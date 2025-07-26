@@ -1,0 +1,69 @@
+---
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "Discover EvolverAI, your trusted partner for cutting-edge IT and AI solutions. We deliver innovative software, expert consultancy, and tailored services to drive your success." } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content={description}>
+  <title>{title}</title>
+  
+  <!-- Favicons -->
+  <link rel="icon" type="image/png" sizes="16x16" href="/img/icons/favicon-16x16.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/img/icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="48x48" href="/img/icons/favicon-48x48.png">
+  <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png">
+  <link rel="icon" type="image/x-icon" href="/favicon.ico">
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Sans:wght@800;400;300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined" rel="stylesheet">
+  
+  <!-- Font Awesome for social media icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  
+  <!-- Elysia Chatbot -->
+  <script src="https://elysia.evolverai.ch/static/elysiachatbot.js" type="module"
+    data-api-key="f64230e7-8428-43e0-94a6-52e831239d74" data-page-context-id="evolverai">
+  </script>
+</head>
+<body class="bg-custom-slate text-gray-200 font-roboto">
+  <slot />
+  
+  <script>
+    // Mobile menu functionality
+    document.addEventListener('DOMContentLoaded', function() {
+      const mobileMenuButton = document.getElementById('mobile-menu-button');
+      const menu = document.getElementById('menu');
+      
+      if (mobileMenuButton && menu) {
+        mobileMenuButton.addEventListener('click', function() {
+          menu.classList.toggle('hidden');
+        });
+      }
+    });
+
+    // Smooth scrolling for anchor links
+    function handleNavigation(event, sectionId) {
+      event.preventDefault();
+      const section = document.getElementById(sectionId);
+      if (section) {
+        section.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+
+    // Make handleNavigation global
+    window.handleNavigation = handleNavigation;
+  </script>
+</body>
+</html>

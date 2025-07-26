@@ -1,0 +1,56 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+---
+
+<Layout title="B2B Outsourcing Services - EvolverAI" description="Comprehensive B2B outsourcing solutions that let you focus on core competencies while we handle specialized processes.">
+  <Header />
+  
+  <main>
+    <section class="relative bg-gradient-to-br from-slate-900 via-blue-900 to-slate-800 py-20">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto text-center">
+          <h1 class="text-5xl md:text-6xl font-bold text-white mb-6 font-noto">
+            B2B <span class="text-blue-400">Outsourcing</span>
+          </h1>
+          <p class="text-xl md:text-2xl text-gray-300 mb-8 leading-relaxed">
+            Comprehensive outsourcing solutions that let you focus on your core business while we handle specialized processes.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="py-16 bg-custom-slate">
+      <div class="container mx-auto px-4">
+        <div class="max-w-4xl mx-auto">
+          <h2 class="text-3xl font-bold text-white text-center mb-12">Our B2B Services</h2>
+          
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-slate-800 p-8 rounded-lg border border-blue-700">
+              <h3 class="text-xl font-semibold text-blue-400 mb-4">IT Infrastructure Management</h3>
+              <p class="text-gray-300">Complete management of your IT infrastructure with 24/7 monitoring and support.</p>
+            </div>
+            
+            <div class="bg-slate-800 p-8 rounded-lg border border-blue-700">
+              <h3 class="text-xl font-semibold text-blue-400 mb-4">Data Processing & Analytics</h3>
+              <p class="text-gray-300">Advanced data processing and analytics services to drive business insights.</p>
+            </div>
+            
+            <div class="bg-slate-800 p-8 rounded-lg border border-blue-700">
+              <h3 class="text-xl font-semibold text-blue-400 mb-4">Customer Support Services</h3>
+              <p class="text-gray-300">Professional customer support services to enhance your client relationships.</p>
+            </div>
+            
+            <div class="bg-slate-800 p-8 rounded-lg border border-blue-700">
+              <h3 class="text-xl font-semibold text-blue-400 mb-4">Business Process Automation</h3>
+              <p class="text-gray-300">Streamline your operations with intelligent automation solutions.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>

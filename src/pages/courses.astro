@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import CourseHero from '../components/courses/CourseHero.astro';
+import CourseDelivery from '../components/courses/CourseDelivery.astro';
+---
+
+<Layout title="AI Courses - EvolverAI" description="Professional AI training courses and workshops. Learn cutting-edge artificial intelligence technologies with expert-led training programs.">
+  <Header />
+  
+  <main>
+    <CourseHero />
+    <div id="course-delivery">
+      <CourseDelivery />
+    </div>
+  </main>
+
+  <Footer />
+</Layout>

@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    :root {
+        --custom-slate: #0f172a;
+    }
+}
+
+@layer components {
+    .bg-custom-slate {
+        background-color: var(--custom-slate);
+    }
+
+    .p-noto-sans {
+        font-family: 'Noto Sans', sans-serif;
+    }
+
+    .top-bottom-margins {
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+}
+
+@layer utilities {
+    .font-roboto {
+        font-family: 'Roboto', sans-serif;
+    }
+
+    .font-noto-sans {
+        font-family: 'Noto Sans', sans-serif;
+    }
+
+    .font-noto {
+        font-family: 'Noto Sans', sans-serif;
+    }
+}
