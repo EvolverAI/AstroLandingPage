@@ -1,0 +1,78 @@
+---
+// Enhanced About Section component with Content Collections
+import { getEntry, getCollection } from "astro:content";
+
+// Option 1: Get specific section
+const aboutSection = await getEntry("sections", "about");
+
+// Option 2: Get from page data
+// const homePage = await getEntry('pages', 'home');
+// const about = homePage.data.sections.about;
+
+// Option 3: Get all sections and filter
+// const allSections = await getCollection('sections');
+// const aboutSection = allSections.find(section => section.data.id === 'about');
+
+const about = aboutSection.data;
+
+// Helper function to build CSS classes
+function buildClasses(styling) {
+    return {
+        background: `absolute inset-0 bg-black ${styling.backgroundOpacity || "bg-opacity-10"}`,
+        container: `container mx-auto px-4 flex ${styling.justifyContent || "justify-end"} items-center h-full relative z-10`,
+        content: `bg-black ${styling.contentBackgroundOpacity || "bg-opacity-75"} p-6 rounded-lg ${styling.textAlign || "text-right"} ${styling.maxWidth || "max-w-lg"}`,
+    };
+}
+
+const cssClasses = buildClasses(about.styling);
+---
+
+<section
+    id={about.id}
+    class="relative bg-custom-slate py-12 bg-center bg-cover"
+    style={`background-image: url('${about.backgroundImage}'); min-height: ${about.minHeight};`}
+    data-section-order={about.metadata?.order}
+    data-theme={about.styling?.theme}
+>
+    <div class={cssClasses.background}></div>
+    <div class={cssClasses.container}>
+        <div class={cssClasses.content}>
+            <p class="p-noto-sans top-bottom-margins md:text-lg">
+                At {about.content.companyName}<span class="text-blue-800"
+                    >{about.content.companyNameHighlight}</span
+                >,
+                {
+                    about.content.description.replace(
+                        `At ${about.content.companyName}${about.content.companyNameHighlight}, `,
+                        "",
+                    )
+                }
+            </p>
+
+            {
+                about.metadata?.lastUpdated && (
+                    <small class="text-gray-400 text-xs block mt-4">
+                        Last updated:{" "}
+                        {new Date(
+                            about.metadata.lastUpdated,
+                        ).toLocaleDateString()}
+                    </small>
+                )
+            }
+        </div>
+    </div>
+</section>
+
+<!-- Development helper (remove in production) -->
+{
+    import.meta.env.DEV && (
+        <details class="mt-4 p-4 bg-gray-100 rounded">
+            <summary class="cursor-pointer font-semibold">
+                Content Debug Info
+            </summary>
+            <pre class="mt-2 text-xs overflow-auto">
+                {JSON.stringify(about, null, 2)}
+            </pre>
+        </details>
+    )
+}

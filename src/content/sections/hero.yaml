@@ -1,0 +1,23 @@
+id: "hero"
+backgroundImage: "/img/evolverai-web-hero-bg.jpg"
+minHeight: "600px"
+content:
+  companyName: "Evolver"
+  companyNameHighlight: "AI"
+  title: "Transforming Business Through AI"
+  subtitle: "We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses."
+  description: "Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes."
+  cta:
+    text: "Get Started"
+    link: "#contact"
+    style: "primary"
+styling:
+  layout: "center"
+  theme: "gradient"
+  customClasses: ""
+metadata:
+  order: 1
+  visible: true
+  lastUpdated: 2025-07-27T00:00:00.000Z
+  author: "EvolverAI Team"
+  featured: true

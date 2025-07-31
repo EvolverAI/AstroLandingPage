@@ -1,20 +1,102 @@
 ---
-// Hero Section component
+// Enhanced Hero Section component with Content Collections
+import { getEntry } from "astro:content";
+
+export interface Props {
+  language?: string;
+  environment?: string;
+}
+
+const { language = "en", environment = "production" } = Astro.props;
+
+// EMERGENCY DEBUG - Test if language is being passed
+console.log("🚨 HERO LANGUAGE:", language);
+
+// Get content directly from Astro Content Collections
+let heroData = null;
+let localizedSections = {};
+
+try {
+  const heroSection = await getEntry("sections", "hero");
+  heroData = heroSection?.data;
+
+  const langData = await getEntry("languages", language);
+  localizedSections = langData?.data?.sections || {};
+} catch (error) {
+  console.warn("Content Collections not available:", error);
+}
+
+// Merge section data with localized content, with fallback to defaults
+const content = {
+  companyName: language === "de" ? "Evolver" : "Evolver",
+  companyNameHighlight: language === "de" ? "AI" : "AI",
+  title:
+    language === "de"
+      ? "Geschäfte durch KI transformieren"
+      : "Transforming Business Through AI",
+  subtitle:
+    language === "de"
+      ? "Wir glauben an eine Welt, in der Künstliche Intelligenz Komplexität vereinfacht und nachhaltigen Erfolg für Unternehmen vorantreibt."
+      : "We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses.",
+  description:
+    language === "de"
+      ? "Unsere Mission ist es, modernste KI für Unternehmen jeder Größe zugänglich und wirkungsvoll zu machen."
+      : "Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes.",
+  // @ts-ignore
+  ...(heroData?.content || {}),
+  // @ts-ignore
+  ...(localizedSections.hero || {}),
+};
+
+// @ts-ignore
+const styling = heroData?.styling || {};
+// @ts-ignore
+const backgroundImage = heroData?.backgroundImage;
+// @ts-ignore
+const minHeight = heroData?.minHeight || "600px";
 ---
 
-<section id="company" class="relative bg-custom-slate py-12 bg-center bg-cover" style="min-height: 600px;">
-  <div class="container mx-auto px-4 flex justify-end items-center h-full relative z-10">
+<section
+  id="hero"
+  class={`relative bg-custom-slate py-12 bg-center bg-cover ${styling.customClasses || ""}`}
+  style={`min-height: ${minHeight}; ${backgroundImage ? `background-image: url('${backgroundImage}');` : ""}`}
+  data-section="hero"
+  data-theme={styling.theme || "gradient"}
+>
+  <div
+    class="container mx-auto px-4 flex justify-end items-center h-full relative z-10"
+  >
     <div class="p-8 rounded-lg text-justify max-w-lg">
       <p class="p-noto-sans top-bottom-margins md:text-lg">
         <i class="material-icons text-yellow-300 mr-2">lightbulb</i>
-        We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses. Our mission is to
-        make cutting-edge AI accessible and impactful for companies of all sizes.
+        {
+          content?.subtitle ||
+            content?.description ||
+            "We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses. Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes."
+        }
       </p>
     </div>
   </div>
   <div class="w-full text-center py-8">
-    <h1 class="font-bold text-white text-[20vw] leading-none w-full text-center">
-      <span class="inline-block">Evolver</span><span class="text-blue-800 inline-block">AI</span>
+    <h1
+      class="font-bold text-white text-[20vw] leading-none w-full text-center"
+    >
+      <span class="inline-block">{content?.companyName || "Evolver"}</span><span
+        class="text-blue-800 inline-block"
+        >{content?.companyNameHighlight || "AI"}</span
+      >
     </h1>
   </div>
+
+  <!-- Development helper (remove in production) -->
+  {
+    import.meta.env.DEV && (
+      <details class="absolute top-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
+        <summary class="cursor-pointer">Content Debug</summary>
+        <pre class="mt-2 max-w-xs overflow-auto">
+          {JSON.stringify({ content, styling }, null, 2)}
+        </pre>
+      </details>
+    )
+  }
 </section>

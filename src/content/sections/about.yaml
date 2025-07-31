@@ -1,0 +1,20 @@
+id: "about"
+backgroundImage: "/img/evolverai-web-company-bg.jpg"
+minHeight: "600px"
+content:
+  companyName: "Evolver"
+  companyNameHighlight: "AI"
+  description: "At EvolverAI, we specialize in developing smart, innovative solutions that empower companies to thrive in the modern digital landscape. By seamlessly integrating Artificial Intelligence into your business processes, we help you unlock new levels of efficiency, accuracy, and growth."
+styling:
+  backgroundOpacity: "bg-opacity-10"
+  contentBackgroundOpacity: "bg-opacity-75"
+  maxWidth: "max-w-lg"
+  textAlign: "text-right"
+  justifyContent: "justify-end"
+  layout: "right"
+  theme: "dark"
+metadata:
+  order: 2
+  visible: true
+  lastUpdated: 2025-07-27T00:00:00.000Z
+  author: "EvolverAI Team"

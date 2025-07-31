@@ -1,0 +1,155 @@
+code: "de"
+name: "Deutsch"
+flag: "🇩🇪"
+sections:
+  about:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: "Bei EvolverAI spezialisieren wir uns auf die Entwicklung intelligenter, innovativer Lösungen, die Unternehmen dabei helfen, in der modernen digitalen Landschaft zu prosperieren. Durch die nahtlose Integration von Künstlicher Intelligenz in Ihre Geschäftsprozesse helfen wir Ihnen, neue Ebenen von Effizienz, Genauigkeit und Wachstum zu erschließen."
+  
+  hero:
+    title: "Geschäfte durch KI transformieren"
+    subtitle: "Wir glauben an eine Welt, in der Künstliche Intelligenz Komplexität vereinfacht, Kreativität fördert und bedeutungsvolle Innovation vorantreibt."
+    description: "Gestalten Sie mit uns die Zukunft intelligenter Geschäftslösungen."
+    
+  services:
+    title: "Unsere KI-Dienstleistungen"
+    description: "Umfassende Künstliche-Intelligenz-Lösungen, maßgeschneidert für Ihre Geschäftsanforderungen"
+    cards:
+      - title: "Maßgeschneiderte KI-Lösungen"
+        description: "Angepasste Systeme, die Ihren einzigartigen Geschäftsanforderungen entsprechen."
+        icon: "check_circle"
+      - title: "Datengestützte Erkenntnisse"
+        description: "Fortgeschrittene Analytik zur Umwandlung Ihrer Daten in umsetzbare Strategien."
+        icon: "insights"
+      - title: "Intelligente Automatisierung"
+        description: "Optimierte, skalierbare Arbeitsabläufe, die mit Ihrem Unternehmen wachsen und Betriebskosten reduzieren."
+        icon: "speed"
+      - title: "B2B-Outsourcing"
+        description: "Umfassende Dienstleistungen, die es Ihnen ermöglichen, sich auf Kernkompetenzen zu konzentrieren, während wir spezialisierte Prozesse übernehmen."
+        icon: "business"
+        linkText: "Mehr entdecken"
+        linkUrl: "#b2b_outsourcing"
+    
+  contact:
+    title: "Kontakt aufnehmen"
+    description: "Haben Sie Fragen oder möchten Sie mehr erfahren? Kontaktieren Sie uns, und wir werden Ihnen umgehend antworten."
+    buttonText: "Kontakt aufnehmen"
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+
+  brainstorming:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: "Bei EvolverAI warten wir darauf, dass Sie sich uns auf der Reise der Innovation und des Wachstums anschließen. Wir sind hier, um Ihnen zu helfen, das Potenzial der KI zu erschließen und Ihre Geschäftsabläufe zu transformieren. Lassen Sie uns gemeinsam brainstormen und eine hellere Zukunft für Ihr Unternehmen schaffen."
+
+  b2b:
+    title: "B2B-Outsourcing-Dienstleistungen"
+    professionalServices:
+      title: "Professionelle Dienstleistungen"
+      description: "Umfassende Outsourcing-Lösungen, die es Ihnen ermöglichen, sich auf Ihr Kerngeschäft zu konzentrieren, während wir spezialisierte Prozesse übernehmen."
+      features:
+        - "IT-Infrastruktur-Management"
+        - "Datenverarbeitung & Analytik"
+        - "Kundensupport-Dienstleistungen"
+        - "Geschäftsprozess-Automatisierung"
+    aiIntegration:
+      title: "KI-Integration"
+      description: "Nahtlose Integration von KI-Technologien in Ihre bestehenden Geschäftsabläufe für verbesserte Effizienz."
+      linkText: "Mehr erfahren"
+
+  product_wfm:
+    title: "Workforce Management Lösungen"
+    subtitle: "Infinite Workforce"
+    description: "Revolutionäre Workforce-Management-Plattform, die Planung optimiert, Produktivität steigert und Abläufe rationalisiert."
+    buttonText: "WFM-Lösungen erkunden"
+    features:
+      - text: "Intelligente Planung & Ressourcenzuteilung"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+      - text: "Echtzeit-Leistungsanalytik"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+      - text: "Automatisiertes Compliance-Management"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+
+  product_elysia:
+    title: "Elysia KI-Assistent"
+    subtitle: "Intelligenter KI-Assistent"
+    description: "Lernen Sie Elysia kennen, Ihren intelligenten KI-Assistenten, der entwickelt wurde, um Kundeninteraktionen zu verbessern und Geschäftsabläufe zu optimieren."
+    buttonText: "Elysia entdecken"
+    features:
+      - text: "Natürliche Sprachverarbeitung"
+        icon: "psychology"
+        iconColor: "text-purple-400"
+      - text: "Fortgeschrittene Konversations-KI"
+        icon: "chat"
+        iconColor: "text-purple-400"
+      - text: "Nahtlose Systemintegration"
+        icon: "integration_instructions"
+        iconColor: "text-purple-400"
+
+  features:
+    title: "Unsere Funktionen"
+    cards:
+      - title: "KI-gestützte Analytik"
+        description: "Nutzen Sie die Kraft der künstlichen Intelligenz, um tiefe Einblicke in Ihre Geschäftsdaten zu gewinnen."
+        icon: "analytics"
+      - title: "Intelligente Automatisierung"
+        description: "Optimieren Sie Ihre Abläufe mit intelligenten Automatisierungslösungen, die sich an Ihre Bedürfnisse anpassen."
+        icon: "smart_toy"
+      - title: "Maßgeschneiderte KI-Entwicklung"
+        description: "Maßgeschneiderte KI-Lösungen, die speziell für Ihre einzigartigen Geschäftsanforderungen entwickelt wurden."
+        icon: "build"
+      - title: "24/7 KI-Support"
+        description: "Rund um die Uhr intelligente Unterstützung, um Ihr Unternehmen reibungslos am Laufen zu halten."
+        icon: "support_agent"
+
+  courses:
+    title: "KI-Training & Kurse"
+    cards:
+      - title: "KI-Grundlagen"
+        description: "Lernen Sie die Grundlagen der künstlichen Intelligenz und des maschinellen Lernens."
+        duration: "8 Wochen"
+        level: "Anfänger"
+      - title: "Machine Learning Meisterschaft"
+        description: "Fortgeschrittene Techniken im maschinellen Lernen und Data Science."
+        duration: "12 Wochen"
+        level: "Fortgeschritten"
+      - title: "KI-Ethik und Governance"
+        description: "Verstehen der ethischen Implikationen und Governance von KI-Systemen."
+        duration: "6 Wochen"
+        level: "Mittelstufe"
+
+  ai_courses:
+    title: "KI-Training & Kurse"
+    cards:
+      - title: "Professionelle Schulung"
+        description: "Umfassende KI-Trainingsprogramme für Fachkräfte und Teams."
+        icon: "school"
+        linkText: "Mehr erfahren"
+        linkUrl: "/courses"
+      - title: "Unternehmens-Workshops"
+        description: "Maßgeschneiderte Trainingslösungen für die spezifischen Bedürfnisse Ihrer Organisation."
+        icon: "corporate_fare"
+        linkText: "Mehr erfahren"
+        linkUrl: "/courses"
+      - title: "Mehrsprachige Unterstützung"
+        description: "Training in mehreren Sprachen für globale Reichweite verfügbar."
+        icon: "language"
+        linkText: "Mehr erfahren"
+        linkUrl: "/courses"
+
+  footer:
+    title: "Lassen Sie uns sprechen, erzählen Sie uns von Ihren Bedürfnissen"
+    description: "Wir sind hier, um Ihnen zu helfen, das Potenzial der KI zu erschließen und Ihre Geschäftsabläufe zu transformieren. Lassen Sie uns gemeinsam brainstormen und eine hellere Zukunft für Ihr Unternehmen schaffen."
+    buttonText: "Erzählen Sie uns von Ihrem Projekt"
+    copyright: "Alle Rechte vorbehalten"
+    contact:
+      email:
+        label: "E-Mail"
+      phone:
+        label: "Telefon"
+      address:
+        label: "Adresse"

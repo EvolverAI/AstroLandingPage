@@ -1,54 +1,107 @@
 ---
-// Footer component
+// Footer component with language support
+import { getCollection } from "astro:content";
+
+export interface Props {
+  language?: string;
+}
+
+const { language = "en" } = Astro.props;
+
+// Get footer content from language files
+let footerContent;
+try {
+  const languagesCollection = await getCollection("languages");
+  const currentLang = languagesCollection.find(
+    (lang) => lang.data.code === language,
+  );
+  footerContent = currentLang?.data?.sections?.footer || {};
+} catch (error) {
+  console.warn("Error loading footer content:", error);
+  footerContent = {};
+}
 ---
 
 <footer class="bg-slate-900 text-gray-200 py-8">
-  <div class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start">
+  <div
+    class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start"
+  >
     <!-- 3/4 Section -->
     <div class="md:w-2/4 mb-8 md:mb-0">
-      <h2 class="text-2xl font-bold mb-4">Let's talk, tell us about your needs</h2>
+      <h2 class="text-2xl font-bold mb-4">
+        {footerContent?.title || "Let's talk, tell us about your needs"}
+      </h2>
       <p class="mb-4">
-        We are here to help you unlock the potential of AI and transform your business operations. Let's brainstorm together and create a brighter future for your company.
+        {
+          footerContent?.description ||
+            "We are here to help you unlock the potential of AI and transform your business operations. Let's brainstorm together and create a brighter future for your company."
+        }
       </p>
-      <button onclick="window.location.href='/form';"
-        class="bg-green-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-green-700 transition duration-300">
-        Tell us about your project
+      <button
+        onclick="window.location.href='/form';"
+        class="bg-green-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-green-700 transition duration-300"
+      >
+        {footerContent?.buttonText || "Tell us about your project"}
       </button>
     </div>
     <!-- 1/4 Section -->
     <div class="md:w-1/4 flex flex-col space-y-4">
-        <div class="grid grid-cols-2 gap-4">
-          <div>
-            <h3 class="font-noto-sans text-orange-300">Email:</h3>
-            <a href="mailto:info@evolverai.ch" class="underline">info@evolverai.ch</a>
-          </div>
-          <div>
-            <h3 class="font-noto-sans text-orange-300">Phone:</h3>
-            <a href="tel:+41792156801" class="underline">+41 79 215 6801</a>
-          </div>
-          <div class="col-span-2">
-            <h3 class="font-noto-sans text-orange-300">Address:</h3>
-            <p>EvolverAI GmbH</p>
-            <p>Zwydenweg, 3</p>
-            <p>CH-6052 Hergiswil</p>
-            <p>Switzerland</p>
-          </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div>
+          <h3 class="font-noto-sans text-orange-300">
+            {footerContent?.contact?.email?.label || "Email"}:
+          </h3>
+          <a href="mailto:info@evolverai.ch" class="underline"
+            >info@evolverai.ch</a
+          >
         </div>
+        <div>
+          <h3 class="font-noto-sans text-orange-300">
+            {footerContent?.contact?.phone?.label || "Phone"}:
+          </h3>
+          <a href="tel:+41792156801" class="underline">+41 79 215 6801</a>
+        </div>
+        <div class="col-span-2">
+          <h3 class="font-noto-sans text-orange-300">
+            {footerContent?.contact?.address?.label || "Address"}:
+          </h3>
+          <p>EvolverAI GmbH</p>
+          <p>Zwydenweg, 3</p>
+          <p>CH-6052 Hergiswil</p>
+          <p>Switzerland</p>
+        </div>
+      </div>
       <div class="flex space-x-4 mt-4">
-        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://facebook.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <i class="fa-brands fa-facebook"></i>
         </a>
         <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
           <i class="fa-brands fa-x-twitter"></i>
         </a>
-        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://instagram.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <i class="fa-brands fa-instagram"></i>
         </a>
-        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+        <a
+          href="https://linkedin.com"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
           <i class="fa-brands fa-linkedin"></i>
         </a>
       </div>
     </div>
   </div>
-  <p class="text-center">&copy; 2025 Evolver<span class="text-blue-800">AI</span> GmbH. All rights reserved.</p>
+  <p class="text-center">
+    &copy; 2025 Evolver<span class="text-blue-800">AI</span> GmbH. {
+      footerContent?.copyright || "All rights reserved"
+    }.
+  </p>
 </footer>

@@ -1,0 +1,14 @@
+name: "Corporate Landing Page"
+description: "Standard corporate landing page template with hero, about, services, and contact sections"
+sections:
+  - "hero"
+  - "about"
+  - "services"
+  - "contact"
+styling:
+  theme: "light"
+  layout: "full"
+metadata:
+  author: "EvolverAI Team"
+  version: "1.0.0"
+  lastUpdated: 2025-07-27T00:00:00.000Z

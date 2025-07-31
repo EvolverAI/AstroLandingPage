@@ -1,0 +1,38 @@
+---
+// Example: How to use Content Collections in a page
+import Layout from "../layouts/Layout.astro";
+import { getPageSections, getSection } from "../utils/content.js";
+
+// Get all sections for the home page
+const sections = await getPageSections("home");
+
+// Or get specific sections
+const aboutSection = await getSection("about");
+const heroSection = await getSection("hero");
+
+// Filter sections by criteria
+const visibleSections = sections.filter(
+    (section) => section.metadata?.visible !== false,
+);
+---
+
+<Layout title="EvolverAI - Home">
+    <main>
+        <!-- Render sections dynamically -->
+        {
+            visibleSections.map((section) => {
+                // You can dynamically import components based on section type
+                switch (section.id) {
+                    case "hero":
+                        return <HeroSection content={section} />;
+                    case "about":
+                        return <AboutSection content={section} />;
+                    case "services":
+                        return <ServicesSection content={section} />;
+                    default:
+                        return <GenericSection content={section} />;
+                }
+            })
+        }
+    </main>
+</Layout>

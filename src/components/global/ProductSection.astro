@@ -1,0 +1,189 @@
+---
+// Reusable Product Section component
+// Can display image on left or right with text on opposite side
+import { resolveImage } from "../../utils/images.js";
+import { getEntry } from "astro:content";
+
+export interface FeatureItem {
+  text: string;
+  icon?: string;
+  iconColor?: string;
+}
+
+export interface Props {
+  // Section identification
+  sectionId: string;
+  sectionType?: string;
+  
+  // Content
+  title: string;
+  subtitle: string;
+  description: string;
+  features?: FeatureItem[];
+  buttonText?: string;
+  buttonUrl?: string;
+  buttonColor?: string;
+  
+  // Image/Visual
+  image?: string;
+  imageAlt?: string;
+  imageClasses?: string;
+  useIconInstead?: boolean;
+  iconName?: string;
+  iconGradient?: string;
+  
+  // Layout
+  imagePosition?: string;
+  backgroundColor?: string;
+  textColor?: string;
+  
+  // Styling
+  customClasses?: string;
+  
+  // Localization
+  language?: string;
+  environment?: string;
+}
+
+const {
+  sectionId,
+  sectionType = sectionId,
+  title,
+  subtitle,
+  description,
+  features = [],
+  buttonText,
+  buttonUrl,
+  buttonColor = "bg-blue-600 hover:bg-blue-700",
+  image,
+  imageAlt = "",
+  imageClasses = "max-w-md mx-auto",
+  useIconInstead = false,
+  iconName = "smart_toy",
+  iconGradient = "from-purple-600 to-blue-600",
+  imagePosition = "right",
+  backgroundColor = "bg-custom-slate",
+  textColor = "text-gray-300",
+  customClasses = "",
+  language = "en",
+  environment = "production"
+} = Astro.props;
+
+// Try to get localized content if available
+let localizedTitle = title;
+let localizedSubtitle = subtitle;
+let localizedDescription = description;
+let localizedFeatures = features;
+let localizedButtonText = buttonText;
+
+
+try {
+  const langData = await getEntry("languages", language);
+  const localizedSections = langData?.data?.sections || {};
+  
+  if (localizedSections[sectionType]) {
+    const sectionData = localizedSections[sectionType];
+    localizedTitle = sectionData.title || title;
+    localizedSubtitle = sectionData.subtitle || subtitle;
+    localizedDescription = sectionData.description || description;
+    localizedFeatures = sectionData.features || features;
+    localizedButtonText = sectionData.buttonText || buttonText;
+  }
+} catch (error) {
+  console.warn("Localization not available for section:", sectionType, error);
+}
+
+// Resolve image path if provided
+const resolvedImage = image ? resolveImage(image) : null;
+
+// Determine grid order based on image position
+const isImageLeft = imagePosition === "left";
+const textOrderClass = isImageLeft ? "order-2" : "order-1";
+const imageOrderClass = isImageLeft ? "order-1" : "order-2";
+---
+
+<section
+  id={sectionId}
+  class={`relative ${backgroundColor} py-12 ${customClasses}`}
+  data-section={sectionType}
+>
+  <div class="container mx-auto px-4">
+    <h2 class="text-3xl font-noto-sans mb-8 text-center text-white">
+      {localizedTitle}
+    </h2>
+    
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+      <!-- Text Content -->
+      <div class={`${textOrderClass}`}>
+        <h3 class="text-2xl font-semibold text-blue-400 mb-4">
+          {localizedSubtitle}
+        </h3>
+        
+        <p class={`${textColor} mb-6`}>
+          {localizedDescription}
+        </p>
+        
+        {localizedFeatures.length > 0 && (
+          <ul class={`space-y-3 ${textColor} mb-6`}>
+            {localizedFeatures.map((feature) => (
+              <li class="flex items-start">
+                <span class={`material-icons ${feature.iconColor || 'text-green-400'} mr-2`}>
+                  {feature.icon || 'check_circle'}
+                </span>
+                {feature.text}
+              </li>
+            ))}
+          </ul>
+        )}
+        
+        {localizedButtonText && buttonUrl && (
+          <a
+            href={buttonUrl}
+            class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+          >
+            {localizedButtonText}
+          </a>
+        )}
+      </div>
+      
+      <!-- Image/Visual Content -->
+      <div class={`text-center ${imageOrderClass}`}>
+        {useIconInstead ? (
+          <div class={`bg-gradient-to-br ${iconGradient} rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6`}>
+            <span class="material-icons text-white text-5xl">{iconName}</span>
+          </div>
+        ) : resolvedImage ? (
+          <img 
+            src={resolvedImage} 
+            alt={imageAlt} 
+            class={imageClasses}
+          />
+        ) : (
+          <!-- Fallback visual if no image or icon specified -->
+          <div class="bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg w-32 h-32 flex items-center justify-center mx-auto">
+            <span class="material-icons text-white text-4xl">image</span>
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+
+  <!-- Development helper -->
+  {import.meta.env.DEV && (
+    <details class="container mx-auto px-4 mt-8 bg-black bg-opacity-75 text-white p-4 rounded text-xs">
+      <summary class="cursor-pointer">{sectionType} Product Debug</summary>
+      <pre class="mt-2 overflow-auto">
+        {JSON.stringify({ 
+          sectionId, 
+          sectionType, 
+          title: localizedTitle,
+          imagePosition,
+          featuresCount: localizedFeatures.length,
+          hasImage: !!resolvedImage,
+          useIcon: useIconInstead,
+          language
+        }, null, 2)}
+      </pre>
+    </details>
+  )}
+</section>

@@ -1,0 +1,166 @@
+---
+// Reusable Cards Section component
+import Card from "./Card.astro";
+import { getEntry } from "astro:content";
+
+export interface CardData {
+    title: string;
+    description: string;
+    icon?: string;
+    features?: string[];
+    linkText?: string;
+    linkUrl?: string;
+}
+
+export interface Props {
+    // Section identification
+    sectionId: string;
+    sectionType?: string;
+
+    // Content
+    title: string;
+    description?: string;
+    cards: CardData[];
+
+    // Layout
+    columns?: string;
+    responsiveColumns?: {
+        mobile?: string;
+        tablet?: string;
+        desktop?: string;
+    };
+
+    // Styling
+    theme?: string;
+    backgroundColor?: string;
+    cardTheme?: string;
+    iconColor?: string;
+    centerCards?: boolean;
+    customClasses?: string;
+
+    // Localization
+    language?: string;
+    environment?: string;
+}
+
+const {
+    sectionId,
+    sectionType = sectionId,
+    title,
+    description,
+    cards,
+    columns = "4",
+    responsiveColumns,
+    theme = "dark",
+    backgroundColor = "bg-custom-slate",
+    cardTheme,
+    iconColor,
+    centerCards = true,
+    customClasses = "",
+    language = "en",
+    environment = "production",
+} = Astro.props;
+
+// Try to get localized content if available
+let localizedTitle = title;
+let localizedDescription = description;
+let localizedCards = cards;
+
+try {
+    const langData = await getEntry("languages", language);
+    const localizedSections = langData?.data?.sections || {};
+
+    if (localizedSections[sectionType]) {
+        const sectionData = localizedSections[sectionType];
+        localizedTitle = sectionData.title || title;
+        localizedDescription = sectionData.description || description;
+        localizedCards = sectionData.cards || cards;
+    }
+} catch (error) {
+    console.warn("Localization not available for section:", sectionType, error);
+}
+
+// Generate responsive grid classes
+const defaultResponsive = {
+    mobile: "1",
+    tablet: columns === "4" ? "2" : columns,
+    desktop: columns,
+};
+
+const responsive = { ...defaultResponsive, ...responsiveColumns };
+
+const gridClasses = `grid grid-cols-${responsive.mobile} md:grid-cols-${responsive.tablet} lg:grid-cols-${responsive.desktop} gap-6`;
+
+// Final card theme (inherit from section if not specified)
+const finalCardTheme = cardTheme || theme;
+
+// Title styling based on theme
+const titleClasses = theme === "dark" ? "text-white" : "text-gray-800";
+
+const descriptionClasses = theme === "dark" ? "text-gray-300" : "text-gray-600";
+---
+
+<section
+    id={sectionId}
+    class={`relative ${backgroundColor} py-12 ${customClasses}`}
+    data-section={sectionType}
+    data-theme={theme}
+>
+    <div
+        class="container mx-auto px-4 flex flex-col justify-start items-start h-full relative z-10 mb-8"
+    >
+        <h1 class={`h1-noto-sans mb-4 ${titleClasses}`}>{localizedTitle}</h1>
+        {
+            localizedDescription && (
+                <p class={`${descriptionClasses} text-lg max-w-3xl`}>
+                    {localizedDescription}
+                </p>
+            )
+        }
+    </div>
+    <div class="container mx-auto px-4">
+        <div class={gridClasses}>
+            {
+                localizedCards.map((card) => (
+                    <Card
+                        title={card.title}
+                        description={card.description}
+                        icon={card.icon}
+                        features={card.features}
+                        linkText={card.linkText}
+                        linkUrl={card.linkUrl}
+                        theme={finalCardTheme}
+                        iconColor={iconColor}
+                        centerContent={centerCards}
+                    />
+                ))
+            }
+        </div>
+    </div>
+
+    <!-- Development helper -->
+    {
+        import.meta.env.DEV && (
+            <details class="container mx-auto px-4 mt-8 bg-black bg-opacity-75 text-white p-4 rounded text-xs">
+                <summary class="cursor-pointer">
+                    {sectionType} Cards Debug
+                </summary>
+                <pre class="mt-2 overflow-auto">
+                    {JSON.stringify(
+                        {
+                            sectionId,
+                            sectionType,
+                            title: localizedTitle,
+                            cardsCount: localizedCards.length,
+                            theme,
+                            cardTheme: finalCardTheme,
+                            language,
+                        },
+                        null,
+                        2,
+                    )}
+                </pre>
+            </details>
+        )
+    }
+</section>

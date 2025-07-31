@@ -1,0 +1,87 @@
+code: "en"
+name: "English"
+flag: "🇺🇸"
+sections:
+  about:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: "At EvolverAI, we specialize in developing smart, innovative solutions that empower companies to thrive in the modern digital landscape. By seamlessly integrating Artificial Intelligence into your business processes, we help you unlock new levels of efficiency, accuracy, and growth."
+  
+  hero:
+    title: "Transforming Business Through AI"
+    subtitle: "We believe in a world where Artificial Intelligence simplifies complexity, enhances creativity, and drives meaningful innovation."
+    description: "Join us in shaping the future of intelligent business solutions."
+    
+  services:
+    title: "What we do"
+    description: "Comprehensive artificial intelligence solutions tailored to your business needs"
+    cards:
+      - title: "Customized AI Solutions"
+        description: "Tailored systems that meet your unique business requirements."
+        icon: "check_circle"
+      - title: "Data-Driven Insights"
+        description: "Advanced analytics to transform your data into actionable strategies."
+        icon: "insights"
+      - title: "Intelligent Automation"
+        description: "Optimized, scalable workflows that grow with your business and reduce operational costs."
+        icon: "speed"
+      - title: "B2B Outsourcing"
+        description: "Comprehensive services that allow you to focus on core competencies while we take care of specialized processes."
+        icon: "business"
+        linkText: "Learn More"
+        linkUrl: "#b2b_outsourcing"
+    
+  features:
+    title: "EvolverAI: Redefining Excellence"
+    cards:
+      - title: "Practical AI Applications"
+        description: "Delivering practical AI applications that create immediate value."
+        icon: "check_circle"
+      - title: "Client Collaboration"
+        description: "Collaborating closely with our clients to understand their challenges and goals."
+        icon: "handshake"
+      - title: "Forward-Thinking Technology"
+        description: "Maintaining a forward-thinking approach to technology and innovation."
+        icon: "lightbulb"
+
+  contact:
+    title: "Get in Touch"
+    description: "Ready to transform your business with AI? Let's discuss your project."
+
+  product_wfm:
+    subtitle: "Workforce Manager"
+    image: "/img/evolverai-web-wfm-bg.png"
+    description: "Workforce Manager is an advanced tool designed to streamline shift planning and workforce management. Harness the power of AI and an automated chatbot for efficient communication, scheduling, and productivity enhancements."
+    buttonText: "Tell me more"
+
+  product_elysia:
+    subtitle: "Elysia: Your AI-Powered Assistant"
+    description: "Elysia is more than just a bot—it's your organization's new best friend. Powered by cutting-edge AI, Elysia streamlines operations by automating repetitive tasks and reducing workloads, giving your team more time to focus on what truly matters. Whether it's managing workflows, handling routine queries, or optimizing processes, Elysia works tirelessly behind the scenes to boost efficiency and productivity. Say goodbye to manual effort and hello to a smarter, more seamless way of working. Transform your organization with Elysia and unlock the potential of AI today!"
+    buttonText: "Discover Elysia"
+
+  courses:
+    - title: "AI Fundamentals"
+      description: "Learn the basics of artificial intelligence and machine learning."
+      duration: "8 weeks"
+      level: "Beginner"
+    - title: "Machine Learning Mastery"
+      description: "Advanced techniques in machine learning and data science."
+      duration: "12 weeks"
+      level: "Advanced"
+    - title: "AI Ethics & Governance"
+      description: "Understanding the ethical implications and governance of AI systems."
+      duration: "6 weeks"
+      level: "Intermediate"
+
+  footer:
+    title: "Let's talk, tell us about your needs"
+    description: "We are here to help you unlock the potential of AI and transform your business operations. Let's brainstorm together and create a brighter future for your company."
+    buttonText: "Tell us about your project"
+    copyright: "All rights reserved"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Phone"
+      address:
+        label: "Address"

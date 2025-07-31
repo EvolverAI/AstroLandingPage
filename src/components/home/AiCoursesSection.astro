@@ -1,29 +1,52 @@
 ---
-// AI Courses Section component
+// AI Courses Section using the reusable CardsSection component
+import CardsSection from "../global/CardsSection.astro";
+
+export interface Props {
+  language?: string;
+  environment?: string;
+}
+
+const { language = "en", environment = "production" } = Astro.props;
+
+const coursesData = [
+  {
+    title: "Professional Training",
+    description:
+      "Comprehensive AI training programs for professionals and teams.",
+    icon: "school",
+    linkText: "Learn More",
+    linkUrl: "/courses",
+  },
+  {
+    title: "Corporate Workshops",
+    description:
+      "Customized training solutions for your organization's specific needs.",
+    icon: "corporate_fare",
+    linkText: "Learn More",
+    linkUrl: "/courses",
+  },
+  {
+    title: "Multi-Language Support",
+    description: "Training available in multiple languages for global reach.",
+    icon: "language",
+    linkText: "Learn More",
+    linkUrl: "/courses",
+  },
+];
+
+const sectionProps = {
+  sectionId: "ai_courses",
+  sectionType: "ai_courses",
+  title: "AI Training & Courses",
+  cards: coursesData,
+  columns: "3",
+  theme: "dark",
+  cardTheme: "dark",
+  iconColor: "text-yellow-400",
+  language,
+  environment,
+};
 ---
 
-<section id="ai_courses" class="relative bg-custom-slate py-12">
-  <div class="container mx-auto px-4">
-    <h2 class="text-3xl font-noto-sans mb-8 text-center text-white">AI Training & Courses</h2>
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-      <div class="bg-slate-800 p-6 rounded-lg text-center">
-        <span class="material-icons text-yellow-400 text-4xl mb-4 block">school</span>
-        <h3 class="text-xl font-semibold text-white mb-2">Professional Training</h3>
-        <p class="text-gray-300 mb-4">Comprehensive AI training programs for professionals and teams.</p>
-        <a href="/courses" class="text-blue-400 hover:text-blue-300">Learn More →</a>
-      </div>
-      <div class="bg-slate-800 p-6 rounded-lg text-center">
-        <span class="material-icons text-yellow-400 text-4xl mb-4 block">corporate_fare</span>
-        <h3 class="text-xl font-semibold text-white mb-2">Corporate Workshops</h3>
-        <p class="text-gray-300 mb-4">Customized training solutions for your organization's specific needs.</p>
-        <a href="/courses" class="text-blue-400 hover:text-blue-300">Learn More →</a>
-      </div>
-      <div class="bg-slate-800 p-6 rounded-lg text-center">
-        <span class="material-icons text-yellow-400 text-4xl mb-4 block">language</span>
-        <h3 class="text-xl font-semibold text-white mb-2">Multi-Language Support</h3>
-        <p class="text-gray-300 mb-4">Training available in multiple languages for global reach.</p>
-        <a href="/courses" class="text-blue-400 hover:text-blue-300">Learn More →</a>
-      </div>
-    </div>
-  </div>
-</section>
+<CardsSection {...sectionProps} />

@@ -1,0 +1,149 @@
+---
+// Reusable Content Section component
+// Can be used for About, Brainstorming, Contact, and similar sections
+import { getEntry } from "astro:content";
+
+export interface Props {
+    // Section identification
+    sectionId: string;
+    sectionType?: string;
+
+    // Content
+    heading?: string;
+    content: string;
+    buttonText?: string;
+    buttonAction?: string;
+
+    // Styling
+    backgroundImage: string;
+    minHeight?: string;
+    backgroundOpacity?: string;
+    contentOpacity?: string;
+    maxWidth?: string;
+    textAlign?: string;
+    contentPosition?: string;
+
+    // Company name highlighting
+    companyName?: string;
+    companyNameHighlight?: string;
+
+    // Localization
+    language?: string;
+    environment?: string;
+}
+
+const {
+    sectionId,
+    sectionType = sectionId,
+    heading,
+    content,
+    buttonText,
+    buttonAction,
+    backgroundImage,
+    minHeight = "600px",
+    backgroundOpacity = "bg-opacity-10",
+    contentOpacity = "bg-opacity-75",
+    maxWidth = "max-w-lg",
+    textAlign = "text-right",
+    contentPosition = "justify-end",
+    companyName = "Evolver",
+    companyNameHighlight = "AI",
+    language = "en",
+    environment = "production",
+} = Astro.props;
+
+// Try to get localized content if available
+let localizedContent = content;
+let localizedHeading = heading;
+let localizedButtonText = buttonText;
+let localizedCompanyName = companyName;
+let localizedCompanyNameHighlight = companyNameHighlight;
+
+try {
+    const langData = await getEntry("languages", language);
+    const localizedSections = langData?.data?.sections || {};
+
+    if (localizedSections[sectionType]) {
+        const sectionData = localizedSections[sectionType];
+        localizedContent =
+            sectionData.description || sectionData.content || content;
+        localizedHeading = sectionData.title || sectionData.heading || heading;
+        localizedButtonText = sectionData.buttonText || buttonText;
+        localizedCompanyName = sectionData.companyName || companyName;
+        localizedCompanyNameHighlight =
+            sectionData.companyNameHighlight || companyNameHighlight;
+    }
+} catch (error) {
+    console.warn("Localization not available for section:", sectionType, error);
+}
+
+// Process content to handle company name highlighting
+const processedContent = localizedContent.replace(
+    new RegExp(`${localizedCompanyName}${localizedCompanyNameHighlight}`, "g"),
+    `${localizedCompanyName}<span class="text-blue-800">${localizedCompanyNameHighlight}</span>`,
+);
+---
+
+<section
+    id={sectionId}
+    class="relative bg-custom-slate py-12 bg-center bg-cover"
+    style={`background-image: url('${backgroundImage}'); min-height: ${minHeight};`}
+    data-section={sectionType}
+>
+    <div class={`absolute inset-0 bg-black ${backgroundOpacity}`}></div>
+    <div
+        class={`container mx-auto px-4 flex ${contentPosition} items-center h-full relative z-10`}
+    >
+        <div
+            class={`bg-black ${contentOpacity} p-6 rounded-lg ${textAlign} ${maxWidth}`}
+        >
+            {
+                localizedHeading && (
+                    <h2 class="text-3xl font-noto-sans mb-4 text-white">
+                        {localizedHeading}
+                    </h2>
+                )
+            }
+            <hr class="my-4 border-orange-600" />
+            <p
+                class="p-noto-sans top-bottom-margins md:text-lg text-gray-200"
+                set:html={processedContent}
+            />
+
+            {
+                localizedButtonText && buttonAction && (
+                    <button
+                        onclick={buttonAction}
+                        class="bg-blue-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-blue-700 transition duration-300 mt-4"
+                    >
+                        {localizedButtonText}
+                    </button>
+                )
+            }
+            <hr class="my-4 border-orange-600" />
+        </div>
+    </div>
+
+    <!-- Development helper -->
+    {
+        import.meta.env.DEV && (
+            <details class="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs max-w-xs">
+                <summary class="cursor-pointer">{sectionType} Debug</summary>
+                <pre class="mt-2 overflow-auto">
+                    {JSON.stringify(
+                        {
+                            sectionId,
+                            sectionType,
+                            localizedContent:
+                                localizedContent.substring(0, 100) + "...",
+                            language,
+                            backgroundImage,
+                        },
+                        null,
+                        2,
+                    )}
+                </pre>
+            </details>
+        )
+    }
+</section>

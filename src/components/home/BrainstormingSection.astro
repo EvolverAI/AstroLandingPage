@@ -1,19 +1,31 @@
 ---
-// Brainstorming Section component
+// Brainstorming Section using the reusable ContentSection component
+import ContentSection from "../global/ContentHeaderSection.astro";
+
+export interface Props {
+  language?: string;
+  environment?: string;
+}
+
+const { language = "en", environment = "production" } = Astro.props;
+
+const sectionProps = {
+  sectionId: "brainstorming",
+  sectionType: "brainstorming",
+  content:
+    "At EvolverAI, we are waiting for you to join us in the journey of innovation and growth. We are here to help you unlock the potential of AI and transform your business operations. Let's brainstorm together and create a brighter future for your company.",
+  backgroundImage: "/img/evolverai-web-brainstorming-bg.jpg",
+  minHeight: "600px",
+  backgroundOpacity: "bg-opacity-10",
+  contentOpacity: "bg-opacity-75",
+  maxWidth: "max-w-lg",
+  textAlign: "text-right",
+  contentPosition: "justify-end",
+  companyName: "Evolver",
+  companyNameHighlight: "AI",
+  language,
+  environment,
+};
 ---
 
-<section id="brainstorming" class="relative bg-custom-slate py-12 bg-center bg-cover"
-  style="background-image: url('/img/evolverai-web-brainstorming-bg.jpg'); min-height: 600px;">
-  <div class="absolute inset-0 bg-black bg-opacity-10"></div>
-  <div class="container mx-auto px-4 flex justify-end items-center h-full relative z-10">
-    <div class="bg-black bg-opacity-75 p-6 rounded-lg text-right max-w-lg">
-      <p class="p-noto-sans top-bottom-margins md:text-lg text-gray-200">
-        At Evolver<span class="text-blue-800">AI</span>, we are waiting for you
-        to join us in the journey of innovation and growth. We are here to
-        help you unlock the potential of AI and transform your business
-        operations. Let's brainstorm together and create a brighter future
-        for your company.
-      </p>
-    </div>
-  </div>
-</section>
+<ContentSection {...sectionProps} />

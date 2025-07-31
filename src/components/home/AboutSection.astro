@@ -1,17 +1,46 @@
 ---
-// About Section component
+// About Section using the reusable ContentSection component
+import ContentSection from "../global/ContentHeaderSection.astro";
+import { getEntry } from "astro:content";
+
+export interface Props {
+  language?: string;
+  environment?: string;
+}
+
+const { language = "en", environment = "production" } = Astro.props;
+
+// Get content from Content Collections with fallback
+let aboutData: any = null;
+try {
+  const aboutSection = await getEntry("sections", "about");
+  aboutData = aboutSection?.data;
+} catch (error) {
+  console.warn("Content Collections not available:", error);
+}
+
+// Default content with fallback from Content Collections
+const defaultContent =
+  "At EvolverAI, we specialize in developing smart, innovative solutions that empower companies to thrive in the modern digital landscape. By seamlessly integrating Artificial Intelligence into your business processes, we help you unlock new levels of efficiency, accuracy, and growth.";
+
+const sectionProps = {
+  sectionId: aboutData?.id || "about",
+  sectionType: "about",
+  content: aboutData?.content?.description || defaultContent,
+  backgroundImage:
+    aboutData?.backgroundImage || "/img/evolverai-web-company-bg.jpg",
+  minHeight: aboutData?.minHeight || "600px",
+  backgroundOpacity: aboutData?.styling?.backgroundOpacity || "bg-opacity-10",
+  contentOpacity:
+    aboutData?.styling?.contentBackgroundOpacity || "bg-opacity-75",
+  maxWidth: aboutData?.styling?.maxWidth || "max-w-lg",
+  textAlign: aboutData?.styling?.textAlign || "text-right",
+  contentPosition: aboutData?.styling?.justifyContent || "justify-end",
+  companyName: "Evolver",
+  companyNameHighlight: "AI",
+  language,
+  environment,
+};
 ---
 
-<section id="about" class="relative bg-custom-slate py-12 bg-center bg-cover"
-  style="background-image: url('/img/evolverai-web-company-bg.jpg'); min-height: 600px;">
-  <div class="absolute inset-0 bg-black bg-opacity-10"></div>
-  <div class="container mx-auto px-4 flex justify-end items-center h-full relative z-10">
-    <div class="bg-black bg-opacity-75 p-6 rounded-lg text-right max-w-lg">
-      <p class="p-noto-sans top-bottom-margins md:text-lg">
-        At Evolver<span class="text-blue-800">AI</span>, we specialize in developing smart, innovative solutions that empower companies to thrive in the
-        modern digital landscape. By seamlessly integrating Artificial Intelligence into your business processes, we help
-        you unlock new levels of efficiency, accuracy, and growth.
-      </p>
-    </div>
-  </div>
-</section>
+<ContentSection {...sectionProps} />

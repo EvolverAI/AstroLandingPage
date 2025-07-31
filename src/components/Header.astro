@@ -1,33 +1,72 @@
 ---
-// Header component
+// Header component with language support
+import LanguageSwitcher from "./LanguageSwitcher.astro";
+
+export interface Props {
+  currentLanguage?: string;
+}
+
+const { currentLanguage = "en" } = Astro.props;
 ---
 
-<header class="bg-gradient-to-r from-slate-900 to-slate-950 text-white py-4 mb-8 sticky top-0 z-50">
+<header
+  class="bg-gradient-to-r from-slate-900 to-slate-950 text-white py-4 mb-8 sticky top-0 z-50"
+>
   <div class="container mx-auto px-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">Evolver<span class="text-blue-800">AI</span></h1>
-    <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-      <i class="material-icons md-24">menu</i>
-    </button>
+    <h1 class="text-2xl font-bold">
+      Evolver<span class="text-blue-800">AI</span>
+    </h1>
+
+    <div class="flex items-center gap-4">
+      <!-- Language Switcher -->
+      <LanguageSwitcher
+        currentLanguage={currentLanguage}
+        className="hidden md:block"
+      />
+
+      <!-- Mobile Menu Button -->
+      <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+        <i class="material-icons md-24">menu</i>
+      </button>
+    </div>
+
     <nav id="menu" class="hidden md:flex items-center">
-      <a href="/#services" class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'company')">
-        <i class="material-icons text-base leading-none mr-2">business</i>Company
-      </a>
-      <a href="/#b2b_outsourcing"
+      <a
+        href="/#services"
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'b2b_outsourcing')">
+        onclick="handleNavigation(event, 'company')"
+      >
+        <i class="material-icons text-base leading-none mr-2">business</i
+        >Company
+      </a>
+      <a
+        href="/#b2b_outsourcing"
+        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
+        onclick="handleNavigation(event, 'b2b_outsourcing')"
+      >
         <i class="material-icons text-base leading-none mr-2">handshake</i>B2B
       </a>
-      <a href="/#product_wfm" class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'product_wfm')">
-        <i class="material-icons text-base leading-none mr-2">settings</i>Products
+      <a
+        href="/#product_wfm"
+        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
+        onclick="handleNavigation(event, 'product_wfm')"
+      >
+        <i class="material-icons text-base leading-none mr-2">settings</i
+        >Products
       </a>
-      <a href="/courses" class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap">
+      <a
+        href="/courses"
+        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
+      >
         <i class="material-icons text-base leading-none mr-2">school</i>Courses
       </a>
-      <a href="/#contact" class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'contact')">
-        <i class="material-icons text-base leading-none mr-2">headset_mic</i>Contact
+      <a
+        href="/#contact"
+        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
+        onclick="handleNavigation(event, 'contact')"
+      >
+        <i class="material-icons text-base leading-none mr-2">headset_mic</i
+        >Contact
       </a>
     </nav>
   </div>

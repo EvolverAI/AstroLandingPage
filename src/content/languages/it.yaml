@@ -1,0 +1,94 @@
+code: "it"
+name: "Italiano"
+flag: "🇮🇹"
+sections:
+  about:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: "In EvolverAI, ci specializziamo nello sviluppo di soluzioni intelligenti e innovative che permettono alle aziende di prosperare nel moderno panorama digitale. Integrando perfettamente l'Intelligenza Artificiale nei vostri processi aziendali, vi aiutiamo a sbloccare nuovi livelli di efficienza, precisione e crescita."
+  
+  hero:
+    title: "Trasformare il Business attraverso l'IA"
+    subtitle: "Crediamo in un mondo dove l'Intelligenza Artificiale semplifica la complessità, migliora la creatività e guida un'innovazione significativa."
+    description: "Unitevi a noi nel plasmare il futuro delle soluzioni aziendali intelligenti."
+    
+  services:
+    title: "I Nostri Servizi IA"
+    description: "Soluzioni complete di intelligenza artificiale personalizzate per le vostre esigenze aziendali"
+    
+  contact:
+    title: "Contattaci"
+    description: "Pronti a trasformare la vostra azienda con l'IA? Parliamo del vostro progetto."
+
+  product_wfm:
+    title: "Soluzioni di Gestione della Forza Lavoro"
+    subtitle: "Infinite Workforce"
+    description: "Piattaforma rivoluzionaria per la gestione della forza lavoro che ottimizza la pianificazione, migliora la produttività e semplifica le operazioni."
+    buttonText: "Esplora Soluzioni WFM"
+    features:
+      - text: "Pianificazione Intelligente e Allocazione Risorse"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+      - text: "Analisi delle Prestazioni in Tempo Reale"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+      - text: "Gestione Automatizzata della Conformità"
+        icon: "check_circle"
+        iconColor: "text-green-400"
+
+  product_elysia:
+    title: "Assistente IA Elysia"
+    subtitle: "Assistente IA Intelligente"
+    description: "Incontra Elysia, il tuo assistente IA intelligente progettato per migliorare le interazioni con i clienti e ottimizzare le operazioni aziendali."
+    buttonText: "Scopri Elysia"
+    features:
+      - text: "Elaborazione del Linguaggio Naturale"
+        icon: "psychology"
+        iconColor: "text-purple-400"
+      - text: "IA Conversazionale Avanzata"
+        icon: "chat"
+        iconColor: "text-purple-400"
+      - text: "Integrazione Seamless dei Sistemi"
+        icon: "integration_instructions"
+        iconColor: "text-purple-400"
+
+  features:
+    - title: "Analytics Potenziata dall'AI"
+      description: "Sfrutta il potere dell'intelligenza artificiale per ottenere insights profondi sui tuoi dati aziendali."
+      icon: "analytics"
+    - title: "Automazione Intelligente"
+      description: "Ottimizza le tue operazioni con soluzioni di automazione intelligente che si adattano alle tue esigenze."
+      icon: "smart_toy"
+    - title: "Sviluppo AI Personalizzato"
+      description: "Soluzioni AI su misura progettate specificamente per i tuoi requisiti aziendali unici."
+      icon: "build"
+    - title: "Supporto AI 24/7"
+      description: "Assistenza intelligente 24 ore su 24 per mantenere la tua azienda operativa senza intoppi."
+      icon: "support_agent"
+
+  courses:
+    - title: "Fondamenti dell'AI"
+      description: "Impara le basi dell'intelligenza artificiale e del machine learning."
+      duration: "8 settimane"
+      level: "Principiante"
+    - title: "Padronanza del Machine Learning"
+      description: "Tecniche avanzate nel machine learning e data science."
+      duration: "12 settimane"
+      level: "Avanzato"
+    - title: "Etica e Governance dell'AI"
+      description: "Comprendere le implicazioni etiche e la governance dei sistemi AI."
+      duration: "6 settimane"
+      level: "Intermedio"
+
+  footer:
+    title: "Parliamo, raccontaci le tue esigenze"
+    description: "Siamo qui per aiutarti a sbloccare il potenziale dell'AI e trasformare le tue operazioni aziendali. Facciamo brainstorming insieme e creiamo un futuro più luminoso per la tua azienda."
+    buttonText: "Raccontaci del tuo progetto"
+    copyright: "Tutti i diritti riservati"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Telefono"
+      address:
+        label: "Indirizzo"
