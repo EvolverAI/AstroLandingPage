@@ -17,20 +17,13 @@ const { currentLanguage = "en" } = Astro.props;
       Evolver<span class="text-blue-800">AI</span>
     </h1>
 
-    <div class="flex items-center gap-4">
-      <!-- Language Switcher -->
-      <LanguageSwitcher
-        currentLanguage={currentLanguage}
-        className="hidden md:block"
-      />
+    <!-- Mobile Menu Button -->
+    <button id="mobile-menu-button" class="md:hidden focus:outline-none">
+      <i class="material-icons md-24">menu</i>
+    </button>
 
-      <!-- Mobile Menu Button -->
-      <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-        <i class="material-icons md-24">menu</i>
-      </button>
-    </div>
-
-    <nav id="menu" class="hidden md:flex items-center">
+    <!-- Desktop Navigation -->
+    <nav id="menu" class="hidden md:flex items-center gap-6">
       <a
         href="/#services"
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
@@ -40,23 +33,24 @@ const { currentLanguage = "en" } = Astro.props;
         >Company
       </a>
       <a
-        href="/#b2b_outsourcing"
+        href="/#b2b"
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'b2b_outsourcing')"
+        onclick="handleNavigation(event, 'b2b')"
       >
         <i class="material-icons text-base leading-none mr-2">handshake</i>B2B
       </a>
       <a
-        href="/#product_wfm"
+        href="/#products"
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'product_wfm')"
+        onclick="handleNavigation(event, 'products')"
       >
         <i class="material-icons text-base leading-none mr-2">settings</i
         >Products
       </a>
       <a
-        href="/courses"
+        href="/#courses"
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
+        onclick="handleNavigation(event, 'courses')"
       >
         <i class="material-icons text-base leading-none mr-2">school</i>Courses
       </a>
@@ -68,6 +62,9 @@ const { currentLanguage = "en" } = Astro.props;
         <i class="material-icons text-base leading-none mr-2">headset_mic</i
         >Contact
       </a>
+
+      <!-- Language Switcher -->
+      <LanguageSwitcher currentLanguage={currentLanguage} />
     </nav>
   </div>
 </header>

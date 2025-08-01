@@ -29,6 +29,7 @@ export interface Props {
 
     // Localization
     language?: string;
+    languageFile?: string; // Override for specific language files
     environment?: string;
 }
 
@@ -49,6 +50,7 @@ const {
     companyName = "Evolver",
     companyNameHighlight = "AI",
     language = "en",
+    languageFile,
     environment = "production",
 } = Astro.props;
 
@@ -60,7 +62,9 @@ let localizedCompanyName = companyName;
 let localizedCompanyNameHighlight = companyNameHighlight;
 
 try {
-    const langData = await getEntry("languages", language);
+    // Use languageFile if provided, otherwise fall back to language
+    const langFileName = languageFile || language;
+    const langData = await getEntry("languages", langFileName);
     const localizedSections = langData?.data?.sections || {};
 
     if (localizedSections[sectionType]) {
@@ -78,7 +82,14 @@ try {
 }
 
 // Process content to handle company name highlighting
-const processedContent = localizedContent.replace(
+const normalizedContent = localizedContent
+    ? localizedContent
+          .replace(/[\r\n]+/g, " ")
+          .replace(/\s+/g, " ")
+          .trim()
+    : "";
+
+const processedContent = normalizedContent.replace(
     new RegExp(`${localizedCompanyName}${localizedCompanyNameHighlight}`, "g"),
     `${localizedCompanyName}<span class="text-blue-800">${localizedCompanyNameHighlight}</span>`,
 );

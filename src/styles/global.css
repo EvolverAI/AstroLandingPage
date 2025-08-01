@@ -32,6 +32,19 @@
         /* border-right: 5px solid green; */
     }
 
+    .h2-noto-sans {
+        font-family: 'Noto Sans', sans-serif;
+        font-size: 30px;
+        font-weight: 400;
+        border-bottom: 2px solid green;
+    }
+
+    .h3-noto-sans {
+        font-family: 'Noto Sans', sans-serif;
+        font-size: 18px;
+        font-weight: 400;
+    }
+
     @media (min-width: 768px) {
         .h1-noto-sans {
             font-size: 40px;

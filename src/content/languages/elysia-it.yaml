@@ -1,0 +1,175 @@
+code: "it"
+name: "Italiano"
+flag: "🇮🇹"
+
+# Page configuration for Elysia - defines sections order and types
+page_sections:
+  - type: "hero"
+    section_id: "hero"
+    order: 1
+    min_height: "100vh"
+  - type: "content_header"
+    section_id: "about"
+    order: 2
+    background_image: "/img/evolverai-web-elysia-bg.jpg"
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "capabilities"
+    order: 4
+  - type: "cards"
+    section_id: "use_cases"
+    order: 5
+  - type: "cards"
+    section_id: "benefits"
+    order: 6
+  - type: "content_header"
+    section_id: "demo"
+    order: 7
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+sections:
+  hero:
+    title: "Incontra Elysia"
+    subtitle: "Il tuo Assistente AI per una Produttività Potenziata"
+    description: "Elysia è più di un semplice bot—è il nuovo migliore amico della tua organizzazione. Alimentata da AI all'avanguardia, Elysia ottimizza le operazioni e aumenta l'efficienza."
+
+  about:
+    companyName: "Elysia"
+    companyNameHighlight: "Assistente AI"
+    description: >
+      Elysia è progettata per trasformare il modo in cui lavora la tua organizzazione. Automatizzando 
+      compiti ripetitivi e riducendo i carichi di lavoro, Elysia dà al tuo team più tempo per concentrarsi 
+      su ciò che conta davvero. Che si tratti di gestire flussi di lavoro, gestire richieste di routine 
+      o ottimizzare processi, Elysia lavora instancabilmente dietro le quinte per aumentare efficienza 
+      e produttività.
+
+  features:
+    title: "Funzionalità Principali"
+    description: "Scopri cosa rende Elysia il tuo perfetto compagno AI"
+    cards:
+      - title: "Elaborazione del Linguaggio Naturale"
+        description: "Capacità NLP avanzate per conversazioni simili a quelle umane e comprensione."
+        icon: 
+          type: "psychology"
+          alignment: "top"
+      - title: "AI Conversazionale"
+        description: "Gestione sofisticata del dialogo per interazioni coinvolgenti con i clienti."
+        icon: 
+          type: "chat"
+          alignment: "top"
+      - title: "Integrazione di Sistema"
+        description: "Integrazione perfetta con i tuoi sistemi aziendali e flussi di lavoro esistenti."
+        icon: 
+          type: "integration_instructions"
+          alignment: "top"
+      - title: "Disponibilità 24/7"
+        description: "Sempre pronta ad assistere, fornendo supporto continuo per il tuo team."
+        icon: 
+          type: "schedule"
+          alignment: "top"
+
+  capabilities:
+    title: "Cosa può fare Elysia"
+    description: "Capacità AI complete su misura per le tue esigenze aziendali"
+    cards:
+      - title: "Automazione delle Attività"
+        description: "Automatizza compiti ripetitivi e flussi di lavoro per aumentare l'efficienza."
+        icon: 
+          type: "autorenew"
+          alignment: "top"
+      - title: "Analisi dei Dati"
+        description: "Analizza i pattern dei dati e fornisce insight azionabili."
+        icon: 
+          type: "analytics"
+          alignment: "top"
+      - title: "Supporto Clienti"
+        description: "Gestisce le richieste dei clienti con risposte intelligenti."
+        icon: 
+          type: "support_agent"
+          alignment: "top"
+      - title: "Elaborazione Documenti"
+        description: "Elabora ed estrae informazioni da vari tipi di documenti."
+        icon: 
+          type: "description"
+          alignment: "top"
+
+  use_cases:
+    title: "Casi d'Uso"
+    description: "Applicazioni del mondo reale dove Elysia eccelle"
+    cards:
+      - title: "Servizio Clienti"
+        description: "Migliora il supporto clienti con risposte intelligenti e contestuali."
+        icon: 
+          type: "headset_mic"
+          alignment: "top"
+      - title: "Operazioni HR"
+        description: "Ottimizza i processi HR dal reclutamento alla gestione dei dipendenti."
+        icon: 
+          type: "people"
+          alignment: "top"
+      - title: "Supporto Vendite"
+        description: "Qualifica i lead, programma incontri e fornisce insight di vendita."
+        icon: 
+          type: "trending_up"
+          alignment: "top"
+      - title: "Gestione Contenuti"
+        description: "Organizza, categorizza e gestisce i tuoi contenuti in modo efficiente."
+        icon: 
+          type: "folder_managed"
+          alignment: "top"
+
+  benefits:
+    title: "Perché Scegliere Elysia"
+    description: "I vantaggi di implementare Elysia nella tua organizzazione"
+    cards:
+      - title: "Produttività Aumentata"
+        description: "Aumenta l'efficienza del team fino al 40% attraverso l'automazione intelligente."
+        icon: 
+          type: "speed"
+          alignment: "top"
+      - title: "Riduzione dei Costi"
+        description: "Riduci i costi operativi mantenendo alta la qualità del servizio."
+        icon: 
+          type: "savings"
+          alignment: "top"
+      - title: "Soluzione Scalabile"
+        description: "Cresce con le tue esigenze aziendali e si adatta ai requisiti in evoluzione."
+        icon: 
+          type: "trending_up"
+          alignment: "top"
+      - title: "Integrazione Facile"
+        description: "Configurazione rapida e integrazione perfetta con i sistemi esistenti."
+        icon: 
+          type: "link"
+          alignment: "top"
+
+  demo:
+    companyName: "Pronto a sperimentare"
+    companyNameHighlight: "Elysia?"
+    description: >
+      Vedi Elysia in azione e scopri come può trasformare le tue operazioni aziendali. 
+      Programma una demo personalizzata per esplorare le capacità di Elysia su misura 
+      per le tue esigenze specifiche.
+
+  contact:
+    title: "Inizia con Elysia"
+    description: "Pronto a trasformare la tua azienda con Elysia? Discutiamo i tuoi requisiti specifici."
+
+  footer:
+    title: "Trasforma la tua organizzazione con Elysia"
+    description: "Sblocca il potenziale dell'AI e dai al tuo team gli strumenti di cui ha bisogno per avere successo."
+    buttonText: "Programma una Demo"
+    copyright: "Tutti i diritti riservati"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Telefono"
+      address:
+        label: "Indirizzo"

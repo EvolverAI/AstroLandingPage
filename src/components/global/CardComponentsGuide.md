@@ -38,7 +38,7 @@ import Card from '../global/Card.astro';
 |------|------|---------|-------------|
 | `title` | `string` | Required | Card title |
 | `description` | `string` | Required | Card description text |
-| `icon` | `string` | Optional | Material Icons icon name |
+| `icon` | `string \| object` | Optional | Material Icons icon name or icon object |
 | `features` | `string[]` | Optional | List of features to display |
 | `linkText` | `string` | Optional | Link button text |
 | `linkUrl` | `string` | Optional | Link URL |
@@ -46,6 +46,50 @@ import Card from '../global/Card.astro';
 | `iconColor` | `string` | Auto | Custom icon color class |
 | `customClasses` | `string` | `""` | Additional CSS classes |
 | `centerContent` | `boolean` | `true` | Center align content |
+
+### Icon Alignment Options
+
+The Card component supports three icon alignment options:
+
+**`alignment: "top"` (Default)**
+- Icon displayed centered above the title
+- Best for standard feature cards and service listings
+
+**`alignment: "left"`  
+- Small icon displayed inline with the title on the left
+- Good for compact lists and navigation-style cards
+
+**`alignment: "left-big"`
+- Large icon in a circular blue background on the left
+- Content (title, description) displayed on the right
+- Perfect for hero cards and prominent feature highlights
+
+### Icon Configuration
+
+Icons can be configured in multiple ways:
+
+```astro
+<!-- Simple string icon -->
+<Card icon="star" />
+
+<!-- Object with alignment -->
+<Card 
+  icon={{ 
+    type: "insights", 
+    alignment: "left-big",
+    color: "#ffffff" 
+  }} 
+/>
+```
+
+```yaml
+# In YAML configuration
+cards:
+  - title: "Feature Title"
+    icon:
+      type: "insights"
+      alignment: "left-big"
+```
 
 ### Theme Differences
 
@@ -116,10 +160,17 @@ const cards = [
 interface CardData {
   title: string;
   description: string;
-  icon?: string;
+  icon?: string | { 
+    type: string; 
+    color?: string; 
+    alignment?: "top" | "left" | "left-big" 
+  };
   features?: string[];
   linkText?: string;
   linkUrl?: string;
+  buttonText?: string;
+  buttonUrl?: string;
+  buttonColor?: string;
 }
 ```
 
@@ -211,6 +262,38 @@ const servicesCards = [
     tablet: "2",    // 2 columns on tablet
     desktop: "3"    // 3 columns on desktop
   }}
+/>
+```
+
+### Hero-Style Cards with Left-Big Icons
+
+```astro
+---
+import CardsSection from '../global/CardsSection.astro';
+
+const heroCards = [
+  {
+    title: "Next-Generation AI Technology",
+    description: "At the heart of our platform is sophisticated artificial intelligence that learns and adapts to your organization's unique requirements.",
+    icon: {
+      type: "insights",
+      alignment: "left-big"
+    }
+  }
+];
+---
+
+<CardsSection 
+  sectionId="hero-features"
+  title="Revolutionary Technology"
+  cards={heroCards}
+  responsiveColumns={{
+    mobile: "1",
+    tablet: "1", 
+    desktop: "1"
+  }}
+  theme="dark"
+  cardTheme="dark"
 />
 ```
 

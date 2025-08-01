@@ -75,7 +75,10 @@ let localizedSubtitle = subtitle;
 let localizedDescription = description;
 let localizedFeatures = features;
 let localizedButtonText = buttonText;
-
+let localizedButtonUrl = buttonUrl;
+let localizedButtonColor = buttonColor;
+let localizedImagePosition = imagePosition;
+let localizedImage = image;
 
 try {
   const langData = await getEntry("languages", language);
@@ -88,18 +91,30 @@ try {
     localizedDescription = sectionData.description || description;
     localizedFeatures = sectionData.features || features;
     localizedButtonText = sectionData.buttonText || buttonText;
+    localizedButtonUrl = sectionData.buttonUrl || buttonUrl;
+    localizedButtonColor = sectionData.buttonColor || buttonColor;
+    localizedImagePosition = sectionData.imagePosition || imagePosition;
+    localizedImage = sectionData.image || image;
+    
   }
 } catch (error) {
   console.warn("Localization not available for section:", sectionType, error);
 }
 
+// Normalize description text by removing extra whitespace and newlines
+localizedDescription = localizedDescription
+  ? localizedDescription.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()
+  : '';
+
 // Resolve image path if provided
-const resolvedImage = image ? resolveImage(image) : null;
+const resolvedImage = localizedImage ? resolveImage(localizedImage) : null;
 
 // Determine grid order based on image position
-const isImageLeft = imagePosition === "left";
-const textOrderClass = isImageLeft ? "order-2" : "order-1";
-const imageOrderClass = isImageLeft ? "order-1" : "order-2";
+// On mobile: image always first (order-1), text always second (order-2)
+// On desktop: respect the imagePosition setting
+const isImageLeft = localizedImagePosition === "left";
+const textOrderClass = isImageLeft ? "order-2 md:order-2" : "order-2 md:order-1";
+const imageOrderClass = isImageLeft ? "order-1 md:order-1" : "order-1 md:order-2";
 ---
 
 <section
@@ -112,14 +127,14 @@ const imageOrderClass = isImageLeft ? "order-1" : "order-2";
       {localizedTitle}
     </h2>
     
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-start min-h-[400px]">
       <!-- Text Content -->
       <div class={`${textOrderClass}`}>
-        <h3 class="text-2xl font-semibold text-blue-400 mb-4">
+        <h2 class="h2-noto-sans text-blue-400 mb-4">
           {localizedSubtitle}
-        </h3>
-        
-        <p class={`${textColor} mb-6`}>
+        </h2>
+
+        <p class={`p-noto-sans md:text-lg ${textColor} mb-6`}>
           {localizedDescription}
         </p>
         
@@ -136,10 +151,10 @@ const imageOrderClass = isImageLeft ? "order-1" : "order-2";
           </ul>
         )}
         
-        {localizedButtonText && buttonUrl && (
+        {localizedButtonText && localizedButtonUrl && (
           <a
-            href={buttonUrl}
-            class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+            href={localizedButtonUrl}
+            class={`inline-block ${localizedButtonColor} text-white py-3 px-6 rounded-lg transition duration-300 text-center w-full md:w-auto`}
           >
             {localizedButtonText}
           </a>
@@ -147,17 +162,19 @@ const imageOrderClass = isImageLeft ? "order-1" : "order-2";
       </div>
       
       <!-- Image/Visual Content -->
-      <div class={`text-center ${imageOrderClass}`}>
+      <div class={`${imageOrderClass} flex items-start justify-center h-full`}>
         {useIconInstead ? (
           <div class={`bg-gradient-to-br ${iconGradient} rounded-full w-32 h-32 flex items-center justify-center mx-auto mb-6`}>
             <span class="material-icons text-white text-5xl">{iconName}</span>
           </div>
         ) : resolvedImage ? (
-          <img 
-            src={resolvedImage} 
-            alt={imageAlt} 
-            class={imageClasses}
-          />
+          <div class="w-full aspect-[4/3] max-h-96">
+            <img 
+              src={resolvedImage} 
+              alt={imageAlt} 
+              class="w-full h-full object-cover rounded-xl shadow-2xl"
+            />
+          </div>
         ) : (
           <!-- Fallback visual if no image or icon specified -->
           <div class="bg-gradient-to-br from-gray-600 to-gray-800 rounded-lg w-32 h-32 flex items-center justify-center mx-auto">
@@ -177,9 +194,12 @@ const imageOrderClass = isImageLeft ? "order-1" : "order-2";
           sectionId, 
           sectionType, 
           title: localizedTitle,
-          imagePosition,
+          imagePosition: localizedImagePosition,
           featuresCount: localizedFeatures.length,
           hasImage: !!resolvedImage,
+          resolvedImage: resolvedImage,
+          localizedImage: localizedImage,
+          originalImage: image,
           useIcon: useIconInstead,
           language
         }, null, 2)}

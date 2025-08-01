@@ -1,59 +1,85 @@
 ---
-import Layout from "../layouts/Layout.astro";
-import Header from "../components/Header.astro";
-import Footer from "../components/Footer.astro";
-import HeroSection from "../components/home/HeroSection.astro";
-import AboutSection from "../components/home/AboutSection.astro";
-import ServicesSection from "../components/home/ServicesSection.astro";
-import BrainstormingSection from "../components/home/BrainstormingSection.astro";
-import FeaturesSection from "../components/home/FeaturesSection.astro";
-import B2BOutsourcingSection from "../components/home/B2BOutsourcingSection.astro";
-import ProductWFMSection from "../components/home/ProductWFMSection.astro";
-import ProductElysiaSection from "../components/home/ProductElysiaSection.astro";
-import AiCoursesSection from "../components/home/AiCoursesSection.astro";
-import ContactSection from "../components/home/ContactSection.astro";
-
-// Default to English for the homepage
-const language = "en";
+// Main index page - handles automatic language detection and redirection
 ---
 
-<Layout
-  title="EvolverAI - Integrated AI Solutions"
-  description="Discover EvolverAI, your trusted partner for cutting-edge IT and AI solutions. We deliver innovative software, expert consultancy, and tailored services to drive your success."
->
-  <Header currentLanguage={language} />
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>EvolverAI - Redirecting...</title>
+    <meta name="description" content="EvolverAI - Integrated AI Solutions" />
+    <style>
+      body {
+        font-family: system-ui, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        color: white;
+      }
+      .loader {
+        text-align: center;
+      }
+      .spinner {
+        border: 3px solid #374151;
+        border-top: 3px solid #3b82f6;
+        border-radius: 50%;
+        width: 40px;
+        height: 40px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+      }
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="loader">
+      <div class="spinner"></div>
+      <p>Detecting your language preference...</p>
+    </div>
 
-  <main class="space-y-16">
-    <!-- Hero section -->
-    <HeroSection language={language} />
+    <script>
+      function getBrowserLanguage() {
+        const supportedLanguages = ["en", "de", "it"];
+        const browserLang = navigator.language || navigator.languages[0];
+        const langCode = browserLang.split("-")[0].toLowerCase();
+        return supportedLanguages.includes(langCode) ? langCode : "en";
+      }
 
-    <!-- About section -->
-    <AboutSection language={language} />
+      function redirectToLanguagePage() {
+        // Check if user has manually set a language preference
+        const userPreference = localStorage.getItem("userLanguagePreference");
 
-    <!-- Services section -->
-    <ServicesSection language={language} />
+        let targetLanguage;
+        if (userPreference) {
+          // User has manually selected a language
+          targetLanguage = userPreference;
+        } else {
+          // Use browser language detection
+          targetLanguage = getBrowserLanguage();
+        }
 
-    <!-- Brainstorming section -->
-    <BrainstormingSection language={language} />
+        // Redirect to appropriate language page
+        const redirectPath =
+          targetLanguage === "en" ? "/en" : `/${targetLanguage}`;
 
-    <!-- Features section -->
-    <FeaturesSection language={language} />
+        // Add a small delay for better UX
+        setTimeout(() => {
+          window.location.href = redirectPath;
+        }, 500);
+      }
 
-    <!-- B2B Outsourcing section -->
-    <B2BOutsourcingSection language={language} />
-
-    <!-- Product WFM section -->
-    <ProductWFMSection language={language} />
-
-    <!-- Product Elysia section -->
-    <ProductElysiaSection language={language} />
-
-    <!-- AI Courses section -->
-    <AiCoursesSection language={language} />
-
-    <!-- Contact section -->
-    <ContactSection language={language} />
-  </main>
-
-  <Footer language={language} />
-</Layout>
+      // Start redirection process
+      document.addEventListener("DOMContentLoaded", redirectToLanguagePage);
+    </script>
+  </body>
+</html>

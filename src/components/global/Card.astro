@@ -4,30 +4,47 @@ export interface Props {
     // Content
     title: string;
     description: string;
-    icon?: string;
-    features?: string[];
+    badges?: Array<{ text: string; color: string; tooltip?: string }>; // Title-level badges
+    icon?: string | { type: string; color?: string; alignment?: string } | Array<{ type?: string; color?: string; alignment?: string }>;
+    features?: string[] | Array<{ 
+        text: string; 
+        bullet?: string; 
+        bulletType?: 'icon' | 'symbol' | 'dot'; 
+        bulletColor?: string;
+        badges?: Array<{ text: string; color: string; tooltip?: string }>;
+    }>;
     linkText?: string;
     linkUrl?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+    buttonColor?: string;
 
     // Styling
     theme?: string;
     iconColor?: string;
     customClasses?: string;
     centerContent?: boolean;
-}
-
-const {
+}const {
     title,
     description,
+    badges = [],
     icon,
     features,
     linkText,
     linkUrl,
+    buttonText,
+    buttonUrl,
+    buttonColor = "bg-blue-600 hover:bg-blue-700",
     theme = "dark",
     iconColor,
     customClasses = "",
     centerContent = true,
 } = Astro.props;
+
+// Normalize description text by removing extra whitespace and newlines
+const normalizedDescription = description
+    ? description.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()
+    : '';
 
 // Theme-based styling
 const cardClasses =
@@ -41,65 +58,342 @@ const descriptionClasses = theme === "dark" ? "text-gray-300" : "text-gray-600";
 
 const defaultIconColor = theme === "dark" ? "text-blue-400" : "text-blue-600";
 
-const finalIconColor = iconColor || defaultIconColor;
+// Handle different icon formats and alignments
+// Supported alignments: "top" (default), "left", "left-big"
+// - "top": Icon centered above the title
+// - "left": Small icon inline with title on the left
+// - "left-big": Large icon in a circular background on the left, content on the right
+let iconName = "";
+let iconColorFromData = "";
+let iconAlignment = "top"; // default alignment
 
-const alignmentClasses = centerContent
+if (typeof icon === "string") {
+    iconName = icon;
+} else if (Array.isArray(icon)) {
+    // Handle array format like in your YAML
+    const iconData = icon.find((item) => item.type) || icon[0];
+    iconName = iconData?.type || "";
+    iconColorFromData = iconData?.color || "";
+    iconAlignment = iconData?.alignment || "top";
+} else if (icon && typeof icon === "object") {
+    // Handle object format
+    iconName = icon.type || "";
+    iconColorFromData = icon.color || "";
+    iconAlignment = icon.alignment || "top";
+}
+
+// Determine final icon color
+let finalIconColor = iconColor || defaultIconColor;
+if (iconColorFromData) {
+    finalIconColor = `text-[${iconColorFromData}]`;
+}
+
+let alignmentClasses = centerContent
     ? "text-center items-center"
     : "text-left items-start";
+
+// Determine if icon should be inline with title (left alignment)
+const isIconLeft = iconAlignment === "left";
+const isIconLeftBig = iconAlignment === "left-big";
+
+if (isIconLeft || isIconLeftBig) {
+    alignmentClasses = "text-left items-start";
+} else {
+    alignmentClasses = "text-center items-center"
+}
 ---
 
 <div
     class={`p-6 rounded-lg flex flex-col ${alignmentClasses} ${cardClasses} transition-shadow duration-300 ${customClasses}`}
 >
     {
-        icon && (
+        iconName && !isIconLeft && !isIconLeftBig && (
             <span
                 class={`material-icons ${finalIconColor} text-4xl mb-4 block`}
+                style={
+                    iconColorFromData
+                        ? `color: ${iconColorFromData}`
+                        : undefined
+                }
             >
-                {icon}
+                {iconName}
             </span>
         )
     }
 
-    <h3 class={`text-xl font-semibold ${titleClasses} mb-2`}>
-        {title}
-    </h3>
-
-    <p class={`${descriptionClasses} mb-4 flex-grow`}>
-        {description}
-    </p>
-
     {
-        features && features.length > 0 && (
-            <ul class={`text-sm ${descriptionClasses} mb-4`}>
-                {features.map((feature) => (
-                    <li class="flex items-center mb-1">
-                        <span class={`${finalIconColor} mr-2`}>•</span>
-                        {feature}
-                    </li>
-                ))}
-            </ul>
+        isIconLeftBig ? (
+            <!-- Left-big aligned icon with content on the right -->
+            <div class="flex items-stretch min-h-[200px]">
+                {iconName && (
+                    <div class="w-1/3 flex items-center justify-center">
+                        <div class={`w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg`}>
+                            <span
+                                class="material-icons text-white text-4xl"
+                                style={
+                                    iconColorFromData
+                                        ? `color: ${iconColorFromData}`
+                                        : undefined
+                                }
+                            >
+                                {iconName}
+                            </span>
+                        </div>
+                    </div>
+                )}
+                <div class="w-2/3 flex flex-col justify-center pl-6">
+                    <div class="mb-4">
+                        <div class="flex items-start gap-2 flex-wrap">
+                            <h3 class={`text-2xl font-semibold ${titleClasses} flex-1`}>
+                                {title}
+                            </h3>
+                            {badges.length > 0 && (
+                                <div class="flex gap-1 flex-wrap">
+                                    {badges.map((badge) => (
+                                        <span 
+                                            class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                            title={badge.tooltip || badge.text}
+                                        >
+                                            {badge.text}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <p class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base`}>
+                        {normalizedDescription}
+                    </p>
+                    
+                    {
+                        features && features.length > 0 && (
+                            <ul class={`text-sm ${descriptionClasses} mb-4 text-left`}>
+                                {features.map((feature) => {
+                                    const isSimpleString = typeof feature === 'string';
+                                    const featureText = isSimpleString ? feature : feature.text;
+                                    const bullet = isSimpleString ? '•' : (feature.bullet || '•');
+                                    const bulletType = isSimpleString ? 'symbol' : (feature.bulletType || 'symbol');
+                                    const bulletColor = isSimpleString ? finalIconColor : (feature.bulletColor || finalIconColor);
+                                    const badges = isSimpleString ? [] : (feature.badges || []);
+                                    
+                                    return (
+                                        <li class="flex items-start mb-2 text-left">
+                                            {bulletType === 'icon' ? (
+                                                <span class={`material-icons ${bulletColor} mr-2 text-base flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            ) : bulletType === 'dot' ? (
+                                                <span class={`inline-block w-2 h-2 rounded-full ${bulletColor.replace('text-', 'bg-')} mr-3 mt-1 flex-shrink-0`}></span>
+                                            ) : (
+                                                <span class={`${bulletColor} mr-2 font-bold flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            )}
+                                            <div class="flex-1 text-left">
+                                                <div class="flex items-start gap-2 flex-wrap">
+                                                    <span class="flex-1">{featureText}</span>
+                                                    {badges.length > 0 && (
+                                                        <div class="flex gap-1 flex-wrap">
+                                                            {badges.map((badge) => (
+                                                                <span 
+                                                                    class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                                                    title={badge.tooltip || badge.text}
+                                                                >
+                                                                    {badge.text}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    }
+                    
+                    {
+                        buttonText && buttonUrl && (
+                            <a
+                                href={buttonUrl}
+                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                            >
+                                {buttonText}
+                            </a>
+                        )
+                    }
+
+                    {
+                        linkText && linkUrl && (
+                            <a
+                                href={linkUrl}
+                                class={
+                                    theme === "dark"
+                                        ? "text-blue-400 hover:text-blue-300"
+                                        : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+                                }
+                            >
+                                {linkText}
+                                {theme === "light" && (
+                                    <span class="material-icons ml-1 text-xs">
+                                        arrow_forward
+                                    </span>
+                                )}
+                                {theme === "dark" && " →"}
+                            </a>
+                        )
+                    }
+                </div>
+            </div>
+        ) : isIconLeft ? (
+            <!-- Left-aligned icon with title and badges -->
+            <div class="flex items-start mb-2">
+                {iconName && (
+                    <span
+                        class={`material-icons ${finalIconColor} text-2xl mr-3`}
+                        style={
+                            iconColorFromData
+                                ? `color: ${iconColorFromData}`
+                                : undefined
+                        }
+                    >
+                        {iconName}
+                    </span>
+                )}
+                <div class="flex-1">
+                    <div class="flex items-start gap-2 flex-wrap">
+                        <h3 class={`text-xl font-semibold ${titleClasses} flex-1`}>
+                            {title}
+                        </h3>
+                        {badges.length > 0 && (
+                            <div class="flex gap-1 flex-wrap">
+                                {badges.map((badge) => (
+                                    <span 
+                                        class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                        title={badge.tooltip || badge.text}
+                                    >
+                                        {badge.text}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        ) : (
+            <!-- Standard title with badges (when icon is top-aligned or no icon) -->
+            <div class="mb-2">
+                <div class="flex items-start gap-2 flex-wrap justify-center">
+                    <h3 class={`text-xl font-semibold ${titleClasses} flex-1 text-center`}>
+                        {title}
+                    </h3>
+                    {badges.length > 0 && (
+                        <div class="flex gap-1 flex-wrap justify-center">
+                            {badges.map((badge) => (
+                                <span 
+                                    class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                    title={badge.tooltip || badge.text}
+                                >
+                                    {badge.text}
+                                </span>
+                            ))}
+                        </div>
+                    )}
+                </div>
+            </div>
         )
     }
 
+    <!-- Content for non-left-big layouts -->
     {
-        linkText && linkUrl && (
-            <a
-                href={linkUrl}
-                class={
-                    theme === "dark"
-                        ? "text-blue-400 hover:text-blue-300"
-                        : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+        !isIconLeftBig && (
+            <>
+                <p class={`${descriptionClasses} mb-4 flex-grow leading-relaxed break-words`}>
+                    {normalizedDescription}
+                </p>
+
+                {
+                    features && features.length > 0 && (
+                        <ul class={`text-sm ${descriptionClasses} mb-4 text-left`}>
+                            {features.map((feature) => {
+                                // Handle both string and object formats
+                                const isSimpleString = typeof feature === 'string';
+                                const featureText = isSimpleString ? feature : feature.text;
+                                const bullet = isSimpleString ? '•' : (feature.bullet || '•');
+                                const bulletType = isSimpleString ? 'symbol' : (feature.bulletType || 'symbol');
+                                const bulletColor = isSimpleString ? finalIconColor : (feature.bulletColor || finalIconColor);
+                                const badges = isSimpleString ? [] : (feature.badges || []);
+                                
+                                return (
+                                    <li class="flex items-start mb-2 text-left">
+                                        {bulletType === 'icon' ? (
+                                            <span class={`material-icons ${bulletColor} mr-2 text-base flex-shrink-0`}>
+                                                {bullet}
+                                            </span>
+                                        ) : bulletType === 'dot' ? (
+                                            <span class={`inline-block w-2 h-2 rounded-full ${bulletColor.replace('text-', 'bg-')} mr-3 mt-1 flex-shrink-0`}></span>
+                                        ) : (
+                                            <span class={`${bulletColor} mr-2 font-bold flex-shrink-0`}>
+                                                {bullet}
+                                            </span>
+                                        )}
+                                        <div class="flex-1 text-left">
+                                            <div class="flex items-start gap-2 flex-wrap">
+                                                <span class="flex-1">{featureText}</span>
+                                                {badges.length > 0 && (
+                                                    <div class="flex gap-1 flex-wrap">
+                                                        {badges.map((badge) => (
+                                                            <span 
+                                                                class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                                                title={badge.tooltip || badge.text}
+                                                            >
+                                                                {badge.text}
+                                                            </span>
+                                                        ))}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </li>
+                                );
+                            })}
+                        </ul>
+                    )
                 }
-            >
-                {linkText}
-                {theme === "light" && (
-                    <span class="material-icons ml-1 text-xs">
-                        arrow_forward
-                    </span>
-                )}
-                {theme === "dark" && " →"}
-            </a>
+
+                {
+                    buttonText && buttonUrl && (
+                        <a
+                            href={buttonUrl}
+                            class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                        >
+                            {buttonText}
+                        </a>
+                    )
+                }
+
+                {
+                    linkText && linkUrl && (
+                        <a
+                            href={linkUrl}
+                            class={
+                                theme === "dark"
+                                    ? "text-blue-400 hover:text-blue-300"
+                                    : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+                            }
+                        >
+                            {linkText}
+                            {theme === "light" && (
+                                <span class="material-icons ml-1 text-xs">
+                                    arrow_forward
+                                </span>
+                            )}
+                            {theme === "dark" && " →"}
+                        </a>
+                    )
+                }
+            </>
         )
     }
 </div>

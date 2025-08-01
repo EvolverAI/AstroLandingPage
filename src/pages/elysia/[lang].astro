@@ -1,0 +1,242 @@
+---
+import Layout from "../../layouts/Layout.astro";
+import Header from "../../components/Header.astro";
+import Footer from "../../components/Footer.astro";
+import DynamicSection from "../../components/DynamicSection.astro";
+import { getEntry } from "astro:content";
+
+// Get language from URL parameter using the same pattern as the main site
+export async function getStaticPaths() {
+    return [
+        { params: { lang: "en" } },
+        { params: { lang: "de" } },
+        { params: { lang: "it" } },
+    ];
+}
+
+const { lang } = Astro.params;
+const language = lang || "en";
+
+// Load page configuration from Elysia-specific language file
+let pageSections: any[] = [];
+try {
+    const langData = await getEntry("languages", `elysia-${language}`);
+    pageSections = langData?.data?.page_sections || [];
+    // Sort sections by order
+    pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+} catch (error) {
+    console.warn(
+        "Could not load Elysia page sections for language:",
+        language,
+        error,
+    );
+    // Fallback to English if the requested language doesn't exist
+    try {
+        const fallbackData = await getEntry("languages", "elysia-en");
+        pageSections = fallbackData?.data?.page_sections || [];
+        pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+    } catch (fallbackError) {
+        console.error(
+            "Could not load fallback Elysia page sections:",
+            fallbackError,
+        );
+    }
+}
+
+// Dynamic titles and descriptions based on language
+const titles = {
+    en: "Elysia - Your AI-Powered Assistant | EvolverAI",
+    de: "Elysia - Ihr KI-gestützter Assistent | EvolverAI",
+    it: "Elysia - Il tuo Assistente AI | EvolverAI",
+};
+
+const descriptions = {
+    en: "Meet Elysia, your intelligent AI assistant designed to enhance productivity and streamline business operations. Powered by cutting-edge AI technology.",
+    de: "Lernen Sie Elysia kennen, Ihren intelligenten KI-Assistenten, der entwickelt wurde, um die Produktivität zu steigern und Geschäftsabläufe zu optimieren.",
+    it: "Incontra Elysia, il tuo assistente AI intelligente progettato per migliorare la produttività e ottimizzare le operazioni aziendali.",
+};
+---
+
+<Layout title={titles[language]} description={descriptions[language]}>
+    <Header currentLanguage={language} />
+
+    <!-- Elysia-specific Language Switcher -->
+    <div class="fixed top-20 right-4 z-50">
+        <div class="language-switcher">
+            <div class="relative inline-block text-left">
+                <div>
+                    <button
+                        type="button"
+                        class="inline-flex items-center justify-center px-3 py-2 text-white hover:underline whitespace-nowrap focus:outline-none"
+                        id="elysia-language-menu-button"
+                        aria-expanded="true"
+                        aria-haspopup="true"
+                    >
+                        <i class="material-icons text-base leading-none mr-2"
+                            >language</i
+                        >
+                        <span id="elysia-language-display">
+                            {
+                                language === "en"
+                                    ? "English"
+                                    : language === "de"
+                                      ? "Deutsch"
+                                      : "Italiano"
+                            }
+                        </span>
+                        <svg
+                            class="ml-1 h-4 w-4"
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            aria-hidden="true"
+                        >
+                            <path
+                                fill-rule="evenodd"
+                                d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                                clip-rule="evenodd"></path>
+                        </svg>
+                    </button>
+                </div>
+
+                <div
+                    class="elysia-language-dropdown origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-slate-800 ring-1 ring-slate-600 focus:outline-none hidden"
+                    role="menu"
+                    aria-orientation="vertical"
+                    aria-labelledby="elysia-language-menu-button"
+                    tabindex="-1"
+                >
+                    <div class="py-1" role="none">
+                        <a
+                            href="/elysia/en"
+                            class={`flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
+                                language === "en"
+                                    ? "bg-slate-700 text-blue-400"
+                                    : "text-gray-200 hover:text-white"
+                            }`}
+                            role="menuitem"
+                        >
+                            <span class="mr-3 text-lg">🇺🇸</span>
+                            English
+                            {
+                                language === "en" && (
+                                    <svg
+                                        class="ml-auto h-4 w-4 text-blue-400"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                )
+                            }
+                        </a>
+                        <a
+                            href="/elysia/de"
+                            class={`flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
+                                language === "de"
+                                    ? "bg-slate-700 text-blue-400"
+                                    : "text-gray-200 hover:text-white"
+                            }`}
+                            role="menuitem"
+                        >
+                            <span class="mr-3 text-lg">🇩🇪</span>
+                            Deutsch
+                            {
+                                language === "de" && (
+                                    <svg
+                                        class="ml-auto h-4 w-4 text-blue-400"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                )
+                            }
+                        </a>
+                        <a
+                            href="/elysia/it"
+                            class={`flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
+                                language === "it"
+                                    ? "bg-slate-700 text-blue-400"
+                                    : "text-gray-200 hover:text-white"
+                            }`}
+                            role="menuitem"
+                        >
+                            <span class="mr-3 text-lg">🇮🇹</span>
+                            Italiano
+                            {
+                                language === "it" && (
+                                    <svg
+                                        class="ml-auto h-4 w-4 text-blue-400"
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                    >
+                                        <path
+                                            fill-rule="evenodd"
+                                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                                            clip-rule="evenodd"
+                                        />
+                                    </svg>
+                                )
+                            }
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <main class="space-y-16">
+        <!-- Dynamically render sections from Elysia YAML configuration -->
+        {
+            pageSections.map((sectionConfig) => (
+                <DynamicSection
+                    sectionConfig={sectionConfig}
+                    language={language}
+                    languageFile={`elysia-${language}`}
+                />
+            ))
+        }
+    </main>
+
+    <Footer language={language} />
+</Layout>
+
+<script>
+    // Elysia language switcher functionality
+    document.addEventListener("DOMContentLoaded", function () {
+        const button = document.getElementById("elysia-language-menu-button");
+        const dropdown = document.querySelector(".elysia-language-dropdown");
+
+        if (button && dropdown) {
+            button.addEventListener("click", function () {
+                dropdown.classList.toggle("hidden");
+            });
+
+            // Close dropdown when clicking outside
+            document.addEventListener("click", function (event) {
+                const target = event.target as Element;
+                if (!button.contains(target) && !dropdown.contains(target)) {
+                    dropdown.classList.add("hidden");
+                }
+            });
+        }
+    });
+</script>
+
+<style>
+    .language-switcher {
+        z-index: 50;
+    }
+</style>

@@ -1,12 +1,69 @@
 code: "en"
 name: "English"
 flag: "🇺🇸"
+
+# Page configuration - defines sections order and types
+page_sections:
+  - type: "hero"
+    section_id: "hero"
+    order: 1
+    min_height: "100vh"
+  - type: "content_header"
+    section_id: "about"
+    order: 2
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "cards"
+    section_id: "divisions"
+    order: 3
+  - type: "cards"
+    section_id: "services"
+    order: 4
+  - type: "content_header"
+    section_id: "brainstorming"
+    order: 5
+    background_image: "/img/evolverai-web-brainstorming-bg.jpg"
+  - type: "cards"
+    section_id: "features"
+    order: 6
+  - type: "cards"
+    section_id: "b2b"
+    order: 7
+  - type: "cards"
+    section_id: "products"
+    order: 8
+  - type: "product"
+    section_id: "product_wfm"
+    order: 9
+  - type: "product"
+    section_id: "product_elysia"
+    order: 10
+  - type: "cards"
+    section_id: "courses"
+    order: 11
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
 sections:
   about:
     companyName: "Evolver"
     companyNameHighlight: "AI"
-    description: "At EvolverAI, we specialize in developing smart, innovative solutions that empower companies to thrive in the modern digital landscape. By seamlessly integrating Artificial Intelligence into your business processes, we help you unlock new levels of efficiency, accuracy, and growth."
-  
+    description: >
+      At EvolverAI, we specialize in developing smart, innovative solutions that
+      empower companies to thrive in the modern digital landscape. By seamlessly 
+      integrating Artificial Intelligence into your business processes, we help 
+      you unlock new levels of efficiency, accuracy, and growth.
+
+  brainstorming:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: >
+      At EvolverAI, we are waiting for you to join us in the journey of innovation 
+      and growth. We are here to help you unlock the potential of AI and transform 
+      your business operations. Let's brainstorm together and create a brighter future 
+      for your company.
+
   hero:
     title: "Transforming Business Through AI"
     subtitle: "We believe in a world where Artificial Intelligence simplifies complexity, enhances creativity, and drives meaningful innovation."
@@ -18,60 +75,308 @@ sections:
     cards:
       - title: "Customized AI Solutions"
         description: "Tailored systems that meet your unique business requirements."
-        icon: "check_circle"
+        icon: 
+          type: "check_circle"
+          alignment: "top"
       - title: "Data-Driven Insights"
         description: "Advanced analytics to transform your data into actionable strategies."
-        icon: "insights"
+        icon: 
+          type: "insights"
+          alignment: "top"
       - title: "Intelligent Automation"
         description: "Optimized, scalable workflows that grow with your business and reduce operational costs."
-        icon: "speed"
+        icon: 
+          type: "speed"
+          alignment: "top"
       - title: "B2B Outsourcing"
         description: "Comprehensive services that allow you to focus on core competencies while we take care of specialized processes."
-        icon: "business"
+        icon: 
+          type: "business"
+          alignment: "top"
         linkText: "Learn More"
         linkUrl: "#b2b_outsourcing"
-    
+
+  divisions:
+    title: "Our Divisions"
+    description: >
+      EvolverAI is more than a company — it's a multidisciplinary ecosystem of innovation. 
+      Our divisions span across cutting-edge technology, healthcare, hospitality, education, 
+      digital design, and business services. Each unit operates with autonomy and focus, 
+      yet shares the same commitment: using intelligence, creativity, and precision to build 
+      the future. Explore how each division contributes to our unified mission.
+    cards:
+      - title: "EvolverAI Tech"
+        description: >
+          Our technology division is the core engine driving innovation at EvolverAI. 
+          We specialize in custom software development, machine learning systems, data 
+          engineering, and scalable AI platforms tailored to business needs. Whether it's 
+          cloud infrastructure or advanced analytics, EvolverAI Tech turns complexity 
+          into smart, usable solutions.
+        icon: 
+          type: "computer"
+          alignment: "top"
+
+      - title: "EvolverAI Medical"
+        description: >
+          At the intersection of healthcare and artificial intelligence, EvolverAI Medical 
+          is committed to improving lives. We develop diagnostic support systems, medical 
+          data platforms, and patient-centric AI applications that enhance clinical decision-making, 
+          research, and care delivery.
+        icon: 
+          type: "health_and_safety"
+          alignment: "top"
+
+      - title: "EvolverAI Hospitality"
+        description: >
+          Merging technology with human experience, EvolverAI Hospitality brings intelligent 
+          solutions to the hotel and leisure industry. From smart guest services and 
+          reservation systems to operational automation and AI-enhanced customer experience — 
+          we help hospitality providers stay ahead of the curve.
+        icon: 
+          type: "room_service"
+          alignment: "top"
+
+      - title: "EvolverAI BPO"
+        description: >
+          EvolverAI BPO (Business Process Outsourcing) delivers intelligent support 
+          operations for companies worldwide. We combine automation, human expertise, 
+          and scalable systems to streamline tasks like data management, customer 
+          service, content moderation, and administrative workflows — with a strong 
+          focus on efficiency and quality.
+        icon: 
+          type: "business"
+          alignment: "top"
+
+      - title: "EvolverAI Academy"
+        description: >
+          Education fuels progress. EvolverAI Academy offers high-impact courses, 
+          workshops, and mentorship programs in AI, data science, and technology. 
+          We empower individuals and organizations with practical skills to thrive 
+          in a rapidly changing digital world — both online and in-person.
+        icon: 
+          type: "school"
+          color: "#F5F5F5"
+          alignment: "top"
+
+      - title: "PixelCraft by EvolverAI"
+        description: >
+          PixelCraft is our creative powerhouse — a design lab where art meets intelligence. 
+          We craft AI-assisted illustrations, pixel art, branding kits, and visual content 
+          for games, merch, and digital campaigns. The spirit is playful, but the execution 
+          is professional.
+        icon: 
+          type: "palette"
+          alignment: "top"
+
   features:
     title: "EvolverAI: Redefining Excellence"
     cards:
       - title: "Practical AI Applications"
         description: "Delivering practical AI applications that create immediate value."
-        icon: "check_circle"
+        icon: 
+          type: "check_circle"
+          alignment: "top"
       - title: "Client Collaboration"
         description: "Collaborating closely with our clients to understand their challenges and goals."
-        icon: "handshake"
+        icon: 
+          type: "handshake"
+          alignment: "top"
       - title: "Forward-Thinking Technology"
         description: "Maintaining a forward-thinking approach to technology and innovation."
-        icon: "lightbulb"
+        icon: 
+          type: "lightbulb"
+          alignment: "top"
+
+  b2b:
+    title: "B2B Outsourcing Services"
+    description: >
+      Comprehensive outsourcing solutions that let you focus on your core business while 
+      we handle specialized processes.
+    buttonText: "Partner with Us"
+    buttonUrl: "/b2b"
+    buttonColor: "bg-green-600 hover:bg-green-700"
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "IT Infrastructure Management"
+        description: "Ensuring optimal performance and security of your IT infrastructure."
+        icon: 
+          type: "tune"
+          alignment: "top"
+      - title: "Data Processing & Analytics"
+        description: "Transforming raw data into actionable insights for informed decision-making."
+        icon: 
+          type: "expand_more"
+          alignment: "top"
+      - title: "Customer Support Services"
+        description: "Providing responsive and effective support to your customers."
+        icon: 
+          type: "business"
+          alignment: "top"
+      - title: "Business Process Automation"
+        description: "Streamlining and automating business processes for increased efficiency."
+        icon: 
+          type: "autorenew"
+          alignment: "top"
 
   contact:
     title: "Get in Touch"
     description: "Ready to transform your business with AI? Let's discuss your project."
 
+  products:
+    title: "Our ready made solutions"
+    description: "These are our software solutions designed to address your business challenges."
+    cards:
+      - title: "Workforce Manager"
+        description: "An advanced tool for streamlining shift planning and workforce management."
+        icon: 
+          type: "clock"
+          alignment: "top"
+          linkText: "Learn More"
+          linkUrl: "#product_wfm"
+      - title: "Elysia"
+        description: "Your AI-powered assistant for enhanced productivity."
+        icon: 
+          type: "assistant"
+          alignment: "top"
+          linkText: "Learn More"
+          linkUrl: "#product_elysia"
+
+
   product_wfm:
     subtitle: "Workforce Manager"
     image: "/img/evolverai-web-wfm-bg.png"
-    description: "Workforce Manager is an advanced tool designed to streamline shift planning and workforce management. Harness the power of AI and an automated chatbot for efficient communication, scheduling, and productivity enhancements."
+    imagePosition: "right"
+    description: >
+      Workforce Manager is an advanced tool designed to streamline shift planning 
+      and workforce management. Harness the power of AI and an automated chatbot for 
+      efficient communication, scheduling, and productivity enhancements.
     buttonText: "Tell me more"
+    buttonUrl: "/wfm"
+    buttonColor: "bg-purple-600 hover:bg-purple-700"
 
   product_elysia:
     subtitle: "Elysia: Your AI-Powered Assistant"
-    description: "Elysia is more than just a bot—it's your organization's new best friend. Powered by cutting-edge AI, Elysia streamlines operations by automating repetitive tasks and reducing workloads, giving your team more time to focus on what truly matters. Whether it's managing workflows, handling routine queries, or optimizing processes, Elysia works tirelessly behind the scenes to boost efficiency and productivity. Say goodbye to manual effort and hello to a smarter, more seamless way of working. Transform your organization with Elysia and unlock the potential of AI today!"
+    image: "/img/evolverai-web-elysia-bg.jpg"
+    imagePosition: "left"
+    description: >
+      Elysia is more than just a bot—it's your organization's new best friend. Powered by 
+      cutting-edge AI, Elysia streamlines operations by automating repetitive tasks and 
+      reducing workloads, giving your team more time to focus on what truly matters. Whether 
+      it's managing workflows, handling routine queries, or optimizing processes, Elysia works 
+      tirelessly behind the scenes to boost efficiency and productivity. Say goodbye to manual 
+      effort and hello to a smarter, more seamless way of working. Transform your organization 
+      with Elysia and unlock the potential of AI today!
     buttonText: "Discover Elysia"
+    buttonUrl: "/elysia"
+    buttonColor: "bg-pink-600 hover:bg-pink-700"
 
   courses:
-    - title: "AI Fundamentals"
-      description: "Learn the basics of artificial intelligence and machine learning."
-      duration: "8 weeks"
-      level: "Beginner"
-    - title: "Machine Learning Mastery"
-      description: "Advanced techniques in machine learning and data science."
-      duration: "12 weeks"
-      level: "Advanced"
-    - title: "AI Ethics & Governance"
-      description: "Understanding the ethical implications and governance of AI systems."
-      duration: "6 weeks"
-      level: "Intermediate"
+    title: "AI Courses & Training"
+    description: "Enhance your skills with our comprehensive AI and data science courses."
+    cards:
+      - title: "AI Fundamentals"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Learn the basics of artificial intelligence and its applications."
+        features:
+          - text: "What is a LLM (Large Language Model)"
+            bullet: "psychology"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+            badges:
+              - text: "New"
+                color: "bg-blue-500"
+                tooltip: "Recently Added"
+          - text: "Key concepts in prompt engineering"
+            bullet: "edit"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+            badges:
+              - text: "Core"
+                color: "bg-green-500"
+                tooltip: "Core Concept"
+          - text: "Generative AI and its applications"
+            bullet: "auto_awesome"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+            badges:
+              - text: "Popular"
+                color: "bg-purple-500"
+                tooltip: "Most Popular Topic"
+        buttonText: "Enroll now"
+        buttonUrl: "/enroll/ai-fundamentals"
+        buttonColor: "bg-indigo-600 hover:bg-indigo-700"
+
+      - title: "Machine Learning Mastery"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Advanced techniques in machine learning and data science."
+        features:
+          - text: "Deep learning and neural networks"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Expert"
+                color: "bg-green-400"
+                tooltip: "Mastery Badge"
+          - text: "Advanced algorithms and model optimization"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Expert"
+                color: "bg-green-400"
+                tooltip: "Mastery Badge"
+          - text: "Real-world project implementation"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Expert"
+                color: "bg-green-400"
+                tooltip: "Mastery Badge"
+        buttonText: "Enroll now"
+        buttonUrl: "/enroll/ai-machine-learning"
+
+      - title: "AI Ethics & Governance"
+        badges:
+          - text: "4 hours"
+            color: "bg-red-500"
+            tooltip: "Your first course"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Understanding the ethical implications and governance of AI systems."
+        features:
+          - text: "Ethical frameworks for AI development"
+            bulletType: "dot"
+            bulletColor: "text-red-400"
+            badges:
+              - text: "Ethics"
+                color: "bg-red-500"
+                tooltip: "Ethics Certified"
+          - text: "Bias detection and mitigation strategies"
+            bulletType: "dot"
+            bulletColor: "text-yellow-400"
+            badges:
+              - text: "Advanced"
+                color: "bg-yellow-500"
+                tooltip: "Advanced Level"
+          - text: "Regulatory compliance and best practices"
+            bulletType: "dot"
+            bulletColor: "text-green-400"
+            badges:
+              - text: "Compliance"
+                color: "bg-green-500"
+                tooltip: "Compliance Ready"
+        buttonText: "Enroll now"
+        buttonUrl: "/enroll/ai-ethics-governance"
 
   footer:
     title: "Let's talk, tell us about your needs"
@@ -85,3 +390,74 @@ sections:
         label: "Phone"
       address:
         label: "Address"
+
+b2b_sections:
+  - type: "hero"
+    title: "Premium B2B Outsourcing Solutions"
+    subtitle: "Transforming operations through strategic partnerships and AI-enhanced services"
+
+  - type: "cards_section"
+    title: "Company Background & Leadership"
+    responsiveColumns:
+      - mobile: 1
+        tablet: 1
+        desktop: 1
+    cards:
+      - image_title: /img/b2b-background.png
+        description: >
+          Infinite Workforce Shpk is our operational entity in Albania, fully owned by EvolverAI GmbH.
+          This strategic investment demonstrates our commitment to creating sustainable, 
+          high-quality outsourcing operations dedicated to data quality control and business 
+          process optimization.
+
+          We've designed this entity specifically to provide a skilled, well-trained workforce at an 
+          optimized cost structure, creating value for our clients while maintaining the highest 
+          standards of service excellence.
+
+          What sets us apart from other outsourcing providers is our commitment to our employees. 
+          We offer higher compensation than local competitors, which has resulted in significantly 
+          lower employee turnover rates. This stability allows us to foster a culture of merit and 
+          continuous professional growth, ensuring that our clients benefit from experienced teams 
+          that understand their business needs.
+
+          Our Albania-based team specializes in BPO operations, leveraging our proprietary 
+          Workforce Manager platform, automated Quality Control systems, and advanced KPI extraction 
+          tools to deliver exceptional results for clients in the media measurement and market research sectors.
+
+  - type: "cards_section"
+    title: 
+      text: "Leadership & Consultancy Expertise"
+      styles:
+        color: "#F5F5F5"
+        alignment: "left"
+    description: >
+      Our leadership team brings decades of combined experience in technology implementation, 
+      operational excellence, and business process optimization. This expertise allows us to 
+      deliver both strategic guidance and practical solutions that drive measurable results 
+      for our clients.
+    responsiveColumns:
+      - mobile: 1
+        tablet: 2
+        desktop: 2
+    cards:
+      - description: >
+          Deep expertise in TV Monitoring and Advertising Expenditure analysis, with specialized 
+          knowledge of market-specific requirements across regions 
+        icon: 
+          type: "chart"
+          color: "#F5F5F5"
+          alignment: "left"
+      - description: >
+          Proven track record in developing and implementing monitoring tools across more than 
+          40 countries spanning all continents
+        icon: 
+          type: "world"
+          color: "#F5F5F5"
+          alignment: "left"
+      - description: >
+          Comprehensive understanding of media measurement methodologies and quality 
+          control processes
+        icon: 
+          type: "chart"
+          color: "#F5F5F5"
+          alignment: "left"

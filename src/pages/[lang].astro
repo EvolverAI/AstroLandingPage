@@ -2,16 +2,8 @@
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
-import HeroSection from "../components/home/HeroSection.astro";
-import AboutSection from "../components/home/AboutSection.astro";
-import ServicesSection from "../components/home/ServicesSection.astro";
-import BrainstormingSection from "../components/home/BrainstormingSection.astro";
-import FeaturesSection from "../components/home/FeaturesSection.astro";
-import B2BOutsourcingSection from "../components/home/B2BOutsourcingSection.astro";
-import ProductWFMSection from "../components/home/ProductWFMSection.astro";
-import ProductElysiaSection from "../components/home/ProductElysiaSection.astro";
-import AiCoursesSection from "../components/home/AiCoursesSection.astro";
-import ContactSection from "../components/home/ContactSection.astro";
+import DynamicSection from "../components/DynamicSection.astro";
+import { getEntry } from "astro:content";
 
 // Get language from URL parameter
 export async function getStaticPaths() {
@@ -24,6 +16,17 @@ export async function getStaticPaths() {
 
 const { lang } = Astro.params;
 const language = lang || "en";
+
+// Load page configuration from language file
+let pageSections: any[] = [];
+try {
+    const langData = await getEntry("languages", language);
+    pageSections = langData?.data?.page_sections || [];
+    // Sort sections by order
+    pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
+} catch (error) {
+    console.warn("Could not load page sections for language:", language, error);
+}
 
 // Dynamic titles and descriptions based on language
 const titles = {
@@ -39,41 +42,26 @@ const descriptions = {
 };
 
 console.log("🌍 Dynamic language page:", language);
+console.log(
+    "📄 Loading",
+    pageSections.length,
+    "sections from YAML configuration",
+);
 ---
 
 <Layout title={titles[language]} description={descriptions[language]}>
     <Header currentLanguage={language} />
 
     <main class="space-y-16">
-        <!-- Hero section -->
-        <HeroSection language={language} />
-
-        <!-- About section -->
-        <AboutSection language={language} />
-
-        <!-- Services section -->
-        <ServicesSection language={language} />
-
-        <!-- Brainstorming section -->
-        <BrainstormingSection language={language} />
-
-        <!-- Features section -->
-        <FeaturesSection language={language} />
-
-        <!-- B2B Outsourcing section -->
-        <B2BOutsourcingSection language={language} />
-
-        <!-- Product WFM section -->
-        <ProductWFMSection language={language} />
-
-        <!-- Product Elysia section -->
-        <ProductElysiaSection language={language} />
-
-        <!-- AI Courses section -->
-        <AiCoursesSection language={language} />
-
-        <!-- Contact section -->
-        <ContactSection language={language} />
+        <!-- Dynamically render sections from YAML configuration -->
+        {
+            pageSections.map((sectionConfig) => (
+                <DynamicSection
+                    sectionConfig={sectionConfig}
+                    language={language}
+                />
+            ))
+        }
     </main>
 
     <Footer language={language} />

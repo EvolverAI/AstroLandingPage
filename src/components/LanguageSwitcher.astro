@@ -19,6 +19,10 @@ try {
     console.warn("Could not load languages:", error);
     languages = [{ code: "en", name: "English", flag: "🇺🇸" }];
 }
+
+// Determine display name for current language
+const currentLangData = languages.find((lang) => lang.code === currentLanguage);
+const displayName = currentLangData?.name || "Language";
 ---
 
 <div class={`language-switcher ${className}`}>
@@ -26,21 +30,17 @@ try {
         <div>
             <button
                 type="button"
-                class="inline-flex justify-center w-full rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                class="inline-flex items-center justify-center px-3 py-2 text-white hover:underline whitespace-nowrap focus:outline-none"
                 id="language-menu-button"
                 aria-expanded="true"
                 aria-haspopup="true"
             >
-                {
-                    languages.find((lang) => lang.code === currentLanguage)
-                        ?.flag || "🌐"
-                }
-                {
-                    languages.find((lang) => lang.code === currentLanguage)
-                        ?.name || "Language"
-                }
+                <i class="material-icons text-base leading-none mr-2"
+                    >language</i
+                >
+                <span id="language-display">{displayName}</span>
                 <svg
-                    class="-mr-1 ml-2 h-5 w-5"
+                    class="ml-1 h-4 w-4"
                     xmlns="http://www.w3.org/2000/svg"
                     viewBox="0 0 20 20"
                     fill="currentColor"
@@ -55,7 +55,7 @@ try {
         </div>
 
         <div
-            class="language-dropdown origin-top-right absolute right-0 mt-2 w-56 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 focus:outline-none hidden"
+            class="language-dropdown origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-slate-800 ring-1 ring-slate-600 focus:outline-none hidden"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="language-menu-button"
@@ -64,18 +64,18 @@ try {
             <div class="py-1" role="none">
                 {
                     languages.map((language) => {
-                        const href =
-                            language.code === "en" ? "/" : `/${language.code}`;
+                        const href = `/${language.code}`; // Always use /langcode format
                         return (
                             <a
                                 href={href}
-                                class={`flex items-center px-4 py-2 text-sm hover:bg-gray-100 hover:text-gray-900 ${
+                                class={`flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
                                     currentLanguage === language.code
-                                        ? "bg-blue-50 text-blue-700"
-                                        : "text-gray-700"
+                                        ? "bg-slate-700 text-blue-400"
+                                        : "text-gray-200 hover:text-white"
                                 }`}
                                 role="menuitem"
                                 tabindex="-1"
+                                onclick={`event.preventDefault(); setUserLanguage('${language.code}');`}
                             >
                                 <span class="mr-3 text-lg">
                                     {language.flag}
@@ -83,7 +83,7 @@ try {
                                 {language.name}
                                 {currentLanguage === language.code && (
                                     <svg
-                                        class="ml-auto h-5 w-5 text-blue-600"
+                                        class="ml-auto h-4 w-4 text-blue-400"
                                         xmlns="http://www.w3.org/2000/svg"
                                         viewBox="0 0 20 20"
                                         fill="currentColor"
@@ -99,16 +99,72 @@ try {
                         );
                     })
                 }
+
+                <hr class="border-slate-600 my-1" />
+
+                <!-- System Configuration Option -->
+                <button
+                    class="w-full text-left flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors text-gray-200 hover:text-white"
+                    role="menuitem"
+                    tabindex="-1"
+                    onclick="setSystemLanguage()"
+                >
+                    <i class="material-icons text-base mr-3">settings</i>
+                    System Configuration
+                </button>
             </div>
         </div>
     </div>
 </div>
 
 <script>
+    // Language preference management
+    function setUserLanguage(langCode) {
+        localStorage.setItem("userLanguagePreference", langCode);
+        // Navigate to the language page
+        window.location.href = `/${langCode}`;
+    }
+
+    function setSystemLanguage() {
+        localStorage.removeItem("userLanguagePreference");
+        // Close the dropdown
+        const dropdown = document.querySelector(".language-dropdown");
+        if (dropdown) {
+            dropdown.classList.add("hidden");
+        }
+        // Detect browser language and redirect
+        const browserLang = getBrowserLanguage();
+        window.location.href = `/${browserLang}`;
+    }
+
+    function getBrowserLanguage() {
+        const supportedLanguages = ["en", "de", "it"];
+        const browserLang = navigator.language || navigator.languages[0];
+        const langCode = browserLang.split("-")[0].toLowerCase();
+        return supportedLanguages.includes(langCode) ? langCode : "en";
+    }
+
     // Toggle dropdown functionality
     document.addEventListener("DOMContentLoaded", function () {
         const button = document.getElementById("language-menu-button");
         const dropdown = document.querySelector(".language-dropdown");
+        const languageDisplay = document.getElementById("language-display");
+
+        // Update display based on user preference
+        function updateLanguageDisplay() {
+            const userPreference = localStorage.getItem(
+                "userLanguagePreference",
+            );
+            if (!userPreference) {
+                // Show "System" when using auto-detection
+                if (languageDisplay) {
+                    languageDisplay.textContent = "System";
+                }
+            }
+        }
+
+        // Initial update
+        updateLanguageDisplay();
 
         if (button && dropdown) {
             button.addEventListener("click", function () {
@@ -124,6 +180,11 @@ try {
             });
         }
     });
+
+    // Make functions globally available
+    (window as any).setUserLanguage = setUserLanguage;
+    (window as any).setSystemLanguage = setSystemLanguage;
+    (window as any).getBrowserLanguage = getBrowserLanguage;
 </script>
 
 <style>

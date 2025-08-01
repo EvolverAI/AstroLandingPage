@@ -1,0 +1,175 @@
+code: "de"
+name: "Deutsch"
+flag: "🇩🇪"
+
+# Page configuration for Elysia - defines sections order and types
+page_sections:
+  - type: "hero"
+    section_id: "hero"
+    order: 1
+    min_height: "100vh"
+  - type: "content_header"
+    section_id: "about"
+    order: 2
+    background_image: "/img/evolverai-web-elysia-bg.jpg"
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "capabilities"
+    order: 4
+  - type: "cards"
+    section_id: "use_cases"
+    order: 5
+  - type: "cards"
+    section_id: "benefits"
+    order: 6
+  - type: "content_header"
+    section_id: "demo"
+    order: 7
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+sections:
+  hero:
+    title: "Lernen Sie Elysia kennen"
+    subtitle: "Ihr KI-gestützter Assistent für erhöhte Produktivität"
+    description: "Elysia ist mehr als nur ein Bot—sie ist der neue beste Freund Ihrer Organisation. Angetrieben von modernster KI rationalisiert Elysia Abläufe und steigert die Effizienz."
+
+  about:
+    companyName: "Elysia"
+    companyNameHighlight: "KI-Assistent"
+    description: >
+      Elysia wurde entwickelt, um die Arbeitsweise Ihrer Organisation zu transformieren. Durch die 
+      Automatisierung repetitiver Aufgaben und die Reduzierung von Arbeitslasten gibt Elysia Ihrem 
+      Team mehr Zeit, sich auf das zu konzentrieren, was wirklich wichtig ist. Ob es um die Verwaltung 
+      von Arbeitsabläufen, die Bearbeitung routinemäßiger Anfragen oder die Optimierung von Prozessen 
+      geht, Elysia arbeitet unermüdlich im Hintergrund, um Effizienz und Produktivität zu steigern.
+
+  features:
+    title: "Kernfunktionen"
+    description: "Entdecken Sie, was Elysia zu Ihrem perfekten KI-Begleiter macht"
+    cards:
+      - title: "Natürliche Sprachverarbeitung"
+        description: "Fortgeschrittene NLP-Fähigkeiten für menschenähnliche Gespräche und Verständnis."
+        icon: 
+          type: "psychology"
+          alignment: "top"
+      - title: "Konversationelle KI"
+        description: "Ausgeklügelte Dialogverwaltung für ansprechende Kundeninteraktionen."
+        icon: 
+          type: "chat"
+          alignment: "top"
+      - title: "Systemintegration"
+        description: "Nahtlose Integration in Ihre bestehenden Geschäftssysteme und Arbeitsabläufe."
+        icon: 
+          type: "integration_instructions"
+          alignment: "top"
+      - title: "24/7 Verfügbarkeit"
+        description: "Immer bereit zu helfen, bietet rund um die Uhr Support für Ihr Team."
+        icon: 
+          type: "schedule"
+          alignment: "top"
+
+  capabilities:
+    title: "Was Elysia kann"
+    description: "Umfassende KI-Fähigkeiten, maßgeschneidert für Ihre Geschäftsanforderungen"
+    cards:
+      - title: "Aufgabenautomatisierung"
+        description: "Automatisierung repetitiver Aufgaben und Arbeitsabläufe zur Effizienzsteigerung."
+        icon: 
+          type: "autorenew"
+          alignment: "top"
+      - title: "Datenanalyse"
+        description: "Analysiert Datenmuster und liefert umsetzbare Erkenntnisse."
+        icon: 
+          type: "analytics"
+          alignment: "top"
+      - title: "Kundensupport"
+        description: "Bearbeitet Kundenanfragen mit intelligenten Antworten."
+        icon: 
+          type: "support_agent"
+          alignment: "top"
+      - title: "Dokumentenverarbeitung"
+        description: "Verarbeitet und extrahiert Informationen aus verschiedenen Dokumenttypen."
+        icon: 
+          type: "description"
+          alignment: "top"
+
+  use_cases:
+    title: "Anwendungsfälle"
+    description: "Reale Anwendungen, in denen Elysia exzelliert"
+    cards:
+      - title: "Kundenservice"
+        description: "Verbessern Sie den Kundensupport mit intelligenten, kontextbewussten Antworten."
+        icon: 
+          type: "headset_mic"
+          alignment: "top"
+      - title: "HR-Operationen"
+        description: "Rationalisieren Sie HR-Prozesse von der Rekrutierung bis zum Mitarbeitermanagement."
+        icon: 
+          type: "people"
+          alignment: "top"
+      - title: "Vertriebsunterstützung"
+        description: "Qualifiziert Leads, plant Meetings und liefert Vertriebserkenntnisse."
+        icon: 
+          type: "trending_up"
+          alignment: "top"
+      - title: "Content Management"
+        description: "Organisiert, kategorisiert und verwaltet Ihre Inhalte effizient."
+        icon: 
+          type: "folder_managed"
+          alignment: "top"
+
+  benefits:
+    title: "Warum Elysia wählen"
+    description: "Die Vorteile der Implementierung von Elysia in Ihrer Organisation"
+    cards:
+      - title: "Erhöhte Produktivität"
+        description: "Steigern Sie die Teameffizienz um bis zu 40% durch intelligente Automatisierung."
+        icon: 
+          type: "speed"
+          alignment: "top"
+      - title: "Kostensenkung"
+        description: "Reduzieren Sie Betriebskosten bei gleichbleibend hoher Servicequalität."
+        icon: 
+          type: "savings"
+          alignment: "top"
+      - title: "Skalierbare Lösung"
+        description: "Wächst mit Ihren Geschäftsanforderungen und passt sich ändernden Anforderungen an."
+        icon: 
+          type: "trending_up"
+          alignment: "top"
+      - title: "Einfache Integration"
+        description: "Schnelle Einrichtung und nahtlose Integration in bestehende Systeme."
+        icon: 
+          type: "link"
+          alignment: "top"
+
+  demo:
+    companyName: "Bereit, Elysia zu"
+    companyNameHighlight: "erleben?"
+    description: >
+      Sehen Sie Elysia in Aktion und entdecken Sie, wie sie Ihre Geschäftsabläufe transformieren kann. 
+      Planen Sie eine personalisierte Demo, um Elysias Fähigkeiten zu erkunden, die auf Ihre spezifischen 
+      Bedürfnisse zugeschnitten sind.
+
+  contact:
+    title: "Starten Sie mit Elysia"
+    description: "Bereit, Ihr Unternehmen mit Elysia zu transformieren? Lassen Sie uns Ihre spezifischen Anforderungen besprechen."
+
+  footer:
+    title: "Transformieren Sie Ihre Organisation mit Elysia"
+    description: "Erschließen Sie das Potenzial der KI und geben Sie Ihrem Team die Tools, die es zum Erfolg braucht."
+    buttonText: "Demo planen"
+    copyright: "Alle Rechte vorbehalten"
+    contact:
+      email:
+        label: "E-Mail"
+      phone:
+        label: "Telefon"
+      address:
+        label: "Adresse"

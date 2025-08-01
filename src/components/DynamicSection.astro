@@ -1,0 +1,98 @@
+---
+// Dynamic Section component that renders different section types based on configuration
+import ContentHeaderSection from "./global/ContentHeaderSection.astro";
+import CardsSection from "./global/CardsSection.astro";
+import ProductSection from "./global/ProductSection.astro";
+import HeroSection from "./home/HeroSection.astro";
+
+export interface Props {
+    sectionConfig: {
+        type: "content_header" | "cards" | "product" | "hero";
+        section_id: string;
+        order: number;
+        background_image?: string;
+        min_height?: string;
+        image?: string;
+        [key: string]: any;
+    };
+    language?: string;
+    languageFile?: string; // For Elysia-specific language files
+    environment?: string;
+}
+
+const {
+    sectionConfig,
+    language = "en",
+    languageFile,
+    environment = "production",
+} = Astro.props;
+
+const { type, section_id, background_image, min_height, image, ...otherProps } =
+    sectionConfig;
+
+// Common props for all section types
+const commonProps = {
+    sectionId: section_id,
+    sectionType: section_id,
+    language,
+    languageFile,
+    environment,
+};
+---
+
+{
+    type === "hero" && (
+        <HeroSection language={language} environment={environment} />
+    )
+}
+
+{
+    type === "content_header" && (
+        <ContentHeaderSection
+            {...commonProps}
+            backgroundImage={
+                background_image || "/img/evolverai-web-brainstorming-bg.jpg"
+            }
+            minHeight={min_height || "600px"}
+            content=""
+            {...otherProps}
+        />
+    )
+}
+
+{
+    type === "cards" && (
+        <CardsSection {...commonProps} title="" cards={[]} {...otherProps} />
+    )
+}
+
+{
+    type === "product" && (
+        <ProductSection
+            {...commonProps}
+            title=""
+            subtitle=""
+            description=""
+            image={image}
+            {...otherProps}
+        />
+    )
+}
+
+<!-- Development helper -->
+{
+    import.meta.env.DEV && (
+        <details class="bg-black bg-opacity-75 text-white p-2 rounded text-xs m-4">
+            <summary class="cursor-pointer">
+                Dynamic Section Debug: {section_id}
+            </summary>
+            <pre class="mt-2 overflow-auto">
+                {JSON.stringify(
+                    { type, section_id, language, ...otherProps },
+                    null,
+                    2,
+                )}
+            </pre>
+        </details>
+    )
+}

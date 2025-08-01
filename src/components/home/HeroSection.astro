@@ -13,13 +13,9 @@ const { language = "en", environment = "production" } = Astro.props;
 console.log("🚨 HERO LANGUAGE:", language);
 
 // Get content directly from Astro Content Collections
-let heroData = null;
 let localizedSections = {};
 
 try {
-  const heroSection = await getEntry("sections", "hero");
-  heroData = heroSection?.data;
-
   const langData = await getEntry("languages", language);
   localizedSections = langData?.data?.sections || {};
 } catch (error) {
@@ -43,17 +39,15 @@ const content = {
       ? "Unsere Mission ist es, modernste KI für Unternehmen jeder Größe zugänglich und wirkungsvoll zu machen."
       : "Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes.",
   // @ts-ignore
-  ...(heroData?.content || {}),
-  // @ts-ignore
   ...(localizedSections.hero || {}),
 };
 
 // @ts-ignore
-const styling = heroData?.styling || {};
+const styling = { customClasses: "", theme: "gradient" };
 // @ts-ignore
-const backgroundImage = heroData?.backgroundImage;
+const backgroundImage = undefined;
 // @ts-ignore
-const minHeight = heroData?.minHeight || "600px";
+const minHeight = "600px";
 ---
 
 <section

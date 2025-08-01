@@ -1,89 +1,372 @@
 code: "it"
 name: "Italiano"
 flag: "🇮🇹"
+
+# Page configuration - defines sections order and types
+page_sections:
+  - type: "hero"
+    section_id: "hero"
+    order: 1
+    min_height: "100vh"
+  - type: "content_header"
+    section_id: "about"
+    order: 2
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "cards"
+    section_id: "divisions"
+    order: 3
+  - type: "cards"
+    section_id: "services"
+    order: 4
+  - type: "content_header"
+    section_id: "brainstorming"
+    order: 5
+    background_image: "/img/evolverai-web-brainstorming-bg.jpg"
+  - type: "cards"
+    section_id: "features"
+    order: 6
+  - type: "cards"
+    section_id: "b2b"
+    order: 7
+  - type: "product"
+    section_id: "product_wfm"
+    order: 8
+  - type: "product"
+    section_id: "product_elysia"
+    order: 9
+  - type: "cards"
+    section_id: "courses"
+    order: 10
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
 sections:
   about:
     companyName: "Evolver"
     companyNameHighlight: "AI"
-    description: "In EvolverAI, ci specializziamo nello sviluppo di soluzioni intelligenti e innovative che permettono alle aziende di prosperare nel moderno panorama digitale. Integrando perfettamente l'Intelligenza Artificiale nei vostri processi aziendali, vi aiutiamo a sbloccare nuovi livelli di efficienza, precisione e crescita."
-  
+    description: >
+      In EvolverAI, ci specializziamo nello sviluppo di soluzioni intelligenti e innovative 
+      che aiutano le aziende a prosperare nel moderno panorama digitale. Integrando 
+      senza soluzione di continuità l'Intelligenza Artificiale nei vostri processi 
+      aziendali, vi aiutiamo a sbloccare nuovi livelli di efficienza, precisione e crescita.
+
+  brainstorming:
+    companyName: "Evolver"
+    companyNameHighlight: "AI"
+    description: >
+      In EvolverAI, vi aspettiamo per unirvi a noi nel viaggio dell'innovazione e della 
+      crescita. Siamo qui per aiutarvi a sbloccare il potenziale dell'IA e trasformare 
+      le vostre operazioni aziendali. Facciamo brainstorming insieme e creiamo un futuro 
+      più luminoso per la vostra azienda.
+
   hero:
     title: "Trasformare il Business attraverso l'IA"
-    subtitle: "Crediamo in un mondo dove l'Intelligenza Artificiale semplifica la complessità, migliora la creatività e guida un'innovazione significativa."
+    subtitle: "Crediamo in un mondo dove l'Intelligenza Artificiale semplifica la complessità, potenzia la creatività e guida l'innovazione significativa."
     description: "Unitevi a noi nel plasmare il futuro delle soluzioni aziendali intelligenti."
     
   services:
-    title: "I Nostri Servizi IA"
+    title: "Cosa facciamo"
     description: "Soluzioni complete di intelligenza artificiale personalizzate per le vostre esigenze aziendali"
-    
-  contact:
-    title: "Contattaci"
-    description: "Pronti a trasformare la vostra azienda con l'IA? Parliamo del vostro progetto."
+    cards:
+      - title: "Soluzioni IA Personalizzate"
+        description: "Sistemi su misura che soddisfano i vostri requisiti aziendali unici."
+        icon: 
+          type: "check_circle"
+          alignment: "top"
+      - title: "Insight Basati sui Dati"
+        description: "Analisi avanzate per trasformare i vostri dati in strategie attuabili."
+        icon: 
+          type: "insights"
+          alignment: "top"
+      - title: "Automazione Intelligente"
+        description: "Flussi di lavoro ottimizzati e scalabili che crescono con la vostra azienda e riducono i costi operativi."
+        icon: 
+          type: "speed"
+          alignment: "top"
+      - title: "Outsourcing B2B"
+        description: "Servizi completi che vi permettono di concentrarvi sulle competenze principali mentre noi ci occupiamo dei processi specializzati."
+        icon: 
+          type: "business"
+          alignment: "top"
+        linkText: "Scopri di più"
+        linkUrl: "#b2b_outsourcing"
 
-  product_wfm:
-    title: "Soluzioni di Gestione della Forza Lavoro"
-    subtitle: "Infinite Workforce"
-    description: "Piattaforma rivoluzionaria per la gestione della forza lavoro che ottimizza la pianificazione, migliora la produttività e semplifica le operazioni."
-    buttonText: "Esplora Soluzioni WFM"
-    features:
-      - text: "Pianificazione Intelligente e Allocazione Risorse"
-        icon: "check_circle"
-        iconColor: "text-green-400"
-      - text: "Analisi delle Prestazioni in Tempo Reale"
-        icon: "check_circle"
-        iconColor: "text-green-400"
-      - text: "Gestione Automatizzata della Conformità"
-        icon: "check_circle"
-        iconColor: "text-green-400"
+  divisions:
+    title: "Le nostre Divisioni"
+    description: >
+      EvolverAI è più di un'azienda — è un ecosistema multidisciplinare di innovazione. 
+      Le nostre divisioni spaziano attraverso tecnologia all'avanguardia, sanità, ospitalità, 
+      educazione, design digitale e servizi aziendali. Ogni unità opera con autonomia e 
+      focus, ma condivide lo stesso impegno: utilizzare intelligenza, creatività e precisione 
+      per costruire il futuro. Esplorate come ogni divisione contribuisce alla nostra missione unificata.
+    cards:
+      - title: "EvolverAI Tech"
+        description: >
+          La nostra divisione tecnologica è il motore principale dell'innovazione in EvolverAI. 
+          Ci specializziamo in sviluppo software personalizzato, sistemi di machine learning, 
+          ingegneria dei dati e piattaforme IA scalabili adattate alle esigenze aziendali. 
+          Che si tratti di infrastruttura cloud o analisi avanzate, EvolverAI Tech trasforma 
+          la complessità in soluzioni intelligenti e utilizzabili.
+        icon: 
+          type: "computer"
+          alignment: "top"
 
-  product_elysia:
-    title: "Assistente IA Elysia"
-    subtitle: "Assistente IA Intelligente"
-    description: "Incontra Elysia, il tuo assistente IA intelligente progettato per migliorare le interazioni con i clienti e ottimizzare le operazioni aziendali."
-    buttonText: "Scopri Elysia"
-    features:
-      - text: "Elaborazione del Linguaggio Naturale"
-        icon: "psychology"
-        iconColor: "text-purple-400"
-      - text: "IA Conversazionale Avanzata"
-        icon: "chat"
-        iconColor: "text-purple-400"
-      - text: "Integrazione Seamless dei Sistemi"
-        icon: "integration_instructions"
-        iconColor: "text-purple-400"
+      - title: "EvolverAI Medical"
+        description: >
+          All'incrocio tra sanità e intelligenza artificiale, EvolverAI Medical è impegnata 
+          nel migliorare le vite. Sviluppiamo sistemi di supporto diagnostico, piattaforme 
+          di dati medici e applicazioni IA incentrate sul paziente che migliorano il processo 
+          decisionale clinico, la ricerca e l'erogazione delle cure.
+        icon: 
+          type: "health_and_safety"
+          alignment: "top"
+
+      - title: "EvolverAI Hospitality"
+        description: >
+          Fondendo tecnologia ed esperienza umana, EvolverAI Hospitality porta soluzioni 
+          intelligenti nell'industria alberghiera e del tempo libero. Dai servizi ospiti 
+          intelligenti e sistemi di prenotazione all'automazione operativa e all'esperienza 
+          cliente potenziata dall'IA — aiutiamo i fornitori di ospitalità a rimanere 
+          all'avanguardia.
+        icon: 
+          type: "room_service"
+          alignment: "top"
+
+      - title: "EvolverAI BPO"
+        description: >
+          EvolverAI BPO (Business Process Outsourcing) fornisce operazioni di supporto 
+          intelligenti per aziende in tutto il mondo. Combiniamo automazione, competenza 
+          umana e sistemi scalabili per ottimizzare compiti come gestione dati, servizio 
+          clienti, moderazione contenuti e flussi di lavoro amministrativi — con un forte 
+          focus su efficienza e qualità.
+        icon: 
+          type: "business"
+          alignment: "top"
+
+      - title: "EvolverAI Academy"
+        description: >
+          L'educazione alimenta il progresso. EvolverAI Academy offre corsi ad alto impatto, 
+          workshop e programmi di mentoring in IA, data science e tecnologia. Potenziamo 
+          individui e organizzazioni con competenze pratiche per prosperare in un mondo 
+          digitale in rapida evoluzione — sia online che di persona.
+        icon: 
+          type: "school"
+          color: "#F5F5F5"
+          alignment: "top"
+
+      - title: "PixelCraft by EvolverAI"
+        description: >
+          PixelCraft è la nostra centrale creativa — un laboratorio di design dove l'arte 
+          incontra l'intelligenza. Creiamo illustrazioni assistite dall'IA, pixel art, 
+          kit di branding e contenuti visivi per giochi, merchandise e campagne digitali. 
+          Lo spirito è giocoso, ma l'esecuzione è professionale.
+        icon: 
+          type: "palette"
+          alignment: "top"
 
   features:
-    - title: "Analytics Potenziata dall'AI"
-      description: "Sfrutta il potere dell'intelligenza artificiale per ottenere insights profondi sui tuoi dati aziendali."
-      icon: "analytics"
-    - title: "Automazione Intelligente"
-      description: "Ottimizza le tue operazioni con soluzioni di automazione intelligente che si adattano alle tue esigenze."
-      icon: "smart_toy"
-    - title: "Sviluppo AI Personalizzato"
-      description: "Soluzioni AI su misura progettate specificamente per i tuoi requisiti aziendali unici."
-      icon: "build"
-    - title: "Supporto AI 24/7"
-      description: "Assistenza intelligente 24 ore su 24 per mantenere la tua azienda operativa senza intoppi."
-      icon: "support_agent"
+    title: "EvolverAI: Ridefinire l'Eccellenza"
+    cards:
+      - title: "Applicazioni IA Pratiche"
+        description: "Fornire applicazioni IA pratiche che creano valore immediato."
+        icon: 
+          type: "check_circle"
+          alignment: "top"
+      - title: "Collaborazione con i Clienti"
+        description: "Collaborare strettamente con i nostri clienti per comprendere le loro sfide e obiettivi."
+        icon: 
+          type: "handshake"
+          alignment: "top"
+      - title: "Tecnologia Lungimirante"
+        description: "Mantenere un approccio lungimirante alla tecnologia e all'innovazione."
+        icon: 
+          type: "lightbulb"
+          alignment: "top"
+  b2b:
+    title: "Servizi di Outsourcing B2B"
+    description: >
+      Soluzioni di outsourcing complete che vi permettono di concentrarvi sul vostro 
+      business principale mentre noi gestiamo i processi specializzati.
+    buttonText: "Diventa Partner"
+    buttonUrl: "/b2b"
+    buttonColor: "bg-green-600 hover:bg-green-700"
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Gestione Infrastruttura IT"
+        description: "Garantire prestazioni ottimali e sicurezza della vostra infrastruttura IT."
+        icon: 
+          type: "tune"
+          alignment: "top"
+      - title: "Elaborazione Dati & Analisi"
+        description: "Trasformare dati grezzi in insight attuabili per decisioni informate."
+        icon: 
+          type: "expand_more"
+          alignment: "top"
+      - title: "Servizi di Supporto Clienti"
+        description: "Fornire supporto reattivo ed efficace ai vostri clienti."
+        icon: 
+          type: "business"
+          alignment: "top"
+      - title: "Automazione Processi Aziendali"
+        description: "Razionalizzare e automatizzare i processi aziendali per maggiore efficienza."
+        icon: 
+          type: "autorenew"
+          alignment: "top"
+      - title: "Abbiamo catturato la vostra attenzione?"
+        description: "Scoprite come i nostri servizi di outsourcing B2B possono beneficiare la vostra azienda."
+        icon: 
+          type: "star"
+          alignment: "top"
+        linkText: "Scopri di più"
+        linkUrl: "/b2b"
+
+  contact:
+    title: "Mettetevi in Contatto"
+    description: "Pronti a trasformare la vostra azienda con l'IA? Discutiamo del vostro progetto."
+
+  product_wfm:
+    subtitle: "Workforce Manager"
+    image: "/img/evolverai-web-wfm-bg.png"
+    imagePosition: "right"
+    description: >
+      Workforce Manager è uno strumento avanzato progettato per ottimizzare la pianificazione 
+      dei turni e la gestione della forza lavoro. Sfruttate la potenza dell'IA e di un chatbot 
+      automatizzato per comunicazione efficiente, programmazione e miglioramenti della produttività.
+    buttonText: "Dimmi di più"
+    buttonUrl: "/wfm"
+    buttonColor: "bg-purple-600 hover:bg-purple-700"
+
+  product_elysia:
+    subtitle: "Elysia: Il Vostro Assistente Potenziato dall'IA"
+    image: "/img/evolverai-web-elysia-bg.jpg"
+    imagePosition: "left"
+    description: >
+      Elysia è più di un semplice bot—è il nuovo migliore amico della vostra organizzazione. 
+      Alimentata da IA all'avanguardia, Elysia ottimizza le operazioni automatizzando compiti 
+      ripetitivi e riducendo i carichi di lavoro, dando al vostro team più tempo per concentrarsi 
+      su ciò che conta davvero. Che si tratti di gestione dei flussi di lavoro, gestione di 
+      richieste di routine o ottimizzazione dei processi, Elysia lavora instancabilmente dietro 
+      le quinte per aumentare efficienza e produttività. Dite addio allo sforzo manuale e 
+      benvenuti a un modo di lavorare più intelligente e fluido. Trasformate la vostra 
+      organizzazione con Elysia e sbloccate il potenziale dell'IA oggi!
+    buttonText: "Scopri Elysia"
+    buttonUrl: "/elysia"
+    buttonColor: "bg-pink-600 hover:bg-pink-700"
 
   courses:
-    - title: "Fondamenti dell'AI"
-      description: "Impara le basi dell'intelligenza artificiale e del machine learning."
-      duration: "8 settimane"
-      level: "Principiante"
-    - title: "Padronanza del Machine Learning"
-      description: "Tecniche avanzate nel machine learning e data science."
-      duration: "12 settimane"
-      level: "Avanzato"
-    - title: "Etica e Governance dell'AI"
-      description: "Comprendere le implicazioni etiche e la governance dei sistemi AI."
-      duration: "6 settimane"
-      level: "Intermedio"
+    title: "Corsi e Formazione IA"
+    description: "Migliorate le vostre competenze con i nostri corsi completi di IA e data science."
+    cards:
+      - title: "Fondamenti dell'IA"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Imparate le basi dell'intelligenza artificiale e delle sue applicazioni."
+        features:
+          - text: "Cos'è un LLM (Large Language Model)"
+            bullet: "psychology"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+            badges:
+              - text: "Nuovo"
+                color: "bg-blue-500"
+                tooltip: "Aggiunto di recente"
+          - text: "Concetti chiave nel prompt engineering"
+            bullet: "edit"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+            badges:
+              - text: "Core"
+                color: "bg-green-500"
+                tooltip: "Concetto fondamentale"
+          - text: "IA generativa e le sue applicazioni"
+            bullet: "auto_awesome"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+            badges:
+              - text: "Popolare"
+                color: "bg-purple-500"
+                tooltip: "Argomento più popolare"
+        buttonText: "Iscriviti ora"
+        buttonUrl: "/enroll/ai-fundamentals"
+        buttonColor: "bg-indigo-600 hover:bg-indigo-700"
+
+      - title: "Maestria nel Machine Learning"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Tecniche avanzate nel machine learning e nella data science."
+        features:
+          - text: "Deep learning e reti neurali"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Esperto"
+                color: "bg-green-400"
+                tooltip: "Badge di maestria"
+          - text: "Algoritmi avanzati e ottimizzazione modelli"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Esperto"
+                color: "bg-green-400"
+                tooltip: "Badge di maestria"
+          - text: "Implementazione di progetti reali"
+            bullet: "▶"
+            bulletType: "symbol"
+            bulletColor: "text-orange-400"
+            badges:
+              - text: "Esperto"
+                color: "bg-green-400"
+                tooltip: "Badge di maestria"
+        buttonText: "Iscriviti ora"
+        buttonUrl: "/enroll/ai-machine-learning"
+
+      - title: "Etica e Governance dell'IA"
+        badges:
+          - text: "4 ore"
+            color: "bg-red-500"
+            tooltip: "Il vostro primo corso"
+        icon: 
+          type: "school"
+          alignment: "left"
+        description: "Comprendere le implicazioni etiche e la governance dei sistemi IA."
+        features:
+          - text: "Framework etici per lo sviluppo dell'IA"
+            bulletType: "dot"
+            bulletColor: "text-red-400"
+            badges:
+              - text: "Etica"
+                color: "bg-red-500"
+                tooltip: "Certificato in etica"
+          - text: "Strategie di rilevamento e mitigazione dei bias"
+            bulletType: "dot"
+            bulletColor: "text-yellow-400"
+            badges:
+              - text: "Avanzato"
+                color: "bg-yellow-500"
+                tooltip: "Livello avanzato"
+          - text: "Conformità normativa e migliori pratiche"
+            bulletType: "dot"
+            bulletColor: "text-green-400"
+            badges:
+              - text: "Conformità"
+                color: "bg-green-500"
+                tooltip: "Pronto per la conformità"
+        buttonText: "Iscriviti ora"
+        buttonUrl: "/enroll/ai-ethics-governance"
 
   footer:
-    title: "Parliamo, raccontaci le tue esigenze"
-    description: "Siamo qui per aiutarti a sbloccare il potenziale dell'AI e trasformare le tue operazioni aziendali. Facciamo brainstorming insieme e creiamo un futuro più luminoso per la tua azienda."
-    buttonText: "Raccontaci del tuo progetto"
+    title: "Parliamo, raccontateci delle vostre esigenze"
+    description: "Siamo qui per aiutarvi a sbloccare il potenziale dell'IA e trasformare le vostre operazioni aziendali. Facciamo brainstorming insieme e creiamo un futuro più luminoso per la vostra azienda."
+    buttonText: "Raccontateci del vostro progetto"
     copyright: "Tutti i diritti riservati"
     contact:
       email:
@@ -92,3 +375,76 @@ sections:
         label: "Telefono"
       address:
         label: "Indirizzo"
+
+b2b_sections:
+  - type: "hero"
+    title: "Soluzioni Premium di Outsourcing B2B"
+    subtitle: "Trasformare le operazioni attraverso partnership strategiche e servizi potenziati dall'IA"
+
+  - type: "cards_section"
+    title: "Background Aziendale & Leadership"
+    responsiveColumns:
+      - mobile: 1
+        tablet: 1
+        desktop: 1
+    cards:
+      - image_title: /img/b2b-background.png
+        description: >
+          Infinite Workforce Shpk è la nostra entità operativa in Albania, completamente 
+          posseduta da EvolverAI GmbH. Questo investimento strategico dimostra il nostro 
+          impegno nel creare operazioni di outsourcing sostenibili e di alta qualità 
+          dedicate al controllo qualità dei dati e all'ottimizzazione dei processi aziendali.
+
+          Abbiamo progettato questa entità specificamente per fornire una forza lavoro 
+          qualificata e ben addestrata con una struttura di costi ottimizzata, creando 
+          valore per i nostri clienti mantenendo i più alti standard di eccellenza del servizio.
+
+          Ciò che ci distingue da altri fornitori di outsourcing è il nostro impegno verso 
+          i nostri dipendenti. Offriamo compensi superiori rispetto ai concorrenti locali, 
+          il che ha portato a tassi di turnover dei dipendenti significativamente più bassi. 
+          Questa stabilità ci permette di favorire una cultura del merito e della crescita 
+          professionale continua, garantendo che i nostri clienti beneficino di team 
+          esperti che comprendono le loro esigenze aziendali.
+
+          Il nostro team albanese si specializza in operazioni BPO, sfruttando la nostra 
+          piattaforma proprietaria Workforce Manager, sistemi automatizzati di controllo 
+          qualità e strumenti avanzati di estrazione KPI per fornire risultati eccezionali 
+          per clienti nei settori della misurazione media e ricerca di mercato.
+
+  - type: "cards_section"
+    title: 
+      text: "Leadership & Competenza Consulenziale"
+      styles:
+        color: "#F5F5F5"
+        alignment: "left"
+    description: >
+      Il nostro team di leadership porta decenni di esperienza combinata nell'implementazione 
+      tecnologica, eccellenza operativa e ottimizzazione dei processi aziendali. Questa 
+      competenza ci permette di fornire sia guida strategica che soluzioni pratiche che 
+      producono risultati misurabili per i nostri clienti.
+    responsiveColumns:
+      - mobile: 1
+        tablet: 2
+        desktop: 2
+    cards:
+      - description: >
+          Competenza approfondita nel monitoraggio TV e nell'analisi delle spese pubblicitarie, 
+          con conoscenza specializzata dei requisiti specifici del mercato in diverse regioni
+        icon: 
+          type: "chart"
+          color: "#F5F5F5"
+          alignment: "left"
+      - description: >
+          Comprovata esperienza nello sviluppo e implementazione di strumenti di monitoraggio 
+          in più di 40 paesi su tutti i continenti
+        icon: 
+          type: "world"
+          color: "#F5F5F5"
+          alignment: "left"
+      - description: >
+          Comprensione completa delle metodologie di misurazione media e dei processi 
+          di controllo qualità
+        icon: 
+          type: "chart"
+          color: "#F5F5F5"
+          alignment: "left"
