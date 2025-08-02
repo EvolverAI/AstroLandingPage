@@ -2,7 +2,7 @@
 // Page redirector - catches /pagename and redirects to /{lang}/pagename
 
 export async function getStaticPaths() {
-    const AVAILABLE_PAGES = ["b2b", "wfm", "elysia", "courses"];
+    const AVAILABLE_PAGES = ["b2b", "wfm", "elysia", "academy"];
     const paths: any[] = [];
 
     // Generate paths for all available pages without language prefix
