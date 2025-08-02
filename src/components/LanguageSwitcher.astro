@@ -6,15 +6,28 @@ import { getAvailableLanguages } from "../utils/content.js";
 export interface Props {
     currentLanguage?: string;
     className?: string;
+    currentPath?: string; // Add current path to determine URL structure
 }
 
-const { currentLanguage = "en", className = "" } = Astro.props;
+const {
+    currentLanguage = "en",
+    className = "",
+    currentPath = "",
+} = Astro.props;
 
 // Get available languages from content collections
 let languages: any[] = [];
 try {
     const languagesCollection = await getCollection("languages");
-    languages = getAvailableLanguages(languagesCollection);
+    const allLanguages = getAvailableLanguages(languagesCollection);
+
+    // Deduplicate languages by code (keep only the first occurrence of each language code)
+    const uniqueLanguages = allLanguages.filter(
+        (lang, index, array) =>
+            array.findIndex((l) => l.code === lang.code) === index,
+    );
+
+    languages = uniqueLanguages;
 } catch (error) {
     console.warn("Could not load languages:", error);
     languages = [{ code: "en", name: "English", flag: "🇺🇸" }];
@@ -23,6 +36,62 @@ try {
 // Determine display name for current language
 const currentLangData = languages.find((lang) => lang.code === currentLanguage);
 const displayName = currentLangData?.name || "Language";
+
+// Function to generate language-aware URLs
+function generateLanguageUrl(
+    targetLangCode: string,
+    currentPath: string,
+): string {
+    // Remove leading slash for processing
+    const path = currentPath.startsWith("/")
+        ? currentPath.substring(1)
+        : currentPath;
+
+    // Split path into segments
+    const segments = path.split("/").filter((segment) => segment.length > 0);
+
+    if (segments.length === 0) {
+        // Root path, just return language code
+        return `/${targetLangCode}`;
+    }
+
+    const supportedLanguages = ["en", "de", "it"];
+
+    // Check different URL patterns
+    if (segments.length === 1) {
+        // Pattern: /en or /de or /page
+        if (supportedLanguages.includes(segments[0])) {
+            // It's a language code, replace it
+            return `/${targetLangCode}`;
+        } else {
+            // It's a page, append language
+            return `/${segments[0]}/${targetLangCode}`;
+        }
+    } else if (segments.length >= 2) {
+        // Pattern: /page/en or /en/page or more complex
+
+        // Check if first segment is a language code
+        if (supportedLanguages.includes(segments[0])) {
+            // Pattern: /en/page/... - replace first segment
+            segments[0] = targetLangCode;
+        } else if (supportedLanguages.includes(segments[1])) {
+            // Pattern: /page/en/... - replace second segment
+            segments[1] = targetLangCode;
+        } else {
+            // No language code found, check if it's a known page pattern
+            const knownPages = ["elysia", "wfm", "b2b", "courses"];
+            if (knownPages.includes(segments[0])) {
+                // Pattern: /page/... - append language as second segment
+                segments.splice(1, 0, targetLangCode);
+            } else {
+                // Default: prepend language code
+                segments.unshift(targetLangCode);
+            }
+        }
+    }
+
+    return "/" + segments.join("/");
+}
 ---
 
 <div class={`language-switcher ${className}`}>
@@ -64,18 +133,16 @@ const displayName = currentLangData?.name || "Language";
             <div class="py-1" role="none">
                 {
                     languages.map((language) => {
-                        const href = `/${language.code}`; // Always use /langcode format
                         return (
-                            <a
-                                href={href}
-                                class={`flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
+                            <button
+                                onclick={`setUserLanguage('${language.code}')`}
+                                class={`w-full text-left flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
                                     currentLanguage === language.code
                                         ? "bg-slate-700 text-blue-400"
                                         : "text-gray-200 hover:text-white"
                                 }`}
                                 role="menuitem"
                                 tabindex="-1"
-                                onclick={`event.preventDefault(); setUserLanguage('${language.code}');`}
                             >
                                 <span class="mr-3 text-lg">
                                     {language.flag}
@@ -95,7 +162,7 @@ const displayName = currentLangData?.name || "Language";
                                         />
                                     </svg>
                                 )}
-                            </a>
+                            </button>
                         );
                     })
                 }
@@ -118,11 +185,70 @@ const displayName = currentLangData?.name || "Language";
 </div>
 
 <script>
+    // Dynamic URL generation function
+    function generateLanguageUrl(targetLangCode, currentPath) {
+        // Remove leading slash for processing
+        const path = currentPath.startsWith("/")
+            ? currentPath.substring(1)
+            : currentPath;
+
+        // Split path into segments
+        const segments = path
+            .split("/")
+            .filter((segment) => segment.length > 0);
+
+        if (segments.length === 0) {
+            // Root path, just return language code
+            return `/${targetLangCode}`;
+        }
+
+        const supportedLanguages = ["en", "de", "it"];
+
+        // Check different URL patterns
+        if (segments.length === 1) {
+            // Pattern: /en or /de or /page
+            if (supportedLanguages.includes(segments[0])) {
+                // It's a language code, replace it
+                return `/${targetLangCode}`;
+            } else {
+                // It's a page, append language
+                return `/${segments[0]}/${targetLangCode}`;
+            }
+        } else if (segments.length >= 2) {
+            // Pattern: /page/en or /en/page or more complex
+
+            // Check if first segment is a language code
+            if (supportedLanguages.includes(segments[0])) {
+                // Pattern: /en/page/... - replace first segment
+                segments[0] = targetLangCode;
+            } else if (supportedLanguages.includes(segments[1])) {
+                // Pattern: /page/en/... - replace second segment
+                segments[1] = targetLangCode;
+            } else {
+                // No language code found, check if it's a known page pattern
+                const knownPages = ["elysia", "wfm", "b2b", "courses"];
+                if (knownPages.includes(segments[0])) {
+                    // Pattern: /page/... - append language as second segment
+                    segments.splice(1, 0, targetLangCode);
+                } else {
+                    // Default: prepend language code
+                    segments.unshift(targetLangCode);
+                }
+            }
+        }
+
+        return "/" + segments.join("/");
+    }
+
     // Language preference management
     function setUserLanguage(langCode) {
         localStorage.setItem("userLanguagePreference", langCode);
-        // Navigate to the language page
-        window.location.href = `/${langCode}`;
+        // Generate dynamic URL preserving current page structure
+        const targetUrl = generateLanguageUrl(
+            langCode,
+            window.location.pathname,
+        );
+        window.location.href = targetUrl;
     }
 
     function setSystemLanguage() {
@@ -134,7 +260,11 @@ const displayName = currentLangData?.name || "Language";
         }
         // Detect browser language and redirect
         const browserLang = getBrowserLanguage();
-        window.location.href = `/${browserLang}`;
+        const targetUrl = generateLanguageUrl(
+            browserLang,
+            window.location.pathname,
+        );
+        window.location.href = targetUrl;
     }
 
     function getBrowserLanguage() {
@@ -150,17 +280,70 @@ const displayName = currentLangData?.name || "Language";
         const dropdown = document.querySelector(".language-dropdown");
         const languageDisplay = document.getElementById("language-display");
 
-        // Update display based on user preference
+        // Update display based on current URL and user preference
         function updateLanguageDisplay() {
+            if (!languageDisplay) return; // Guard clause for null check
+
             const userPreference = localStorage.getItem(
                 "userLanguagePreference",
             );
-            if (!userPreference) {
-                // Show "System" when using auto-detection
-                if (languageDisplay) {
-                    languageDisplay.textContent = "System";
-                }
+
+            // Get current language from URL
+            const currentLang = getCurrentLanguageFromUrl();
+
+            if (userPreference) {
+                // User has a preference, show the preferred language name
+                const langMap = {
+                    en: "English",
+                    de: "Deutsch",
+                    it: "Italiano",
+                };
+                languageDisplay.textContent =
+                    langMap[userPreference] || userPreference;
+            } else if (currentLang && currentLang !== "auto") {
+                // No user preference but we can detect language from URL
+                const langMap = {
+                    en: "English",
+                    de: "Deutsch",
+                    it: "Italiano",
+                };
+                languageDisplay.textContent =
+                    langMap[currentLang] || currentLang;
+            } else {
+                // Show "System" when using auto-detection and no clear language in URL
+                languageDisplay.textContent = "System";
             }
+        }
+
+        // Function to detect current language from URL
+        function getCurrentLanguageFromUrl() {
+            const path = window.location.pathname.startsWith("/")
+                ? window.location.pathname.substring(1)
+                : window.location.pathname;
+
+            const segments = path
+                .split("/")
+                .filter((segment) => segment.length > 0);
+            const supportedLanguages = ["en", "de", "it"];
+
+            if (segments.length === 0) {
+                return "en"; // Default to English for root
+            }
+
+            // Check if first segment is a language
+            if (supportedLanguages.includes(segments[0])) {
+                return segments[0];
+            }
+
+            // Check if second segment is a language (for /page/lang patterns)
+            if (
+                segments.length >= 2 &&
+                supportedLanguages.includes(segments[1])
+            ) {
+                return segments[1];
+            }
+
+            return "en"; // Default fallback
         }
 
         // Initial update
@@ -182,6 +365,7 @@ const displayName = currentLangData?.name || "Language";
     });
 
     // Make functions globally available
+    (window as any).generateLanguageUrl = generateLanguageUrl;
     (window as any).setUserLanguage = setUserLanguage;
     (window as any).setSystemLanguage = setSystemLanguage;
     (window as any).getBrowserLanguage = getBrowserLanguage;

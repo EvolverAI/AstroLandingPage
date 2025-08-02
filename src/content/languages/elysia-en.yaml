@@ -23,7 +23,10 @@ page_sections:
   - type: "cards"
     section_id: "benefits"
     order: 5
-  - type: "content_header"
+  - type: "cards"
+    section_id: "roi"
+    order: 5.1
+  - type: "cards"
     section_id: "demo"
     order: 6
     background_image: "/img/evolverai-web-company-bg.jpg"
@@ -32,7 +35,52 @@ page_sections:
     order: 99
     background_image: "/img/evolverai-web-contact-bg.jpg"
 
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      #background: "bg-gradient-to-r from-yellow-100 via-yellow-50 to-gray-100"
+      #background: "bg-gradient-to-r from-blue-900 to-slate-800"
+      background: "bg-slate-800"
+      #text: "text-gray-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-lg"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-lg"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-sm"
+      weight: "font-normal"
+      color: "text-gray-600"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+
 sections:
+  about:
+    title: "Elysia"
+    description: >
+      Your Intelligent AI Assistant for Streamlined Operations
+
   overview:
     title: "Elysia Overview"
     description: >
@@ -44,8 +92,9 @@ sections:
       - title: "The Problem"
         description: "Many organizations struggle with:"
         icon: 
-          type: "problem"
+          type: "warning"
           alignment: "left"
+          color: "text-yellow-100"
         features:
           - text: "Time-consuming manual and repetitive tasks"
             bullet: "error"
@@ -70,8 +119,9 @@ sections:
       - title: "Our Solution"
         description: "Elysia addresses these challenges by providing:"
         icon: 
-          type: "solution"
+          type: "lightbulb"
           alignment: "left"
+          color: "text-green-500"
         features:
           - text: "Intelligent automation of routine tasks and workflows"
             bullet: "check"
@@ -114,19 +164,8 @@ sections:
           type: "insights"
           alignment: "left-big"
 
-  content_header:
-    title: "Meet Elysia"
-    subtitle: "Your AI-Powered Assistant for Enhanced Productivity"
-    description: "Elysia is more than just a bot—it's your organization's new best friend. Powered by cutting-edge AI, Elysia streamlines operations and boosts efficiency."
 
-  about:
-    companyName: "Elysia"
-    companyNameHighlight: "AI Assistant"
-    description: >
-      Elysia is designed to transform how your organization works. By automating repetitive tasks 
-      and reducing workloads, Elysia gives your team more time to focus on what truly matters. 
-      Whether it's managing workflows, handling routine queries, or optimizing processes, Elysia 
-      works tirelessly behind the scenes to boost efficiency and productivity.
+  
 
   features:
     title: "Key Features"
@@ -275,29 +314,76 @@ sections:
         description: "Boost team efficiency by up to 40% through intelligent automation."
         icon: 
           type: "speed"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Cost Reduction"
         description: "Reduce operational costs while maintaining high service quality."
         icon: 
           type: "savings"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Scalable Solution"
         description: "Grows with your business needs and adapts to changing requirements."
         icon: 
           type: "trending_up"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Easy Integration"
         description: "Quick setup and seamless integration with existing systems."
         icon: 
           type: "link"
+          alignment: "top-big"
+
+  roi:
+    subtitle: "Return on Investment"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Organizations implementing Elysia typically see return on investment within 3-6 months, with:
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "30-40%"
+        description: "Reduction in operational costs"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "25-35%"
+        description: "Increase in productivity"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "60-70%"
+        description: "Time saved on routine tasks"
+        icon:
+          type: "percent"
           alignment: "top"
 
   demo:
-    companyName: "Ready to experience"
-    companyNameHighlight: "Elysia?"
+    subtitle: "Ready to Transform Your Operations?"
     description: >
-      See Elysia in action and discover how it can transform your business operations. 
-      Schedule a personalized demo to explore Elysia's capabilities tailored to your specific needs.
+      Discover how Elysia can help your organization automate tasks, streamline workflows, 
+      and boost productivity.
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "Schedule a Demo"
+        description: >
+          See Elysia in action with a personalized demonstration tailored to your business needs. 
+          Our experts will show you how Elysia can address your specific challenges.
+        icon:
+          type: "calendar_today"
+          alignment: "left-big"
+        buttonText: "Request Demo"
+        buttonUrl: "/schedule-demo"
+      - title: "Speak with an Expert"
+        description: >
+          Have questions about implementing Elysia in your organization? Our team is ready to 
+          discuss your requirements and provide tailored recommendations.
+        icon:
+          type: "support_agent"
+          alignment: "left-big"
+        buttonText: "Contact Us"
+        buttonUrl: "/contact-us"
 
   contact:
     title: "Get Started with Elysia"

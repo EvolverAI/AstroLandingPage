@@ -1,0 +1,66 @@
+---
+// Divider Section component for adding custom spacing between sections
+export interface Props {
+    // Spacing configuration
+    height?: string; // Custom height (e.g., "8", "12", "16", "20", "24")
+    backgroundColor?: string; // Background color (optional)
+    showLine?: boolean; // Show a visual divider line
+    lineColor?: string; // Color of the divider line
+    lineWidth?: string; // Width of the divider line ("full", "1/2", "1/3", etc.)
+
+    // Section identification
+    sectionId?: string;
+    customClasses?: string;
+}
+
+const {
+    height = "8", // Default to 32px spacing
+    backgroundColor = "transparent",
+    showLine = false,
+    lineColor = "border-gray-300",
+    lineWidth = "full",
+    sectionId,
+    customClasses = "",
+} = Astro.props;
+
+// Generate spacing class
+const spacingClass = `h-${height}`;
+
+// Generate line classes if line is shown
+const lineClasses = showLine
+    ? `border-t ${lineColor} w-${lineWidth} mx-auto`
+    : "";
+---
+
+<section
+    id={sectionId}
+    class={`relative ${backgroundColor} ${spacingClass} ${customClasses} flex items-center justify-center`}
+    data-section="divider"
+>
+    {showLine && <div class={`${lineClasses}`} />}
+</section>
+
+<!-- Development helper -->
+{
+    import.meta.env.DEV && (
+        <details class="container mx-auto px-4 mt-2 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
+            <summary class="cursor-pointer">
+                Divider Debug: {sectionId || "unnamed"}
+            </summary>
+            <pre class="mt-2 overflow-auto">
+                {JSON.stringify(
+                    {
+                        height,
+                        backgroundColor,
+                        showLine,
+                        lineColor,
+                        lineWidth,
+                        spacingClass,
+                    },
+                    null,
+                    2,
+                )}
+            </pre>
+        </details>
+    )
+}

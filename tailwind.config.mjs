@@ -60,6 +60,40 @@ export default {
         'text-pink-400',
         'text-teal-400',
         'text-cyan-400',
+        // Grid column classes for responsive design
+        'grid-cols-1',
+        'grid-cols-2',
+        'grid-cols-3',
+        'grid-cols-4',
+        'grid-cols-5',
+        'grid-cols-6',
+        'md:grid-cols-1',
+        'md:grid-cols-2',
+        'md:grid-cols-3',
+        'md:grid-cols-4',
+        'md:grid-cols-5',
+        'md:grid-cols-6',
+        'xl:grid-cols-1',
+        'xl:grid-cols-2',
+        'xl:grid-cols-3',
+        'xl:grid-cols-4',
+        'xl:grid-cols-5',
+        'xl:grid-cols-6',
+        // Utility classes
+        'last:mb-0',
+        'text-justify',
+        'space-y-0',
+        'py-2',
+        'p-4',
+        'mb-2',
+        'mb-3',
+        'mb-4',
+        // Height classes for dividers
+        'h-2', 'h-4', 'h-6', 'h-8', 'h-10', 'h-12', 'h-16', 'h-20', 'h-24', 'h-32',
+        // Width classes for divider lines
+        'w-full', 'w-1/2', 'w-1/3', 'w-1/4', 'w-2/3', 'w-3/4',
+        // Border classes for divider lines
+        'border-t', 'border-gray-300', 'border-gray-400', 'border-gray-500', 'border-blue-300', 'border-blue-400',
     ],
     theme: {
         extend: {

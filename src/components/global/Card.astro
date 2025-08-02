@@ -5,7 +5,7 @@ export interface Props {
     title: string;
     description: string;
     badges?: Array<{ text: string; color: string; tooltip?: string }>; // Title-level badges
-    icon?: string | { type: string; color?: string; alignment?: string } | Array<{ type?: string; color?: string; alignment?: string }>;
+    icon?: string | { type?: string; image?: string; color?: string; alignment?: string } | Array<{ type?: string; image?: string; color?: string; alignment?: string }>;
     features?: string[] | Array<{ 
         text: string; 
         bullet?: string; 
@@ -13,6 +13,7 @@ export interface Props {
         bulletColor?: string;
         badges?: Array<{ text: string; color: string; tooltip?: string }>;
     }>;
+    note?: { title: string; content: string; signature?: string } | string;
     linkText?: string;
     linkUrl?: string;
     buttonText?: string;
@@ -24,12 +25,18 @@ export interface Props {
     iconColor?: string;
     customClasses?: string;
     centerContent?: boolean;
+    
+    // Defaults from language files
+    defaults?: any;
+    language?: string;
+    languageFile?: string;
 }const {
     title,
     description,
     badges = [],
     icon,
     features,
+    note,
     linkText,
     linkUrl,
     buttonText,
@@ -39,53 +46,114 @@ export interface Props {
     iconColor,
     customClasses = "",
     centerContent = true,
+    defaults,
+    language = "en",
+    languageFile,
 } = Astro.props;
 
-// Normalize description text by removing extra whitespace and newlines
+// Load defaults from language file if not provided via props
+let cardDefaults: any = defaults;
+if (!cardDefaults && (language || languageFile)) {
+    try {
+        const { getEntry } = await import("astro:content");
+        const langFileName = languageFile || language;
+        const langData = await getEntry("languages", langFileName);
+        cardDefaults = langData?.data?.defaults?.cards || {};
+    } catch (error) {
+        console.warn("Could not load defaults from language file:", error);
+        cardDefaults = {};
+    }
+}
+
+// Normalize description text - preserve paragraph breaks but clean up whitespace
 const normalizedDescription = description
-    ? description.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()
-    : '';
+    ? description
+        .split(/\n\s*\n/) // Split on double line breaks (paragraph breaks)
+        .map(paragraph => paragraph.replace(/[\r\n]+/g, ' ').replace(/\s+/g, ' ').trim()) // Clean each paragraph
+        .filter(paragraph => paragraph.length > 0) // Remove empty paragraphs
+    : [];
 
-// Theme-based styling
-const cardClasses =
-    theme === "dark"
-        ? "bg-slate-800 text-white"
-        : "bg-white text-gray-800 shadow-lg hover:shadow-xl";
+// Theme-based styling with defaults fallback
+const defaultCardBackground = cardDefaults?.colors?.background || (theme === "dark" ? "bg-slate-800" : "bg-white");
+const defaultCardText = cardDefaults?.colors?.text || (theme === "dark" ? "text-white" : "text-gray-800");
+const defaultCardBorder = cardDefaults?.colors?.border || "";
+const cardPadding = cardDefaults?.padding || "p-6";
+const cardMargin = cardDefaults?.margin || "";
 
-const titleClasses = theme === "dark" ? "text-white" : "text-gray-800";
+// Apply border classes consistently regardless of theme
+const borderClasses = defaultCardBorder ? defaultCardBorder : "";
+const shadowClasses = theme === "light" ? "shadow-lg hover:shadow-xl" : "";
 
-const descriptionClasses = theme === "dark" ? "text-gray-300" : "text-gray-600";
+const cardClasses = `${defaultCardBackground} ${defaultCardText} ${borderClasses} ${shadowClasses}`.trim();
 
-const defaultIconColor = theme === "dark" ? "text-blue-400" : "text-blue-600";
+const titleColor = cardDefaults?.title?.color || (theme === "dark" ? "text-white" : "text-gray-800");
+const titleSize = cardDefaults?.title?.size || "text-xl";
+const titleWeight = cardDefaults?.title?.weight || "font-semibold";
+const titleClasses = `${titleColor} ${titleSize} ${titleWeight}`;
 
-// Handle different icon formats and alignments
-// Supported alignments: "top" (default), "left", "left-big"
+const contentColor = cardDefaults?.content?.color || (theme === "dark" ? "text-gray-300" : "text-gray-600");
+const contentSize = cardDefaults?.content?.size || "text-base";
+const contentWeight = cardDefaults?.content?.weight || "font-normal";
+const descriptionClasses = `${contentColor} ${contentSize} ${contentWeight} text-justify`;
+
+const defaultIconColor = cardDefaults?.icon?.color || (theme === "dark" ? "text-blue-400" : "text-blue-600");
+
+// Feature styling defaults
+const featureColor = cardDefaults?.feature?.color || (theme === "dark" ? "text-gray-300" : "text-gray-600");
+const featureSize = cardDefaults?.feature?.text || "text-sm";
+const featureWeight = cardDefaults?.feature?.weight || "font-normal";
+const featureClasses = `${featureColor} ${featureSize} ${featureWeight}`;
+
+// Feature bullet size default
+const bulletSize = cardDefaults?.feature?.bulletSize || "text-base";
+
+// Handle different icon formats and alignments with defaults
+// Supported alignments: "top" (default), "left", "left-big", "top-big", "top-headline", "left-headline"
 // - "top": Icon centered above the title
 // - "left": Small icon inline with title on the left
 // - "left-big": Large icon in a circular background on the left, content on the right
+// - "top-big": Large icon in a circular background centered at the top
+// - "top-headline": Icon and title together in a colored header section
+// - "left-headline": Icon and title together in a colored header section (horizontal layout)
 let iconName = "";
+let iconImage = "";
 let iconColorFromData = "";
-let iconAlignment = "top"; // default alignment
+let iconAlignment = cardDefaults?.icon?.alignment || "top"; // Use default alignment
+let iconSize = cardDefaults?.icon?.size || "text-4xl";
+let iconBackground = cardDefaults?.icon?.background || null;
 
 if (typeof icon === "string") {
     iconName = icon;
 } else if (Array.isArray(icon)) {
     // Handle array format like in your YAML
-    const iconData = icon.find((item) => item.type) || icon[0];
+    const iconData = icon.find((item) => item.type || item.image) || icon[0];
     iconName = iconData?.type || "";
+    iconImage = iconData?.image || "";
     iconColorFromData = iconData?.color || "";
     iconAlignment = iconData?.alignment || "top";
 } else if (icon && typeof icon === "object") {
     // Handle object format
     iconName = icon.type || "";
+    iconImage = icon.image || "";
     iconColorFromData = icon.color || "";
     iconAlignment = icon.alignment || "top";
 }
 
 // Determine final icon color
 let finalIconColor = iconColor || defaultIconColor;
+let inlineIconColor: string | undefined = undefined;
+
 if (iconColorFromData) {
-    finalIconColor = `text-[${iconColorFromData}]`;
+    // Check if it's a Tailwind CSS class (starts with 'text-') or a color value
+    if (iconColorFromData.startsWith('text-')) {
+        // It's a Tailwind CSS class, use it directly
+        finalIconColor = iconColorFromData;
+        inlineIconColor = undefined;
+    } else {
+        // It's a color value (hex, rgb, etc.), use inline style
+        finalIconColor = iconColor || defaultIconColor;
+        inlineIconColor = iconColorFromData;
+    }
 }
 
 let alignmentClasses = centerContent
@@ -95,8 +163,12 @@ let alignmentClasses = centerContent
 // Determine if icon should be inline with title (left alignment)
 const isIconLeft = iconAlignment === "left";
 const isIconLeftBig = iconAlignment === "left-big";
+const isIconTopBig = iconAlignment === "top-big";
+const isIconTopHeadline = iconAlignment === "top-headline";
+const isIconLeftHeadline = iconAlignment === "left-headline";
+const finalCardPadding = isIconTopHeadline || isIconLeftHeadline ? "p-0" : cardPadding;
 
-if (isIconLeft || isIconLeftBig) {
+if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
     alignmentClasses = "text-left items-start";
 } else {
     alignmentClasses = "text-center items-center"
@@ -104,35 +176,480 @@ if (isIconLeft || isIconLeftBig) {
 ---
 
 <div
-    class={`p-6 rounded-lg flex flex-col ${alignmentClasses} ${cardClasses} transition-shadow duration-300 ${customClasses}`}
+    class={`${finalCardPadding} ${cardMargin} rounded-lg flex flex-col ${alignmentClasses} ${cardClasses} transition-shadow duration-300 ${customClasses}`}
 >
     {
-        iconName && !isIconLeft && !isIconLeftBig && (
-            <span
-                class={`material-icons ${finalIconColor} text-4xl mb-4 block`}
-                style={
-                    iconColorFromData
-                        ? `color: ${iconColorFromData}`
-                        : undefined
-                }
-            >
-                {iconName}
-            </span>
+        (iconName || iconImage) && !isIconLeft && !isIconLeftBig && !isIconTopBig && !isIconTopHeadline && !isIconLeftHeadline && (
+            iconImage ? (
+                <div class="mb-4 flex justify-center">
+                    <img 
+                        src={iconImage} 
+                        alt={title} 
+                        class="w-16 h-16 object-contain"
+                    />
+                </div>
+            ) : (
+                <span
+                    class={`material-icons ${finalIconColor} text-4xl mb-4 block`}
+                    style={
+                        inlineIconColor
+                            ? `color: ${inlineIconColor}`
+                            : undefined
+                    }
+                >
+                    {iconName}
+                </span>
+            )
         )
     }
 
     {
-        isIconLeftBig ? (
+        isIconTopHeadline ? (
+            <!-- Top-headline aligned icon with title in header -->
+            <div class="flex flex-col">
+                  {isIconTopHeadline && (
+    <div class="bg-blue-600 text-white rounded-t-lg">
+      <div class="flex items-center space-x-3 p-4">
+        {iconName && (
+          <span class="material-icons text-2xl">
+            {iconName}
+          </span>
+        )}
+        <h3 class="text-xl font-bold">{title}</h3>
+      </div>
+      {badges && badges.length > 0 && (
+        <div class="flex flex-wrap gap-2 px-4 pb-4">
+          {badges.map((badge: any) => (
+            <span 
+              class={`px-2 py-1 rounded text-xs font-medium text-white ${badge.color}`}
+            >
+              {badge.text}
+            </span>
+          ))}
+        </div>
+      )}
+    </div>
+  )}
+                <div class="flex-1 p-6">
+                    <div class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base`}>
+                        {normalizedDescription.map((paragraph, index) => (
+                            <p class="mb-4 last:mb-0">
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
+                    
+                    {
+                        features && features.length > 0 && (
+                            <ul class={`${featureClasses} mb-4 text-left`}>
+                                {features.map((feature) => {
+                                    const isSimpleString = typeof feature === 'string';
+                                    const featureText = isSimpleString ? feature : feature.text;
+                                    const bullet = isSimpleString ? (cardDefaults?.feature?.bullet || '•') : (feature.bullet || cardDefaults?.feature?.bullet || '•');
+                                    const bulletType = isSimpleString ? (cardDefaults?.feature?.bulletType || 'symbol') : (feature.bulletType || cardDefaults?.feature?.bulletType || 'symbol');
+                                    const bulletColor = isSimpleString ? (cardDefaults?.feature?.bulletColor || finalIconColor) : (feature.bulletColor || cardDefaults?.feature?.bulletColor || finalIconColor);
+                                    const badges = isSimpleString ? [] : (feature.badges || []);
+                                    
+                                    return (
+                                        <li class="flex items-start mb-2 text-left">
+                                            {bulletType === 'icon' ? (
+                                                <span class={`material-icons ${bulletColor} mr-2 ${bulletSize} flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            ) : bulletType === 'dot' ? (
+                                                <span class={`inline-block w-2 h-2 rounded-full ${bulletColor.replace('text-', 'bg-')} mr-3 mt-1 flex-shrink-0`}></span>
+                                            ) : (
+                                                <span class={`${bulletColor} mr-2 font-bold flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            )}
+                                            <div class="flex-1 text-left">
+                                                <div class="flex items-start gap-2 flex-wrap">
+                                                    <span class={`flex-1 ${featureClasses}`}>{featureText}</span>
+                                                    {badges.length > 0 && (
+                                                        <div class="flex gap-1 flex-wrap">
+                                                            {badges.map((badge) => (
+                                                                <span 
+                                                                    class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                                                    title={badge.tooltip || badge.text}
+                                                                >
+                                                                    {badge.text}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    }
+                    
+                    {
+                        note && (
+                            typeof note === 'string' ? (
+                                <div class="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                                    <span class="material-icons text-blue-400 text-base">info</span>
+                                    <span>{note}</span>
+                                </div>
+                            ) : (
+                                <div class="mt-6 p-4 bg-slate-700 rounded-lg border-l-4 border-blue-400">
+                                    <h4 class="text-blue-300 font-semibold text-sm mb-2">{note.title}</h4>
+                                    <blockquote class="text-gray-300 italic text-sm leading-relaxed mb-2">
+                                        "{note.content}"
+                                    </blockquote>
+                                    {note.signature && (
+                                        <p class="text-blue-300 text-xs font-medium">{note.signature}</p>
+                                    )}
+                                </div>
+                            )
+                        )
+                    }
+                    
+                    {
+                        buttonText && buttonUrl && (
+                            <a
+                                href={buttonUrl}
+                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                            >
+                                {buttonText}
+                            </a>
+                        )
+                    }
+
+                    {
+                        linkText && linkUrl && (
+                            <a
+                                href={linkUrl}
+                                class={
+                                    theme === "dark"
+                                        ? "text-blue-400 hover:text-blue-300"
+                                        : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+                                }
+                            >
+                                {linkText}
+                                {theme === "light" && (
+                                    <span class="material-icons ml-1 text-xs">
+                                        arrow_forward
+                                    </span>
+                                )}
+                                {theme === "dark" && " →"}
+                            </a>
+                        )
+                    }
+                </div>
+            </div>
+        ) : isIconLeftHeadline ? (
+            <!-- Left-headline aligned icon with title in horizontal header -->
+            <div class="flex flex-col">
+                <div class="bg-blue-600 text-white rounded-t-lg">
+                    <div class="flex items-center space-x-3 p-4">
+                        {iconName && (
+                            <span class="material-icons text-2xl">
+                                {iconName}
+                            </span>
+                        )}
+                        <div class="flex-1">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-xl font-bold">{title}</h3>
+                                {badges && badges.length > 0 && (
+                                    <div class="flex flex-wrap gap-2 ml-4">
+                                        {badges.map((badge: any) => (
+                                            <span 
+                                                class={`px-2 py-1 rounded text-xs font-medium text-white ${badge.color}`}
+                                            >
+                                                {badge.text}
+                                            </span>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="flex-1 p-6">
+                    <div class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base`}>
+                        {normalizedDescription.map((paragraph, index) => (
+                            <p class="mb-4 last:mb-0">
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
+                    
+                    {
+                        features && features.length > 0 && (
+                            <ul class={`${featureClasses} mb-4 text-left`}>
+                                {features.map((feature) => {
+                                    const isSimpleString = typeof feature === 'string';
+                                    const featureText = isSimpleString ? feature : feature.text;
+                                    const bullet = isSimpleString ? (cardDefaults?.feature?.bullet || '•') : (feature.bullet || cardDefaults?.feature?.bullet || '•');
+                                    const bulletType = isSimpleString ? (cardDefaults?.feature?.bulletType || 'symbol') : (feature.bulletType || cardDefaults?.feature?.bulletType || 'symbol');
+                                    const bulletColor = isSimpleString ? (cardDefaults?.feature?.bulletColor || finalIconColor) : (feature.bulletColor || cardDefaults?.feature?.bulletColor || finalIconColor);
+                                    const badges = isSimpleString ? [] : (feature.badges || []);
+                                    
+                                    return (
+                                        <li class="flex items-start mb-2 text-left">
+                                            {bulletType === 'icon' ? (
+                                                <span class={`material-icons ${bulletColor} mr-2 ${bulletSize} flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            ) : bulletType === 'dot' ? (
+                                                <span class={`inline-block w-2 h-2 rounded-full ${bulletColor.replace('text-', 'bg-')} mr-3 mt-1 flex-shrink-0`}></span>
+                                            ) : (
+                                                <span class={`${bulletColor} mr-2 font-bold flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            )}
+                                            <div class="flex-1 text-left">
+                                                <div class="flex items-start gap-2 flex-wrap">
+                                                    <span class={`flex-1 ${featureClasses}`}>{featureText}</span>
+                                                    {badges.length > 0 && (
+                                                        <div class="flex gap-1 flex-wrap">
+                                                            {badges.map((badge) => (
+                                                                <span 
+                                                                    class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                                                    title={badge.tooltip || badge.text}
+                                                                >
+                                                                    {badge.text}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    }
+                    
+                    {
+                        note && (
+                            typeof note === 'string' ? (
+                                <div class="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                                    <span class="material-icons text-blue-400 text-base">info</span>
+                                    <span>{note}</span>
+                                </div>
+                            ) : (
+                                <div class="mt-6 p-4 bg-slate-700 rounded-lg border-l-4 border-blue-400">
+                                    <h4 class="text-blue-300 font-semibold text-sm mb-2">{note.title}</h4>
+                                    <blockquote class="text-gray-300 italic text-sm leading-relaxed mb-2">
+                                        "{note.content}"
+                                    </blockquote>
+                                    {note.signature && (
+                                        <p class="text-blue-300 text-xs font-medium">{note.signature}</p>
+                                    )}
+                                </div>
+                            )
+                        )
+                    }
+                    
+                    {
+                        buttonText && buttonUrl && (
+                            <a
+                                href={buttonUrl}
+                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                            >
+                                {buttonText}
+                            </a>
+                        )
+                    }
+
+                    {
+                        linkText && linkUrl && (
+                            <a
+                                href={linkUrl}
+                                class={
+                                    theme === "dark"
+                                        ? "text-blue-400 hover:text-blue-300"
+                                        : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+                                }
+                            >
+                                {linkText}
+                                {theme === "light" && (
+                                    <span class="material-icons ml-1 text-xs">
+                                        arrow_forward
+                                    </span>
+                                )}
+                                {theme === "dark" && " →"}
+                            </a>
+                        )
+                    }
+                </div>
+            </div>
+        ) : isIconTopBig ? (
+            <!-- Top-big aligned icon with content below -->
+            <div class="flex flex-col items-center text-center">
+                {(iconName || iconImage) && (
+                    <div class="mb-6">
+                        {iconImage ? (
+                            <div class="flex justify-center">
+                                <img 
+                                    src={iconImage} 
+                                    alt={title} 
+                                    class="max-w-xs h-auto object-contain"
+                                />
+                            </div>
+                        ) : (
+                            <div class={`w-24 h-24 bg-blue-600 rounded-full flex items-center justify-center shadow-lg mx-auto`}>
+                                <span
+                                    class={`material-icons ${iconColorFromData && iconColorFromData.startsWith('text-') ? iconColorFromData : 'text-white'} text-5xl`}
+                                    style={
+                                        inlineIconColor
+                                            ? `color: ${inlineIconColor}`
+                                            : undefined
+                                    }
+                                >
+                                    {iconName}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                )}
+                <div class="w-full">
+                    <div class="mb-4">
+                        <div class="flex items-start gap-2 flex-wrap justify-center">
+                            <h3 class={`text-2xl font-semibold ${titleClasses} flex-1 text-center`}>
+                                {title}
+                            </h3>
+                            {badges.length > 0 && (
+                                <div class="flex gap-1 flex-wrap justify-center">
+                                    {badges.map((badge) => (
+                                        <span 
+                                            class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                            title={badge.tooltip || badge.text}
+                                        >
+                                            {badge.text}
+                                        </span>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                    <div class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base text-center`}>
+                        {normalizedDescription.map((paragraph, index) => (
+                            <p class="mb-4 last:mb-0">
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
+                    
+                    {
+                        features && features.length > 0 && (
+                            <ul class={`${featureClasses} mb-4 text-left`}>
+                                {features.map((feature) => {
+                                    const isSimpleString = typeof feature === 'string';
+                                    const featureText = isSimpleString ? feature : feature.text;
+                                    const bullet = isSimpleString ? (cardDefaults?.feature?.bullet || '•') : (feature.bullet || cardDefaults?.feature?.bullet || '•');
+                                    const bulletType = isSimpleString ? (cardDefaults?.feature?.bulletType || 'symbol') : (feature.bulletType || cardDefaults?.feature?.bulletType || 'symbol');
+                                    const bulletColor = isSimpleString ? (cardDefaults?.feature?.bulletColor || finalIconColor) : (feature.bulletColor || cardDefaults?.feature?.bulletColor || finalIconColor);
+                                    const badges = isSimpleString ? [] : (feature.badges || []);
+                                    
+                                    return (
+                                        <li class="flex items-start mb-2 text-left">
+                                            {bulletType === 'icon' ? (
+                                                <span class={`material-icons ${bulletColor} mr-2 ${bulletSize} flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            ) : bulletType === 'dot' ? (
+                                                <span class={`inline-block w-2 h-2 rounded-full ${bulletColor.replace('text-', 'bg-')} mr-3 mt-1 flex-shrink-0`}></span>
+                                            ) : (
+                                                <span class={`${bulletColor} mr-2 font-bold flex-shrink-0`}>
+                                                    {bullet}
+                                                </span>
+                                            )}
+                                            <div class="flex-1 text-left">
+                                                <div class="flex items-start gap-2 flex-wrap">
+                                                    <span class={`flex-1 ${featureClasses}`}>{featureText}</span>
+                                                    {badges.length > 0 && (
+                                                        <div class="flex gap-1 flex-wrap">
+                                                            {badges.map((badge) => (
+                                                                <span 
+                                                                    class={`inline-block px-2 py-1 text-xs font-medium text-white rounded-full ${badge.color} whitespace-nowrap`}
+                                                                    title={badge.tooltip || badge.text}
+                                                                >
+                                                                    {badge.text}
+                                                                </span>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            </div>
+                                        </li>
+                                    );
+                                })}
+                            </ul>
+                        )
+                    }
+                    
+                    {
+                        note && (
+                            typeof note === 'string' ? (
+                                <div class="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                                    <span class="material-icons text-blue-400 text-base">info</span>
+                                    <span>{note}</span>
+                                </div>
+                            ) : (
+                                <div class="mt-6 p-4 bg-slate-700 rounded-lg border-l-4 border-blue-400">
+                                    <h4 class="text-blue-300 font-semibold text-sm mb-2">{note.title}</h4>
+                                    <blockquote class="text-gray-300 italic text-sm leading-relaxed mb-2">
+                                        "{note.content}"
+                                    </blockquote>
+                                    {note.signature && (
+                                        <p class="text-blue-300 text-xs font-medium">{note.signature}</p>
+                                    )}
+                                </div>
+                            )
+                        )
+                    }
+                    
+                    {
+                        buttonText && buttonUrl && (
+                            <a
+                                href={buttonUrl}
+                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                            >
+                                {buttonText}
+                            </a>
+                        )
+                    }
+
+                    {
+                        linkText && linkUrl && (
+                            <a
+                                href={linkUrl}
+                                class={
+                                    theme === "dark"
+                                        ? "text-blue-400 hover:text-blue-300"
+                                        : "mt-3 px-4 py-1.5 bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors duration-300 text-sm font-medium inline-flex items-center"
+                                }
+                            >
+                                {linkText}
+                                {theme === "light" && (
+                                    <span class="material-icons ml-1 text-xs">
+                                        arrow_forward
+                                    </span>
+                                )}
+                                {theme === "dark" && " →"}
+                            </a>
+                        )
+                    }
+                </div>
+            </div>
+        ) : isIconLeftBig ? (
             <!-- Left-big aligned icon with content on the right -->
             <div class="flex items-stretch min-h-[200px]">
                 {iconName && (
                     <div class="w-1/3 flex items-center justify-center">
                         <div class={`w-20 h-20 bg-blue-600 rounded-full flex items-center justify-center shadow-lg`}>
                             <span
-                                class="material-icons text-white text-4xl"
+                                class={`material-icons ${iconColorFromData && iconColorFromData.startsWith('text-') ? iconColorFromData : 'text-white'} text-4xl`}
                                 style={
-                                    iconColorFromData
-                                        ? `color: ${iconColorFromData}`
+                                    inlineIconColor
+                                        ? `color: ${inlineIconColor}`
                                         : undefined
                                 }
                             >
@@ -161,25 +678,29 @@ if (isIconLeft || isIconLeftBig) {
                             )}
                         </div>
                     </div>
-                    <p class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base`}>
-                        {normalizedDescription}
-                    </p>
+                    <div class={`${descriptionClasses} mb-4 leading-relaxed break-words text-base`}>
+                        {normalizedDescription.map((paragraph, index) => (
+                            <p class="mb-4 last:mb-0">
+                                {paragraph}
+                            </p>
+                        ))}
+                    </div>
                     
                     {
                         features && features.length > 0 && (
-                            <ul class={`text-sm ${descriptionClasses} mb-4 text-left`}>
+                            <ul class={`${featureClasses} mb-4 text-left`}>
                                 {features.map((feature) => {
                                     const isSimpleString = typeof feature === 'string';
                                     const featureText = isSimpleString ? feature : feature.text;
-                                    const bullet = isSimpleString ? '•' : (feature.bullet || '•');
-                                    const bulletType = isSimpleString ? 'symbol' : (feature.bulletType || 'symbol');
-                                    const bulletColor = isSimpleString ? finalIconColor : (feature.bulletColor || finalIconColor);
+                                    const bullet = isSimpleString ? (cardDefaults?.feature?.bullet || '•') : (feature.bullet || cardDefaults?.feature?.bullet || '•');
+                                    const bulletType = isSimpleString ? (cardDefaults?.feature?.bulletType || 'symbol') : (feature.bulletType || cardDefaults?.feature?.bulletType || 'symbol');
+                                    const bulletColor = isSimpleString ? (cardDefaults?.feature?.bulletColor || finalIconColor) : (feature.bulletColor || cardDefaults?.feature?.bulletColor || finalIconColor);
                                     const badges = isSimpleString ? [] : (feature.badges || []);
                                     
                                     return (
                                         <li class="flex items-start mb-2 text-left">
                                             {bulletType === 'icon' ? (
-                                                <span class={`material-icons ${bulletColor} mr-2 text-base flex-shrink-0`}>
+                                                <span class={`material-icons ${bulletColor} mr-2 ${bulletSize} flex-shrink-0`}>
                                                     {bullet}
                                                 </span>
                                             ) : bulletType === 'dot' ? (
@@ -191,7 +712,7 @@ if (isIconLeft || isIconLeftBig) {
                                             )}
                                             <div class="flex-1 text-left">
                                                 <div class="flex items-start gap-2 flex-wrap">
-                                                    <span class="flex-1">{featureText}</span>
+                                                    <span class={`flex-1 ${featureClasses}`}>{featureText}</span>
                                                     {badges.length > 0 && (
                                                         <div class="flex gap-1 flex-wrap">
                                                             {badges.map((badge) => (
@@ -210,6 +731,27 @@ if (isIconLeft || isIconLeftBig) {
                                     );
                                 })}
                             </ul>
+                        )
+                    }
+                    
+                    {
+                        note && (
+                            typeof note === 'string' ? (
+                                <div class="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                                    <span class="material-icons text-blue-400 text-base">info</span>
+                                    <span>{note}</span>
+                                </div>
+                            ) : (
+                                <div class="mt-6 p-4 bg-slate-700 rounded-lg border-l-4 border-blue-400">
+                                    <h4 class="text-blue-300 font-semibold text-sm mb-2">{note.title}</h4>
+                                    <blockquote class="text-gray-300 italic text-sm leading-relaxed mb-2">
+                                        "{note.content}"
+                                    </blockquote>
+                                    {note.signature && (
+                                        <p class="text-blue-300 text-xs font-medium">{note.signature}</p>
+                                    )}
+                                </div>
+                            )
                         )
                     }
                     
@@ -248,13 +790,13 @@ if (isIconLeft || isIconLeftBig) {
             </div>
         ) : isIconLeft ? (
             <!-- Left-aligned icon with title and badges -->
-            <div class="flex items-start mb-2">
+            <div class="flex items-center mb-2">
                 {iconName && (
                     <span
                         class={`material-icons ${finalIconColor} text-2xl mr-3`}
                         style={
-                            iconColorFromData
-                                ? `color: ${iconColorFromData}`
+                            inlineIconColor
+                                ? `color: ${inlineIconColor}`
                                 : undefined
                         }
                     >
@@ -305,30 +847,34 @@ if (isIconLeft || isIconLeftBig) {
         )
     }
 
-    <!-- Content for non-left-big layouts -->
+    <!-- Content for non-left-big, non-top-big, non-top-headline, and non-left-headline layouts -->
     {
-        !isIconLeftBig && (
+        !isIconLeftBig && !isIconTopBig && !isIconTopHeadline && !isIconLeftHeadline && (
             <>
-                <p class={`${descriptionClasses} mb-4 flex-grow leading-relaxed break-words`}>
-                    {normalizedDescription}
-                </p>
+                <div class={`${descriptionClasses} mb-4 flex-grow leading-relaxed break-words`}>
+                    {normalizedDescription.map((paragraph, index) => (
+                        <p class="mb-4 last:mb-0">
+                            {paragraph}
+                        </p>
+                    ))}
+                </div>
 
                 {
                     features && features.length > 0 && (
-                        <ul class={`text-sm ${descriptionClasses} mb-4 text-left`}>
+                        <ul class={`${featureClasses} mb-4 text-left`}>
                             {features.map((feature) => {
                                 // Handle both string and object formats
                                 const isSimpleString = typeof feature === 'string';
                                 const featureText = isSimpleString ? feature : feature.text;
-                                const bullet = isSimpleString ? '•' : (feature.bullet || '•');
-                                const bulletType = isSimpleString ? 'symbol' : (feature.bulletType || 'symbol');
-                                const bulletColor = isSimpleString ? finalIconColor : (feature.bulletColor || finalIconColor);
+                                const bullet = isSimpleString ? (cardDefaults?.feature?.bullet || '•') : (feature.bullet || cardDefaults?.feature?.bullet || '•');
+                                const bulletType = isSimpleString ? (cardDefaults?.feature?.bulletType || 'symbol') : (feature.bulletType || cardDefaults?.feature?.bulletType || 'symbol');
+                                const bulletColor = isSimpleString ? (cardDefaults?.feature?.bulletColor || finalIconColor) : (feature.bulletColor || cardDefaults?.feature?.bulletColor || finalIconColor);
                                 const badges = isSimpleString ? [] : (feature.badges || []);
                                 
                                 return (
                                     <li class="flex items-start mb-2 text-left">
                                         {bulletType === 'icon' ? (
-                                            <span class={`material-icons ${bulletColor} mr-2 text-base flex-shrink-0`}>
+                                            <span class={`material-icons ${bulletColor} mr-2 ${bulletSize} flex-shrink-0`}>
                                                 {bullet}
                                             </span>
                                         ) : bulletType === 'dot' ? (
@@ -340,7 +886,7 @@ if (isIconLeft || isIconLeftBig) {
                                         )}
                                         <div class="flex-1 text-left">
                                             <div class="flex items-start gap-2 flex-wrap">
-                                                <span class="flex-1">{featureText}</span>
+                                                <span class={`flex-1 ${featureClasses}`}>{featureText}</span>
                                                 {badges.length > 0 && (
                                                     <div class="flex gap-1 flex-wrap">
                                                         {badges.map((badge) => (
@@ -359,6 +905,27 @@ if (isIconLeft || isIconLeftBig) {
                                 );
                             })}
                         </ul>
+                    )
+                }
+
+                {
+                    note && (
+                        typeof note === 'string' ? (
+                            <div class="mt-4 flex items-center gap-2 text-sm text-gray-300">
+                                <span class="material-icons text-blue-400 text-base">info</span>
+                                <span>{note}</span>
+                            </div>
+                        ) : (
+                            <div class="mt-6 p-4 bg-slate-700 rounded-lg border-l-4 border-blue-400">
+                                <h4 class="text-blue-300 font-semibold text-sm mb-2">{note.title}</h4>
+                                <blockquote class="text-gray-300 italic text-sm leading-relaxed mb-2">
+                                    "{note.content}"
+                                </blockquote>
+                                {note.signature && (
+                                    <p class="text-blue-300 text-xs font-medium">{note.signature}</p>
+                                )}
+                            </div>
+                        )
                     )
                 }
 

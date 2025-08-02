@@ -71,6 +71,10 @@ sections:
     
   services:
     title: "What we do"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
     description: "Comprehensive artificial intelligence solutions tailored to your business needs"
     cards:
       - title: "Customized AI Solutions"
@@ -98,6 +102,10 @@ sections:
 
   divisions:
     title: "Our Divisions"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
     description: >
       EvolverAI is more than a company — it's a multidisciplinary ecosystem of innovation. 
       Our divisions span across cutting-edge technology, healthcare, hospitality, education, 
@@ -114,7 +122,9 @@ sections:
           into smart, usable solutions.
         icon: 
           type: "computer"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/tech"
 
       - title: "EvolverAI Medical"
         description: >
@@ -124,7 +134,9 @@ sections:
           research, and care delivery.
         icon: 
           type: "health_and_safety"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/medical"
 
       - title: "EvolverAI Hospitality"
         description: >
@@ -134,7 +146,9 @@ sections:
           we help hospitality providers stay ahead of the curve.
         icon: 
           type: "room_service"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/hospitality"
 
       - title: "EvolverAI BPO"
         description: >
@@ -145,7 +159,9 @@ sections:
           focus on efficiency and quality.
         icon: 
           type: "business"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/b2b"
 
       - title: "EvolverAI Academy"
         description: >
@@ -156,7 +172,9 @@ sections:
         icon: 
           type: "school"
           color: "#F5F5F5"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/academy"
 
       - title: "PixelCraft by EvolverAI"
         description: >
@@ -166,10 +184,16 @@ sections:
           is professional.
         icon: 
           type: "palette"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Learn More"
+        linkUrl: "/pixelcraft"
 
   features:
     title: "EvolverAI: Redefining Excellence"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
     cards:
       - title: "Practical AI Applications"
         description: "Delivering practical AI applications that create immediate value."
@@ -197,8 +221,8 @@ sections:
     buttonColor: "bg-green-600 hover:bg-green-700"
     responsiveColumns:
       mobile: 1
-      tablet: 1
-      desktop: 1
+      tablet: 4
+      desktop: 4
     cards:
       - title: "IT Infrastructure Management"
         description: "Ensuring optimal performance and security of your IT infrastructure."
@@ -228,21 +252,25 @@ sections:
   products:
     title: "Our ready made solutions"
     description: "These are our software solutions designed to address your business challenges."
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
     cards:
       - title: "Workforce Manager"
         description: "An advanced tool for streamlining shift planning and workforce management."
         icon: 
           type: "clock"
           alignment: "top"
-          linkText: "Learn More"
-          linkUrl: "#product_wfm"
+        linkText: "Learn More"
+        linkUrl: "#product_wfm"
       - title: "Elysia"
         description: "Your AI-powered assistant for enhanced productivity."
         icon: 
           type: "assistant"
           alignment: "top"
-          linkText: "Learn More"
-          linkUrl: "#product_elysia"
+        linkText: "Learn More"
+        linkUrl: "#product_elysia"
 
 
   product_wfm:
@@ -276,6 +304,10 @@ sections:
   courses:
     title: "AI Courses & Training"
     description: "Enhance your skills with our comprehensive AI and data science courses."
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
     cards:
       - title: "AI Fundamentals"
         icon: 

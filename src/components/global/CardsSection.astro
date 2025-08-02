@@ -9,6 +9,7 @@ export interface CardData {
     badges?: Array<{ text: string; color: string; tooltip?: string }>;
     icon?: string;
     features?: string[];
+    note?: { title: string; content: string; signature?: string } | string;
     linkText?: string;
     linkUrl?: string;
     buttonText?: string;
@@ -22,8 +23,10 @@ export interface Props {
     sectionType?: string;
 
     // Content
-    title: string;
+    title?: string;
+    subtitle?: string;
     description?: string;
+    image?: string;
     cards: CardData[];
     buttonText?: string;
     buttonUrl?: string;
@@ -36,6 +39,7 @@ export interface Props {
         tablet?: string;
         desktop?: string;
     };
+    alignment?: string; // "left" (default), "center", "right"
 
     // Styling
     theme?: string;
@@ -55,13 +59,16 @@ const {
     sectionId,
     sectionType = sectionId,
     title,
+    subtitle,
     description,
+    image,
     cards,
     buttonText,
     buttonUrl,
     buttonColor = "bg-blue-600 hover:bg-blue-700",
     columns = "4",
     responsiveColumns,
+    alignment = "left", // Default to left alignment
     theme = "dark",
     backgroundColor = "bg-custom-slate",
     cardTheme,
@@ -75,12 +82,17 @@ const {
 
 // Try to get localized content if available
 let localizedTitle = title;
+let localizedSubtitle = subtitle;
 let localizedDescription = description;
+let localizedImage = image;
 let localizedCards = cards;
 let localizedButtonText = buttonText;
 let localizedButtonUrl = buttonUrl;
 let localizedButtonColor = buttonColor;
 let localizedResponsiveColumns = responsiveColumns; // Add this line
+let localizedBackground = backgroundColor; // Add background support
+let localizedAlignment = alignment; // Add alignment support
+let defaults: any = {}; // Add defaults storage with any type for flexibility
 
 try {
     // Use languageFile if provided, otherwise fall back to language
@@ -88,16 +100,25 @@ try {
     const langData = await getEntry("languages", langFileName);
     const localizedSections = langData?.data?.sections || {};
 
+    // Extract defaults from language file
+    defaults = langData?.data?.defaults || {};
+
     if (localizedSections[sectionType]) {
         const sectionData = localizedSections[sectionType];
         localizedTitle = sectionData.title || title;
+        localizedSubtitle = sectionData.subtitle || subtitle;
         localizedDescription = sectionData.description || description;
+        localizedImage = sectionData.image || image;
         localizedCards = sectionData.cards || cards;
         localizedButtonText = sectionData.buttonText || buttonText;
         localizedButtonUrl = sectionData.buttonUrl || buttonUrl;
         localizedButtonColor = sectionData.buttonColor || buttonColor;
+        localizedBackground = sectionData.background || backgroundColor; // Add background support
+        localizedAlignment = sectionData.alignment || alignment; // Add alignment support
         localizedResponsiveColumns =
-            sectionData.responsiveColumns || responsiveColumns; // Add this line
+            sectionData.responsiveColumns ||
+            defaults?.cards?.responsiveColumns ||
+            responsiveColumns; // Use defaults as fallback
     }
 } catch (error) {
     console.warn("Localization not available for section:", sectionType, error);
@@ -112,14 +133,12 @@ localizedDescription = localizedDescription
           .trim()
     : "";
 
-// Normalize card descriptions as well
+// Preserve card descriptions as-is for multi-paragraph support
+// Don't normalize individual line breaks as these are needed for paragraph separation
 localizedCards = localizedCards.map((card) => ({
     ...card,
     description: card.description
-        ? String(card.description)
-              .replace(/\r\n|\r|\n/g, " ") // Replace all newline variations
-              .replace(/\s+/g, " ") // Replace multiple spaces with single space
-              .trim()
+        ? String(card.description).trim() // Only trim whitespace from start/end
         : "",
 }));
 
@@ -132,7 +151,25 @@ const defaultResponsive = {
 
 const responsive = { ...defaultResponsive, ...localizedResponsiveColumns };
 
-const gridClasses = `grid grid-cols-${responsive.mobile} md:grid-cols-${responsive.tablet} xl:grid-cols-${responsive.desktop} gap-6`;
+// Ensure all values are strings for class generation
+const responsiveStrings = {
+    mobile: String(responsive.mobile || "1"),
+    tablet: String(responsive.tablet || "2"),
+    desktop: String(responsive.desktop || "3"),
+};
+
+// Debug: Log the responsive configuration (remove in production)
+if (sectionType === "b2b") {
+    console.log("CardsSection Debug:", {
+        sectionType,
+        columns,
+        localizedResponsiveColumns,
+        responsive,
+        responsiveStrings,
+    });
+}
+
+const gridClasses = `grid grid-cols-${responsiveStrings.mobile} md:grid-cols-${responsiveStrings.tablet} xl:grid-cols-${responsiveStrings.desktop} gap-6`;
 
 // Final card theme (inherit from section if not specified)
 const finalCardTheme = cardTheme || theme;
@@ -141,59 +178,100 @@ const finalCardTheme = cardTheme || theme;
 const titleClasses = theme === "dark" ? "text-white" : "text-gray-800";
 
 const descriptionClasses = theme === "dark" ? "text-gray-300" : "text-gray-600";
+
+// Alignment classes for text content
+const alignmentClasses = {
+    left: "text-left items-start",
+    center: "text-center items-center",
+    right: "text-right items-end",
+};
+const contentAlignment =
+    alignmentClasses[localizedAlignment] || alignmentClasses.left;
 ---
 
 <section
     id={sectionId}
-    class={`relative ${backgroundColor} py-12 ${customClasses}`}
+    class={`relative ${backgroundColor} py-2 ${customClasses}`}
     data-section={sectionType}
     data-theme={theme}
 >
-    <div
-        class="container mx-auto px-4 flex flex-col justify-start items-start h-full relative z-10 mb-8"
-    >
-        <h1 class={`h1-noto-sans mb-4 ${titleClasses}`}>{localizedTitle}</h1>
-        {
-            localizedDescription && (
-                <p
-                    class={`${descriptionClasses} text-lg max-w-full mb-6 leading-relaxed`}
-                >
-                    {localizedDescription}
-                </p>
-            )
-        }
-        {
-            localizedButtonText && localizedButtonUrl && (
-                <a
-                    href={localizedButtonUrl}
-                    class={`inline-block ${localizedButtonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
-                >
-                    {localizedButtonText}
-                </a>
-            )
-        }
-    </div>
     <div class="container mx-auto px-4">
-        <div class={gridClasses}>
-            {
-                localizedCards.map((card) => (
-                    <Card
-                        title={card.title}
-                        description={card.description}
-                        badges={card.badges}
-                        icon={card.icon}
-                        features={card.features}
-                        linkText={card.linkText}
-                        linkUrl={card.linkUrl}
-                        buttonText={card.buttonText}
-                        buttonUrl={card.buttonUrl}
-                        buttonColor={card.buttonColor}
-                        theme={finalCardTheme}
-                        iconColor={iconColor}
-                        centerContent={centerCards}
-                    />
-                ))
-            }
+        <div class={`${localizedBackground} p-4 rounded-lg`}>
+            <div
+                class={`flex flex-col justify-start ${contentAlignment} h-full relative z-10 mb-4`}
+            >
+                {
+                    localizedTitle && (
+                        <h1 class={`h1-noto-sans mb-2 ${titleClasses}`}>
+                            {localizedTitle}
+                        </h1>
+                    )
+                }
+                {
+                    localizedImage && (
+                        <div class="mb-3 flex justify-center">
+                            <img
+                                src={localizedImage}
+                                alt={localizedTitle || "Section image"}
+                                class="max-w-xs h-auto object-contain"
+                            />
+                        </div>
+                    )
+                }
+                {
+                    localizedSubtitle && (
+                        <h2
+                            class={`text-2xl font-semibold mb-2 ${titleClasses}`}
+                        >
+                            {localizedSubtitle}
+                        </h2>
+                    )
+                }
+                {
+                    localizedDescription && (
+                        <p
+                            class={`${descriptionClasses} text-lg max-w-full mb-3 leading-relaxed`}
+                        >
+                            {localizedDescription}
+                        </p>
+                    )
+                }
+                {
+                    localizedButtonText && localizedButtonUrl && (
+                        <a
+                            href={localizedButtonUrl}
+                            class={`inline-block ${localizedButtonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                        >
+                            {localizedButtonText}
+                        </a>
+                    )
+                }
+            </div>
+            <div class={gridClasses}>
+                {
+                    localizedCards.map((card) => (
+                        <Card
+                            title={card.title}
+                            description={card.description}
+                            badges={card.badges}
+                            icon={card.icon}
+                            features={card.features}
+                            note={card.note}
+                            linkText={card.linkText}
+                            linkUrl={card.linkUrl}
+                            buttonText={card.buttonText}
+                            buttonUrl={card.buttonUrl}
+                            buttonColor={card.buttonColor}
+                            theme={finalCardTheme}
+                            iconColor={iconColor}
+                            centerContent={centerCards}
+                            defaults={defaults?.cards}
+                            language={language}
+                            languageFile={languageFile}
+                        />
+                    ))
+                }
+            </div>
         </div>
     </div>
 
@@ -210,6 +288,8 @@ const descriptionClasses = theme === "dark" ? "text-gray-300" : "text-gray-600";
                             sectionId,
                             sectionType,
                             title: localizedTitle,
+                            subtitle: localizedSubtitle,
+                            alignment: localizedAlignment,
                             cardsCount: localizedCards.length,
                             theme,
                             cardTheme: finalCardTheme,

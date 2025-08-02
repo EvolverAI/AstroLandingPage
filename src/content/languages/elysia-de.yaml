@@ -4,82 +4,239 @@ flag: "🇩🇪"
 
 # Page configuration for Elysia - defines sections order and types
 page_sections:
-  - type: "hero"
-    section_id: "hero"
-    order: 1
-    min_height: "100vh"
   - type: "content_header"
     section_id: "about"
-    order: 2
+    order: 1
     background_image: "/img/evolverai-web-elysia-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
   - type: "cards"
     section_id: "features"
     order: 3
   - type: "cards"
-    section_id: "capabilities"
+    section_id: "use_cases"
     order: 4
   - type: "cards"
-    section_id: "use_cases"
+    section_id: "benefits"
     order: 5
   - type: "cards"
-    section_id: "benefits"
-    order: 6
-  - type: "content_header"
+    section_id: "roi"
+    order: 5.1
+  - type: "cards"
     section_id: "demo"
-    order: 7
+    order: 6
     background_image: "/img/evolverai-web-company-bg.jpg"
   - type: "content_header"
     section_id: "contact"
     order: 99
     background_image: "/img/evolverai-web-contact-bg.jpg"
 
-sections:
-  hero:
-    title: "Lernen Sie Elysia kennen"
-    subtitle: "Ihr KI-gestützter Assistent für erhöhte Produktivität"
-    description: "Elysia ist mehr als nur ein Bot—sie ist der neue beste Freund Ihrer Organisation. Angetrieben von modernster KI rationalisiert Elysia Abläufe und steigert die Effizienz."
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      #background: "bg-gradient-to-r from-yellow-100 via-yellow-50 to-gray-100"
+      #background: "bg-gradient-to-r from-blue-900 to-slate-800"
+      background: "bg-slate-800"
+      #text: "text-gray-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-lg"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-lg"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-sm"
+      weight: "font-normal"
+      color: "text-gray-600"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
 
+sections:
   about:
-    companyName: "Elysia"
-    companyNameHighlight: "KI-Assistent"
+    title: "Elysia"
     description: >
-      Elysia wurde entwickelt, um die Arbeitsweise Ihrer Organisation zu transformieren. Durch die 
-      Automatisierung repetitiver Aufgaben und die Reduzierung von Arbeitslasten gibt Elysia Ihrem 
-      Team mehr Zeit, sich auf das zu konzentrieren, was wirklich wichtig ist. Ob es um die Verwaltung 
-      von Arbeitsabläufen, die Bearbeitung routinemäßiger Anfragen oder die Optimierung von Prozessen 
-      geht, Elysia arbeitet unermüdlich im Hintergrund, um Effizienz und Produktivität zu steigern.
+      Ihr intelligenter KI-Assistent für optimierte Abläufe
+
+  overview:
+    title: "Elysia Überblick"
+    description: >
+      Elysia ist ein fortschrittlicher KI-gestützter Assistent, der darauf ausgelegt ist, die 
+      Abläufe Ihrer Organisation zu optimieren und sich wiederholende Aufgaben zu automatisieren. 
+      Basierend auf modernster KI-Technologie bietet sie eine umfassende Lösung zur Verbesserung 
+      von Effizienz und Produktivität in all Ihren Geschäftsprozessen.
+    cards:
+      - title: "Das Problem"
+        description: "Viele Organisationen kämpfen mit:"
+        icon: 
+          type: "warning"
+          alignment: "left"
+          color: "text-yellow-100"
+        features:
+          - text: "Zeitaufwändige manuelle und sich wiederholende Aufgaben"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Ineffiziente Arbeitsabläufe und Prozessengpässe"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Uneinheitliche Bearbeitung von Routineanfragen"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Ressourcenzuteilung für Aktivitäten mit geringem Wert"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Schwierigkeiten bei der Skalierung ohne zusätzliches Personal"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+      - title: "Unsere Lösung"
+        description: "Elysia löst diese Herausforderungen durch:"
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Intelligente Automatisierung von Routineaufgaben und Arbeitsabläufen"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "24/7 Verfügbarkeit für die Bearbeitung von Anfragen"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Natürliche Sprachverarbeitung für intuitive Interaktionen"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Nahtlose Integration mit bestehenden Geschäftstools"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Adaptives Lernen, das sich mit der Zeit verbessert"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "KI-Technologie der nächsten Generation"
+        description: >
+          Im Herzen von Elysia befindet sich unsere hochentwickelte Künstliche Intelligenz, die lernt 
+          und sich an die einzigartigen Anforderungen Ihrer Organisation anpasst. Das System verbessert 
+          kontinuierlich seine Fähigkeiten durch die Analyse von Mustern in Ihren Arbeitsabläufen und 
+          der Kommunikation, wodurch es mit der Zeit effizienter und effektiver wird.
+
+          Elysia befolgt nicht nur Anweisungen – sie versteht Kontext, antizipiert Bedürfnisse 
+          und bietet intelligente Empfehlungen, die Ihrem Team dabei helfen, smarter zu arbeiten. 
+          Durch die Bearbeitung von Routineaufgaben und Anfragen befreit sie Ihre wertvollen 
+          menschlichen Ressourcen, damit diese sich auf kreative, strategische Aktivitäten 
+          konzentrieren können, die das Geschäftswachstum vorantreiben.
+        icon: 
+          type: "insights"
+          alignment: "left-big"
 
   features:
-    title: "Kernfunktionen"
-    description: "Entdecken Sie, was Elysia zu Ihrem perfekten KI-Begleiter macht"
+    title: "Hauptfunktionen"
+    description: >
+      Elysia ist mit einer breiten Palette von Funktionen ausgestattet, die darauf ausgelegt sind, 
+      Produktivität zu steigern und Arbeitsabläufe zu optimieren. Von intelligenter Automatisierung 
+      bis hin zu fortgeschrittener Analytik ist Elysia darauf vorbereitet, die vielfältigen 
+      Bedürfnisse moderner Organisationen zu erfüllen.
+
+      Alle Funktionen sind mit Flexibilität und Skalierbarkeit im Blick entwickelt, um sicherzustellen, 
+      dass Elysia mit Ihrem Unternehmen mitwächst.
     cards:
-      - title: "Natürliche Sprachverarbeitung"
-        description: "Fortgeschrittene NLP-Fähigkeiten für menschenähnliche Gespräche und Verständnis."
+      - title: "Intelligente Automatisierung"
+        description: >
+          Elysia automatisiert Routineaufgaben und Arbeitsabläufe mit Intelligenz, die sich an Ihre 
+          spezifischen Geschäftsanforderungen anpasst. Von Dateneingabe und Dokumentenverarbeitung 
+          bis hin zu E-Mail-Management und Kundeninteraktionen übernimmt Elysia sich wiederholende 
+          Arbeit, damit Ihr Team das nicht muss.
         icon: 
-          type: "psychology"
-          alignment: "top"
-      - title: "Konversationelle KI"
-        description: "Ausgeklügelte Dialogverwaltung für ansprechende Kundeninteraktionen."
+          type: "refresh"
+          alignment: "left"
+      - title: "Natürliche Sprachschnittstelle"
+        description: >
+          Kommunizieren Sie mit Elysia genau so, wie Sie es mit einem menschlichen Kollegen tun würden. 
+          Unsere fortgeschrittene natürliche Sprachverarbeitung ermöglicht es Elysia, Kontext, 
+          Absicht und Nuancen in Ihren Anfragen zu verstehen, was Interaktionen nahtlos und intuitiv 
+          für alle Benutzer macht, unabhängig von technischer Expertise.
         icon: 
           type: "chat"
-          alignment: "top"
-      - title: "Systemintegration"
-        description: "Nahtlose Integration in Ihre bestehenden Geschäftssysteme und Arbeitsabläufe."
+          alignment: "left"
+      - title: "Nahtlose Integration"
+        description: >
+          Elysia integriert sich reibungslos in Ihren bestehenden Technologie-Stack, einschließlich 
+          CRM-Systemen, Kommunikationsplattformen, Produktivitätstools und benutzerdefinierten 
+          Anwendungen. Dies gewährleistet einen einheitlichen Arbeitsablauf ohne Störung Ihrer 
+          aktuellen Prozesse oder umfangreiche Umschulungen.
         icon: 
           type: "integration_instructions"
-          alignment: "top"
-      - title: "24/7 Verfügbarkeit"
-        description: "Immer bereit zu helfen, bietet rund um die Uhr Support für Ihr Team."
+          alignment: "left"
+      - title: "Adaptives Lernen"
+        description: >
+          Im Gegensatz zu statischen Automatisierungstools lernt Elysia kontinuierlich aus 
+          Interaktionen und Feedback und wird mit der Zeit effizienter und persönlicher. 
+          Das System identifiziert Muster in Ihren Abläufen und passt seine Antworten an, 
+          um den sich entwickelnden Bedürfnissen Ihrer Organisation besser zu dienen.
         icon: 
           type: "schedule"
-          alignment: "top"
+          alignment: "left"
+      - title: "Unternehmenssicherheit"
+        description: >
+          Sicherheit ist in Elysias Kern eingebaut. Mit Ende-zu-Ende-Verschlüsselung, 
+          rollenbasierter Zugriffskontrolle und Konformität mit wichtigen Industriestandards 
+          bleiben Ihre sensiblen Daten und Kommunikationen geschützt, während der KI-Assistent 
+          seine Funktionen effektiv ausführen kann.
+        icon: 
+          type: "security"
+          alignment: "left"
+      - title: "Erweiterte Analytik"
+        description: >
+          Gewinnen Sie wertvolle Einblicke in Ihre Abläufe mit Elysias umfassendem Analytik-Dashboard. 
+          Verfolgen Sie Produktivitätsverbesserungen, identifizieren Sie Engpässe, messen Sie 
+          Zeitersparnis und visualisieren Sie die Auswirkungen der Automatisierung in Ihrer 
+          Organisation, um datengesteuerte Entscheidungen zu treffen.
+        icon: 
+          type: "analytics"
+          alignment: "left"
 
   capabilities:
     title: "Was Elysia kann"
     description: "Umfassende KI-Fähigkeiten, maßgeschneidert für Ihre Geschäftsanforderungen"
     cards:
       - title: "Aufgabenautomatisierung"
-        description: "Automatisierung repetitiver Aufgaben und Arbeitsabläufe zur Effizienzsteigerung."
+        description: "Automatisierung sich wiederholender Aufgaben und Arbeitsabläufe zur Effizienzsteigerung."
         icon: 
           type: "autorenew"
           alignment: "top"
@@ -103,26 +260,60 @@ sections:
     title: "Anwendungsfälle"
     description: "Reale Anwendungen, in denen Elysia exzelliert"
     cards:
-      - title: "Kundenservice"
-        description: "Verbessern Sie den Kundensupport mit intelligenten, kontextbewussten Antworten."
+      - title: "Verbesserung des Kundenservice"
+        description: >
+          Elysia kann als erste Anlaufstelle für Kundenanfragen dienen, häufige Fragen beantworten, 
+          grundlegende Probleme beheben und Informationen sammeln, bevor sie bei Bedarf an 
+          menschliche Mitarbeiter weiterleitet. Dies reduziert Wartezeiten, bietet 24/7-Support 
+          und ermöglicht es Ihrem Kundenservice-Team, sich auf komplexe Fälle zu konzentrieren, 
+          die wirklich menschliche Aufmerksamkeit erfordern. Ergebnisse:
         icon: 
           type: "headset_mic"
-          alignment: "top"
-      - title: "HR-Operationen"
-        description: "Rationalisieren Sie HR-Prozesse von der Rekrutierung bis zum Mitarbeitermanagement."
+          alignment: "left-big"
+        features:
+          - "Antwortzeit um bis zu 80% reduziert"
+          - "Kundenzufriedenheit um 35% gesteigert"
+          - "65% der Anfragen ohne menschliches Eingreifen bearbeitet"
+      - title: "Dokumentenverarbeitung & Datenextraktion"
+        description: >
+          Elysia kann automatisch Rechnungen, Belege, Formulare und andere Dokumente verarbeiten, 
+          relevante Informationen extrahieren und in Ihre Systeme eingeben. Dies eliminiert 
+          manuelle Dateneingabe, reduziert Fehler und beschleunigt dokumentlastige Arbeitsabläufe 
+          in Abteilungen wie Buchhaltung, HR und Betrieb.
         icon: 
-          type: "people"
-          alignment: "top"
-      - title: "Vertriebsunterstützung"
-        description: "Qualifiziert Leads, plant Meetings und liefert Vertriebserkenntnisse."
+          type: "document_scanner"
+          alignment: "left-big"
+        features:
+          - "90% Reduzierung der manuellen Dateneingabezeit"
+          - "99,5% Genauigkeit bei der Datenextraktion"
+          - "Verarbeitungszeit von Tagen auf Minuten reduziert"
+      - title: "Meeting- & Kalendermanagement"
+        description: >
+          Elysia kann Zeitpläne koordinieren, Meetings einrichten, Einladungen versenden und 
+          Terminverschiebungen bearbeiten. Sie versteht Terminvorlieben, priorisiert wichtige 
+          Meetings und verwaltet Follow-ups, wodurch Ihr Team vom endlosen Hin und Her der 
+          Kalenderkoordination befreit wird.
         icon: 
-          type: "trending_up"
-          alignment: "top"
-      - title: "Content Management"
-        description: "Organisiert, kategorisiert und verwaltet Ihre Inhalte effizient."
+          type: "access_time"
+          alignment: "left-big"
+        features:
+          - "Durchschnittlich 5 Stunden pro Woche pro Mitarbeiter gespart"
+          - "Terminüberschneidungen um 85% reduziert"
+          - "Meeting-Teilnahmequoten um 40% verbessert"
+      - title: "Abteilungsübergreifende Workflow-Orchestrierung"
+        description: >
+          Elysia exzelliert bei der Verwaltung komplexer Arbeitsabläufe, die sich über mehrere 
+          Abteilungen erstrecken, und stellt sicher, dass Aufgaben reibungslos von einem Team 
+          zum anderen übergehen. Sie verfolgt Fortschritte, sendet Erinnerungen, eskaliert 
+          Engpässe und bietet Einblick in den Prozessstatus, wodurch die Zusammenarbeit verbessert 
+          und Verzögerungen reduziert werden.
         icon: 
-          type: "folder_managed"
-          alignment: "top"
+          type: "hub"
+          alignment: "left-big"
+        features:
+          - "Prozessabschlusszeit um 50% reduziert"
+          - "Abteilungsübergreifende Kommunikationsprobleme um 75% verringert"
+          - "Prozesskonformität und Dokumentation um 90% verbessert"
 
   benefits:
     title: "Warum Elysia wählen"
@@ -132,30 +323,78 @@ sections:
         description: "Steigern Sie die Teameffizienz um bis zu 40% durch intelligente Automatisierung."
         icon: 
           type: "speed"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Kostensenkung"
         description: "Reduzieren Sie Betriebskosten bei gleichbleibend hoher Servicequalität."
         icon: 
           type: "savings"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Skalierbare Lösung"
         description: "Wächst mit Ihren Geschäftsanforderungen und passt sich ändernden Anforderungen an."
         icon: 
           type: "trending_up"
-          alignment: "top"
+          alignment: "top-big"
       - title: "Einfache Integration"
         description: "Schnelle Einrichtung und nahtlose Integration in bestehende Systeme."
         icon: 
           type: "link"
+          alignment: "top-big"
+
+  roi:
+    subtitle: "Return on Investment"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Organisationen, die Elysia implementieren, sehen typischerweise einen Return on Investment 
+      innerhalb von 3-6 Monaten, mit:
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "30-40%"
+        description: "Reduzierung der Betriebskosten"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "25-35%"
+        description: "Steigerung der Produktivität"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "60-70%"
+        description: "Gesparte Zeit bei Routineaufgaben"
+        icon:
+          type: "percent"
           alignment: "top"
 
   demo:
-    companyName: "Bereit, Elysia zu"
-    companyNameHighlight: "erleben?"
+    subtitle: "Bereit, Ihre Abläufe zu transformieren?"
     description: >
-      Sehen Sie Elysia in Aktion und entdecken Sie, wie sie Ihre Geschäftsabläufe transformieren kann. 
-      Planen Sie eine personalisierte Demo, um Elysias Fähigkeiten zu erkunden, die auf Ihre spezifischen 
-      Bedürfnisse zugeschnitten sind.
+      Entdecken Sie, wie Elysia Ihrer Organisation dabei helfen kann, Aufgaben zu automatisieren, 
+      Arbeitsabläufe zu optimieren und die Produktivität zu steigern.
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "Demo planen"
+        description: >
+          Sehen Sie Elysia in Aktion mit einer personalisierten Demonstration, die auf Ihre 
+          Geschäftsanforderungen zugeschnitten ist. Unsere Experten zeigen Ihnen, wie Elysia 
+          Ihre spezifischen Herausforderungen angehen kann.
+        icon:
+          type: "calendar_today"
+          alignment: "left-big"
+        buttonText: "Demo anfordern"
+        buttonUrl: "/schedule-demo"
+      - title: "Mit einem Experten sprechen"
+        description: >
+          Haben Sie Fragen zur Implementierung von Elysia in Ihrer Organisation? Unser Team 
+          ist bereit, Ihre Anforderungen zu besprechen und maßgeschneiderte Empfehlungen zu geben.
+        icon:
+          type: "support_agent"
+          alignment: "left-big"
+        buttonText: "Kontakt aufnehmen"
+        buttonUrl: "/contact-us"
 
   contact:
     title: "Starten Sie mit Elysia"

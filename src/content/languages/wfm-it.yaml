@@ -1,0 +1,352 @@
+code: "it"
+name: "Italiano"
+flag: "🇮🇹"
+
+# Page configuration for Workforce Manager - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-wfm-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "use_cases"
+    order: 4
+  - type: "cards"
+    section_id: "benefits"
+    order: 5
+  - type: "cards"
+    section_id: "roi"
+    order: 5.1
+  - type: "cards"
+    section_id: "demo"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-lg"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-lg"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-sm"
+      weight: "font-normal"
+      color: "text-gray-600"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+
+sections:
+  about:
+    title: "Workforce Manager"
+    description: >
+      Soluzione Avanzata di Pianificazione e Programmazione della Forza Lavoro Basata sull'IA
+
+  overview:
+    title: "Panoramica del Prodotto"
+    description: >
+      Workforce Manager è una soluzione software avanzata progettata per 
+      ottimizzare e semplificare tutti gli aspetti della gestione della forza lavoro. 
+      Costruito con la più recente tecnologia AI, fornisce una piattaforma completa 
+      per pianificare, programmare e gestire efficacemente la vostra forza lavoro.
+    cards:
+      - title: "Il Problema"
+        description: "I metodi tradizionali di gestione della forza lavoro spesso risultano in:"
+        icon: 
+          type: "warning"
+          alignment: "left"
+          color: "text-yellow-100"
+        features:
+          - text: "Processi di programmazione manuali inefficienti"
+            bullet: "error"
+            bulletType: "icon"  
+            bulletColor: "text-red-400"
+          - text: "Difficoltà nella gestione di cambi turno e richieste di ferie"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Mancanza di comunicazione chiara tra management e staff"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Utilizzo subottimale della forza lavoro e produttività"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Visibilità limitata su metriche di performance e KPI"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+      - title: "La Nostra Soluzione"
+        description: "Workforce Manager affronta queste sfide fornendo:"
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Algoritmi di programmazione intelligenti e basati sull'IA"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Gestione automatizzata dei turni e delle richieste"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Chatbot integrato per comunicazione senza interruzioni"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Dashboard analitico completo per il monitoraggio delle performance"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Workflow personalizzabili per adattarsi ai vostri processi aziendali"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Alimentato da IA Avanzata"
+        description: >
+          Al centro di Workforce Manager c'è il nostro motore di intelligenza artificiale 
+          proprietario, progettato per apprendere dai modelli e requisiti unici della vostra 
+          organizzazione. Il sistema migliora continuamente le sue raccomandazioni e previsioni 
+          basandosi sui dati storici, ottimizzando i programmi per la massima efficienza 
+          rispettando le preferenze individuali e i vincoli.
+
+          La nostra IA non si limita a reagire alle vostre esigenze – le anticipa, fornendo 
+          suggerimenti proattivi per migliorare l'allocazione della forza lavoro, identificare 
+          potenziali conflitti di programmazione prima che si verifichino e assicurare che le 
+          persone giuste siano assegnate ai compiti giusti al momento giusto.
+        icon: 
+          type: "psychology"
+          alignment: "left-big"
+
+  features:
+    title: "Caratteristiche Principali"
+    description: >
+      Elysia è dotato di una vasta gamma di funzionalità progettate per migliorare la produttività 
+      e semplificare i flussi di lavoro. Dall'automazione intelligente all'analisi avanzata, 
+      Elysia è attrezzato per gestire le diverse esigenze delle organizzazioni moderne.
+
+      Tutte le funzionalità sono progettate con flessibilità e scalabilità in mente, 
+      assicurando che Elysia cresca con la vostra azienda.
+    cards:
+      - title: "Programmazione Intelligente"
+        description: >
+          Il nostro motore di programmazione basato sull'IA genera automaticamente programmi 
+          di lavoro ottimali basati su:
+        icon: 
+          type: "refresh"
+          alignment: "left"
+        features:
+          - text: "Competenze, certificazioni e preferenze dei dipendenti"
+          - text: "Previsioni della domanda aziendale e orari di punta"
+          - text: "Requisiti legali e regole di conformità"
+          - text: "Regole aziendali personalizzate e vincoli"
+        note: >
+          Il sistema impara da ogni ciclo di programmazione, migliorando continuamente 
+          le sue raccomandazioni nel tempo.
+
+      - title: "Chatbot Basato sull'IA"
+        description: >
+          Il nostro chatbot integrato ottimizza la comunicazione e automatizza i compiti di routine:
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "I dipendenti possono richiedere ferie, scambiare turni o controllare i programmi"
+          - text: "I manager ricevono notifiche su problemi urgenti del personale"
+          - text: "Risposte automatizzate a domande e richieste comuni"
+          - text: "Elaborazione del linguaggio naturale per interazioni facili e intuitive"
+        note: >
+          Il chatbot si integra con piattaforme di messaggistica popolari, rendendolo accessibile da ovunque.
+
+  use_cases:
+    subtitle: "Casi d'Uso per Settore"
+    cards:
+      - title: "Contact Center"
+        description: >
+          Per contact center e operazioni di servizio clienti, Workforce Manager fornisce:
+        icon: 
+          type: "headset_mic"
+          alignment: "left"
+        features:
+          - text: "Programmazione ottimale degli agenti basata su previsioni del volume di chiamate"
+            bullet: "check"
+          - text: "Routing basato sulle competenze per abbinare le esigenze dei clienti con l'expertise degli agenti"
+            bullet: "check"
+          - text: "Monitoraggio dell'aderenza in tempo reale e tracciamento SLA"
+            bullet: "check"
+          - text: "Gestione automatizzata di richieste di ferie e scambi di turno"
+            bullet: "check"
+        note:
+          title: "Storia di Successo"
+          content: >
+            "L'implementazione di Workforce Manager ha ridotto i nostri costi del personale del 18% 
+            migliorando al contempo i nostri punteggi di soddisfazione clienti del 22%. Le previsioni 
+            basate sull'IA sono incredibilmente accurate, permettendoci di programmare appropriatamente 
+            per i periodi di punta senza sovradimensionare durante i momenti di calma."
+          signature: "— Direttore Operativo, Centro Supporto Clienti Globale"
+      - title: "Sanità"
+        description: >
+          Per ospedali e strutture sanitarie, Workforce Manager offre:
+        icon: 
+          type: "local_hospital"
+          alignment: "left-big"
+        features:
+          - text: "Rapporti equilibrati infermiere-paziente in tutti i reparti"
+            bullet: "check"
+          - text: "Pianificazione dei turni che considera certificazioni e competenze specializzate"
+            bullet: "check"
+          - text: "Conformità con i limiti legali di orario di lavoro e periodi di riposo"
+            bullet: "check"
+          - text: "Programmazione del team di emergenza con gestione della reperibilità"
+            bullet: "check"
+        note:
+          title: "Storia di Successo"
+          content: >
+            "Il chatbot basato sull'IA ha trasformato il modo in cui il nostro staff comunica 
+            riguardo alla programmazione. Gli infermieri possono facilmente richiedere ferie 
+            o scambiare turni dai loro telefoni, e i manager hanno più tempo per concentrarsi 
+            sulla cura dei pazienti invece che sui compiti amministrativi."
+          signature: "— Capo Infermiere, Centro Medico Regionale"
+
+  benefits:
+    title: "Perché Scegliere Elysia"
+    description: "I vantaggi dell'implementazione di Elysia nella vostra organizzazione"
+    cards:
+      - title: "Aumento della Produttività"
+        description: "Migliorate l'efficienza del team fino al 40% attraverso l'automazione intelligente."
+        icon: 
+          type: "speed"
+          alignment: "top-big"
+      - title: "Riduzione dei Costi"
+        description: "Riducete i costi operativi mantenendo un'alta qualità del servizio."
+        icon: 
+          type: "savings"
+          alignment: "top-big"
+      - title: "Soluzione Scalabile"
+        description: "Cresce con le vostre esigenze aziendali e si adatta ai requisiti in evoluzione."
+        icon: 
+          type: "trending_up"
+          alignment: "top-big"
+      - title: "Integrazione Facile"
+        description: "Configurazione rapida e integrazione senza interruzioni con i sistemi esistenti."
+        icon: 
+          type: "link"
+          alignment: "top-big"
+
+  roi:
+    subtitle: "Ritorno sull'Investimento"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Le organizzazioni che implementano Elysia tipicamente vedono un ritorno sull'investimento 
+      entro 3-6 mesi, con:
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "30-40%"
+        description: "Riduzione dei costi operativi"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "25-35%"
+        description: "Aumento della produttività"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "60-70%"
+        description: "Tempo risparmiato sui compiti di routine"
+        icon:
+          type: "percent"
+          alignment: "top"
+
+  demo:
+    subtitle: "Pronti a Trasformare le Vostre Operazioni?"
+    description: >
+      Scoprite come Elysia può aiutare la vostra organizzazione ad automatizzare i compiti, 
+      ottimizzare i flussi di lavoro e aumentare la produttività.
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "Programma una Demo"
+        description: >
+          Vedete Elysia in azione con una dimostrazione personalizzata adattata alle vostre 
+          esigenze aziendali. I nostri esperti vi mostreranno come Elysia può affrontare 
+          le vostre sfide specifiche.
+        icon:
+          type: "calendar_today"
+          alignment: "left-big"
+        buttonText: "Richiedi Demo"
+        buttonUrl: "/schedule-demo"
+      - title: "Parla con un Esperto"
+        description: >
+          Avete domande sull'implementazione di Elysia nella vostra organizzazione? Il nostro 
+          team è pronto a discutere i vostri requisiti e fornire raccomandazioni personalizzate.
+        icon:
+          type: "support_agent"
+          alignment: "left-big"
+        buttonText: "Contattaci"
+        buttonUrl: "/contact-us"
+
+  contact:
+    title: "Inizia con Elysia"
+    description: "Pronti a trasformare la vostra azienda con Elysia? Discutiamo dei vostri requisiti specifici."
+
+  footer:
+    title: "Trasforma la tua organizzazione con Elysia"
+    description: "Sblocca il potenziale dell'IA e dai al tuo team gli strumenti di cui ha bisogno per avere successo."
+    buttonText: "Programma una Demo"
+    copyright: "Tutti i diritti riservati"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Telefono"
+      address:
+        label: "Indirizzo"

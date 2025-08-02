@@ -15,6 +15,7 @@ const languagesCollection = defineCollection({
             min_height: z.string().optional(),
             image: z.string().optional(),
         })).optional(), // Page layout configuration
+        defaults: z.any().optional(), // Allow any structure for defaults
         sections: z.record(z.string(), z.any()) // Allow any structure for maximum flexibility
     }).passthrough() // Allow additional properties to pass through without validation
 });

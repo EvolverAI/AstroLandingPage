@@ -17,27 +17,27 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const language = lang || "en";
 
-// Load page configuration from Elysia-specific language file
+// Load page configuration from WFM-specific language file
 let pageSections: any[] = [];
 try {
-    const langData = await getEntry("languages", `elysia-${language}`);
+    const langData = await getEntry("languages", `wfm-${language}`);
     pageSections = langData?.data?.page_sections || [];
     // Sort sections by order
     pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 } catch (error) {
     console.warn(
-        "Could not load Elysia page sections for language:",
+        "Could not load WFM page sections for language:",
         language,
         error,
     );
     // Fallback to English if the requested language doesn't exist
     try {
-        const fallbackData = await getEntry("languages", "elysia-en");
+        const fallbackData = await getEntry("languages", "wfm-en");
         pageSections = fallbackData?.data?.page_sections || [];
         pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
     } catch (fallbackError) {
         console.error(
-            "Could not load fallback Elysia page sections:",
+            "Could not load fallback WFM page sections:",
             fallbackError,
         );
     }
@@ -45,15 +45,15 @@ try {
 
 // Dynamic titles and descriptions based on language
 const titles = {
-    en: "Elysia - Your AI-Powered Assistant | EvolverAI",
-    de: "Elysia - Ihr KI-gestützter Assistent | EvolverAI",
-    it: "Elysia - Il tuo Assistente AI | EvolverAI",
+    en: "Workforce Manager - AI-Powered Workforce Planning | EvolverAI",
+    de: "Workforce Manager - KI-gestützte Personalplanung | EvolverAI",
+    it: "Workforce Manager - Pianificazione della Forza Lavoro AI | EvolverAI",
 };
 
 const descriptions = {
-    en: "Meet Elysia, your intelligent AI assistant designed to enhance productivity and streamline business operations. Powered by cutting-edge AI technology.",
-    de: "Lernen Sie Elysia kennen, Ihren intelligenten KI-Assistenten, der entwickelt wurde, um die Produktivität zu steigern und Geschäftsabläufe zu optimieren.",
-    it: "Incontra Elysia, il tuo assistente AI intelligente progettato per migliorare la produttività e ottimizzare le operazioni aziendali.",
+    en: "Advanced AI-Powered Workforce Planning & Scheduling Solution. Streamline and optimize all aspects of workforce management with intelligent automation.",
+    de: "Fortschrittliche KI-gestützte Personalplanung und Terminplanung. Optimieren Sie alle Aspekte des Personalmanagements mit intelligenter Automatisierung.",
+    it: "Soluzione avanzata di pianificazione e programmazione della forza lavoro basata sull'IA. Ottimizza tutti gli aspetti della gestione del personale con automazione intelligente.",
 };
 ---
 
@@ -61,13 +61,13 @@ const descriptions = {
     <Header currentLanguage={language} />
 
     <main class="space-y-16">
-        <!-- Dynamically render sections from Elysia YAML configuration -->
+        <!-- Dynamically render sections from WFM YAML configuration -->
         {
             pageSections.map((sectionConfig) => (
                 <DynamicSection
                     sectionConfig={sectionConfig}
                     language={language}
-                    languageFile={`elysia-${language}`}
+                    languageFile={`wfm-${language}`}
                 />
             ))
         }

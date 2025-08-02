@@ -1,0 +1,390 @@
+code: "en"
+name: "English"
+flag: "🇺🇸"
+
+# Page configuration for Courses - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-brainstorming-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "learning-approach"
+    order: 2.1
+  - type: "cards"
+    section_id: "courses"
+    order: 3
+  - type: "cards"
+    section_id: "benefits"
+    order: 4
+  - type: "cards"
+    section_id: "delivery-methods"
+    order: 5
+  - type: "cards"
+    section_id: "enrollment"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md" 
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+sections:
+  about:
+    title: "AI Courses & Training"
+    description: >
+      Professional Development in Artificial Intelligence & Machine Learning
+
+  overview:
+    subtitle: "Transform Your Career with AI Education"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    description: >
+      Our comprehensive AI training programs are designed to equip professionals 
+      with the knowledge and skills needed to excel in the rapidly evolving 
+      field of artificial intelligence. From foundational concepts to advanced 
+      implementations, our courses provide practical, hands-on learning experiences.
+    cards:
+      - title: "Why AI Skills Matter"
+        description: "The demand for AI professionals continues to grow across all industries:"
+        icon: 
+          type: "trending_up"
+          alignment: "left"
+          color: "text-blue-400"
+        features:
+          - text: "AI job postings have increased by 250% in the last 5 years"
+            bullet: "analytics"
+            bulletType: "icon"  
+            bulletColor: "text-blue-400"
+          - text: "Companies are investing heavily in AI transformation"
+            bullet: "business_center"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "AI professionals earn 30-50% higher salaries"
+            bullet: "attach_money"
+            bulletType: "icon"
+            bulletColor: "text-yellow-400"
+          - text: "Cross-industry applications create diverse opportunities"
+            bullet: "diversity_3"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+      - title: "Our Training Advantage"
+        description: "What makes our AI training programs stand out:"
+        icon: 
+          type: "school"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Industry experts with real-world AI implementation experience"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Hands-on projects using cutting-edge tools and frameworks"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Flexible learning paths tailored to your experience level"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Ongoing support and mentorship throughout your journey"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  learning-approach:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Learn by Doing"
+        description: >
+          Our training methodology emphasizes practical application over theoretical concepts. 
+          Every course includes real-world projects that simulate actual business scenarios, 
+          ensuring you gain hands-on experience with the tools and techniques used in 
+          professional AI development.
+
+          You'll work with popular frameworks like TensorFlow, PyTorch, and scikit-learn, 
+          while learning to deploy models using cloud platforms and modern MLOps practices. 
+          By the end of each course, you'll have a portfolio of projects demonstrating 
+          your capabilities to potential employers.
+        icon: 
+          type: "build"
+          alignment: "left-big"
+
+  courses:
+    subtitle: "Course Catalog"
+    description: >
+      Choose from our comprehensive range of AI and machine learning courses, 
+      designed for different skill levels and career goals.
+    cards:
+      - title: "AI Fundamentals"
+        description: >
+          Perfect for beginners looking to understand AI concepts and applications.
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+        features:
+          - text: "Introduction to AI, ML, and Deep Learning concepts"
+          - text: "Python programming for data science"
+          - text: "Basic statistics and mathematics for AI"
+          - text: "Hands-on projects with popular datasets"
+        note: >
+          Duration: 8 weeks | Prerequisites: Basic programming knowledge
+      - title: "Machine Learning Engineer"
+        description: >
+          Comprehensive training for building and deploying ML models in production.
+        icon: 
+          type: "precision_manufacturing"
+          alignment: "left"
+        features:
+          - text: "Advanced ML algorithms and model selection"
+          - text: "Feature engineering and data preprocessing"
+          - text: "Model deployment and MLOps practices"
+          - text: "Performance monitoring and model maintenance"
+        note: >
+          Duration: 12 weeks | Prerequisites: Programming experience, basic statistics
+      - title: "Deep Learning Specialist"
+        description: >
+          Advanced course focusing on neural networks and deep learning applications.
+        icon: 
+          type: "psychology"
+          alignment: "left"
+        features:
+          - text: "Neural network architectures and optimization"
+          - text: "Computer vision and image processing"
+          - text: "Natural language processing and transformers"
+          - text: "Generative AI and large language models"
+        note: >
+          Duration: 10 weeks | Prerequisites: ML fundamentals, linear algebra
+      - title: "AI for Business Leaders"
+        description: >
+          Strategic course for executives and managers implementing AI initiatives.
+        icon: 
+          type: "business_center"
+          alignment: "left"
+        features:
+          - text: "AI strategy and business case development"
+          - text: "Understanding AI capabilities and limitations"
+          - text: "Managing AI projects and teams"
+          - text: "Ethical AI and responsible implementation"
+        note: >
+          Duration: 4 weeks | Prerequisites: Business or management experience
+      - title: "Computer Vision Mastery"
+        description: >
+          Specialized training in image and video analysis using AI.
+        icon: 
+          type: "visibility"
+          alignment: "left"
+        features:
+          - text: "Image classification and object detection"
+          - text: "Facial recognition and biometric systems"
+          - text: "Medical imaging and diagnostic applications"
+          - text: "Real-time video processing and analysis"
+        note: >
+          Duration: 8 weeks | Prerequisites: Python, basic ML knowledge
+      - title: "NLP & Language Models"
+        description: >
+          Focus on natural language processing and conversational AI.
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "Text processing and sentiment analysis"
+          - text: "Chatbots and conversational interfaces"
+          - text: "Large language models and fine-tuning"
+          - text: "Document analysis and information extraction"
+        note: >
+          Duration: 8 weeks | Prerequisites: Python, basic ML knowledge
+
+  benefits:
+    subtitle: "Learning Benefits"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    alignment: "center"
+    cards:
+      - title: "Career Advancement"
+        icon: 
+          type: "trending_up"
+          alignment: "top-big"
+        features:
+          - text: "Increase earning potential by 30-50%"
+            bullet: "check"
+          - text: "Access to high-demand AI roles"
+            bullet: "check"
+          - text: "Leadership opportunities in AI initiatives"
+            bullet: "check"
+          - text: "Industry recognition and credibility"
+            bullet: "check"
+      - title: "Practical Skills"
+        icon: 
+          type: "build"
+          alignment: "top-big"
+        features:
+          - text: "Hands-on experience with real datasets"
+            bullet: "check"
+          - text: "Portfolio of completed AI projects"
+            bullet: "check"
+          - text: "Industry-standard tools and frameworks"
+            bullet: "check"
+          - text: "Best practices for production deployment"
+            bullet: "check"
+      - title: "Ongoing Support"
+        icon: 
+          type: "support_agent"
+          alignment: "top-big"
+        features:
+          - text: "Access to expert instructors and mentors"
+            bullet: "check"
+          - text: "Peer learning community and networking"
+            bullet: "check"
+          - text: "Career guidance and job placement assistance"
+            bullet: "check"
+          - text: "Lifetime access to course materials"
+            bullet: "check"
+
+  delivery-methods:
+    subtitle: "Flexible Learning Options"
+    description: >
+      Choose the learning format that best fits your schedule and learning preferences.
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    cards:
+      - title: "Live Online Classes"
+        description: >
+          Interactive sessions with real-time Q&A and group activities.
+        icon: 
+          type: "video_call"
+          alignment: "top"
+        features:
+          - text: "Weekly live sessions with instructors"
+          - text: "Real-time interaction with peers"
+          - text: "Immediate feedback on projects"
+          - text: "Flexible evening and weekend options"
+      - title: "Self-Paced Learning"
+        description: >
+          Study at your own pace with recorded lectures and materials.
+        icon: 
+          type: "schedule"
+          alignment: "top"
+        features:
+          - text: "Access to all course materials 24/7"
+          - text: "Progress tracking and milestones"
+          - text: "Optional mentor check-ins"
+          - text: "Up to 12 months to complete"
+      - title: "Hybrid Programs"
+        description: >
+          Combination of live sessions and self-paced components.
+        icon: 
+          type: "sync"
+          alignment: "top"
+        features:
+          - text: "Mix of live and recorded content"
+          - text: "Flexible participation options"
+          - text: "Regular project reviews"
+          - text: "Best of both learning approaches"
+      - title: "Corporate Training"
+        description: >
+          Customized programs for teams and organizations.
+        icon: 
+          type: "groups"
+          alignment: "top"
+        features:
+          - text: "Tailored curriculum for your needs"
+          - text: "On-site or virtual delivery"
+          - text: "Group discounts available"
+          - text: "Custom project focus areas"
+
+  enrollment:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Ready to Start Your AI Journey?"
+        description: >
+          Join thousands of professionals who have advanced their careers 
+          through our comprehensive AI training programs. Our expert instructors 
+          and proven curriculum will give you the skills and confidence needed 
+          to excel in the AI-driven future of work.
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        icon:
+          type: "school"
+          alignment: "left-big"
+        features:
+          - text: "Free consultation to choose the right course"
+            bullet: "check"
+          - text: "Flexible payment options and financing available"
+            bullet: "check"
+          - text: "30-day satisfaction guarantee"
+            bullet: "check"
+          - text: "Industry-recognized certificates upon completion"
+            bullet: "check"
+        buttonText: "Enroll Now"
+        buttonUrl: "/enroll-courses"
+
+  contact:
+    title: "Get Started with AI Training"
+    description: "Ready to transform your career with AI skills? Let's discuss your learning goals."
+
+  footer:
+    title: "Transform your career with AI education"
+    description: "Unlock new opportunities and advance your professional development."
+    buttonText: "Explore Courses"
+    copyright: "All rights reserved"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Phone"
+      address:
+        label: "Address"

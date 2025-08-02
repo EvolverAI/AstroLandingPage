@@ -1,0 +1,356 @@
+code: "de"
+name: "Deutsch"
+flag: "🇩🇪"
+
+# Page configuration for Workforce Manager - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-wfm-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "use_cases"
+    order: 4
+  - type: "cards"
+    section_id: "benefits"
+    order: 5
+  - type: "cards"
+    section_id: "roi"
+    order: 5.1
+  - type: "cards"
+    section_id: "demo"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-lg"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-lg"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-sm"
+      weight: "font-normal"
+      color: "text-gray-600"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+
+sections:
+  about:
+    title: "Workforce Manager"
+    description: >
+      Fortschrittliche KI-gestützte Personalplanung und Terminplanungslösung
+
+  overview:
+    title: "Produktübersicht"
+    description: >
+      Workforce Manager ist eine fortschrittliche Softwarelösung, die darauf ausgelegt ist, 
+      alle Aspekte des Personalmanagements zu optimieren und zu vereinfachen. Basierend 
+      auf modernster KI-Technologie bietet es eine umfassende Plattform für die 
+      Planung, Terminierung und effiziente Verwaltung Ihrer Belegschaft.
+    cards:
+      - title: "Das Problem"
+        description: "Traditionelle Personalmanagement-Methoden führen oft zu:"
+        icon: 
+          type: "warning"
+          alignment: "left"
+          color: "text-yellow-100"
+        features:
+          - text: "Ineffiziente manuelle Terminplanungsprozesse"
+            bullet: "error"
+            bulletType: "icon"  
+            bulletColor: "text-red-400"
+          - text: "Schwierigkeiten bei der Verwaltung von Schichtwechseln und Urlaubsanträgen"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Mangelnde klare Kommunikation zwischen Management und Personal"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Suboptimale Personalauslastung und Produktivität"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Begrenzte Transparenz bei Leistungsmetriken und KPIs"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+      - title: "Unsere Lösung"
+        description: "Workforce Manager löst diese Herausforderungen durch:"
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Intelligente, KI-gestützte Terminplanungsalgorithmen"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Automatisierte Schichtverwaltung und Anfragebearbeitung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Integrierter Chatbot für nahtlose Kommunikation"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Umfassendes Analytics-Dashboard für Leistungsverfolgung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Anpassbare Workflows für Ihre Geschäftsprozesse"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Angetrieben von fortschrittlicher KI"
+        description: >
+          Im Kern von Workforce Manager befindet sich unsere proprietäre KI-Engine, 
+          die darauf ausgelegt ist, aus den einzigartigen Mustern und Anforderungen 
+          Ihrer Organisation zu lernen. Das System verbessert kontinuierlich seine 
+          Empfehlungen und Prognosen basierend auf historischen Daten und optimiert 
+          Terminpläne für maximale Effizienz unter Berücksichtigung individueller 
+          Präferenzen und Einschränkungen.
+
+          Unsere KI reagiert nicht nur auf Ihre Bedürfnisse – sie antizipiert sie und 
+          bietet proaktive Vorschläge zur Verbesserung der Personalzuteilung, 
+          identifiziert potenzielle Terminplanungskonflikte bevor sie auftreten und 
+          stellt sicher, dass die richtigen Personen zur richtigen Zeit den richtigen 
+          Aufgaben zugewiesen werden.
+        icon: 
+          type: "psychology"
+          alignment: "left-big"
+
+  features:
+    title: "Hauptfunktionen"
+    description: >
+      Elysia ist mit einer breiten Palette von Funktionen ausgestattet, die darauf ausgelegt sind, 
+      die Produktivität zu steigern und Arbeitsabläufe zu vereinfachen. Von intelligenter 
+      Automatisierung bis hin zu fortschrittlicher Analytik ist Elysia gerüstet, um den 
+      vielfältigen Anforderungen moderner Organisationen gerecht zu werden.
+
+      Alle Funktionen sind mit Flexibilität und Skalierbarkeit im Fokus entwickelt, 
+      um sicherzustellen, dass Elysia mit Ihrem Unternehmen wächst.
+    cards:
+      - title: "Intelligente Terminplanung"
+        description: >
+          Unsere KI-gestützte Terminplanungs-Engine generiert automatisch optimale 
+          Arbeitspläne basierend auf:
+        icon: 
+          type: "refresh"
+          alignment: "left"
+        features:
+          - text: "Mitarbeiterfähigkeiten, Zertifikate und Präferenzen"
+          - text: "Geschäftsbedarfsprognosen und Spitzenzeiten"
+          - text: "Gesetzliche Anforderungen und Compliance-Regeln"
+          - text: "Benutzerdefinierte Geschäftsregeln und Einschränkungen"
+        note: >
+          Das System lernt aus jedem Terminplanungszyklus und verbessert kontinuierlich 
+          seine Empfehlungen im Laufe der Zeit.
+
+      - title: "KI-gestützter Chatbot"
+        description: >
+          Unser integrierter Chatbot optimiert die Kommunikation und automatisiert 
+          Routineaufgaben:
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "Mitarbeiter können Urlaub beantragen, Schichten tauschen oder Zeitpläne überprüfen"
+          - text: "Manager erhalten Benachrichtigungen über dringende Personalprobleme"
+          - text: "Automatisierte Antworten auf häufige Fragen und Anfragen"
+          - text: "Natürliche Sprachverarbeitung für einfache, intuitive Interaktionen"
+        note: >
+          Der Chatbot integriert sich in beliebte Messaging-Plattformen und ist von überall zugänglich.
+
+  use_cases:
+    subtitle: "Branchen-Anwendungsfälle"
+    cards:
+      - title: "Contact Center"
+        description: >
+          Für Contact Center und Kundenservicebetriebe bietet Workforce Manager:
+        icon: 
+          type: "headset_mic"
+          alignment: "left"
+        features:
+          - text: "Optimale Agententerminplanung basierend auf Anrufvolumenprognosen"
+            bullet: "check"
+          - text: "Fähigkeitsbasierte Weiterleitung zur Abstimmung von Kundenbedürfnissen mit Agentenexpertise"
+            bullet: "check"
+          - text: "Echtzeit-Überwachung der Einhaltung und SLA-Verfolgung"
+            bullet: "check"
+          - text: "Automatisierte Bearbeitung von Urlaubsanträgen und Schichtwechseln"
+            bullet: "check"
+        note:
+          title: "Erfolgsgeschichte"
+          content: >
+            "Die Implementierung von Workforce Manager reduzierte unsere Personalkosten um 18% 
+            und verbesserte gleichzeitig unsere Kundenzufriedenheitswerte um 22%. Die KI-gestützte 
+            Prognose ist unglaublich genau und ermöglicht es uns, angemessen für Spitzenzeiten zu 
+            planen, ohne in ruhigen Zeiten zu überbesetzen."
+          signature: "— Betriebsleiter, Globales Kundensupport-Center"
+      - title: "Gesundheitswesen"
+        description: >
+          Für Krankenhäuser und Gesundheitseinrichtungen liefert Workforce Manager:
+        icon: 
+          type: "local_hospital"
+          alignment: "left-big"
+        features:
+          - text: "Ausgewogene Krankenschwester-zu-Patient-Verhältnisse in allen Abteilungen"
+            bullet: "check"
+          - text: "Schichtplanung unter Berücksichtigung spezialisierter Zertifikate und Fähigkeiten"
+            bullet: "check"
+          - text: "Einhaltung gesetzlicher Arbeitszeitgrenzen und Ruhezeiten"
+            bullet: "check"
+          - text: "Notfallteam-Terminplanung mit Bereitschaftsverwaltung"
+            bullet: "check"
+        note:
+          title: "Erfolgsgeschichte"
+          content: >
+            "Der KI-gestützte Chatbot hat die Art und Weise revolutioniert, wie unser Personal 
+            über Terminplanung kommuniziert. Krankenschwestern können einfach Urlaub beantragen 
+            oder Schichten von ihren Telefonen tauschen, und Manager haben mehr Zeit, sich auf 
+            die Patientenversorgung statt auf administrative Aufgaben zu konzentrieren."
+          signature: "— Chefpflegekraft, Regionales Medizinisches Zentrum"
+
+  benefits:
+    title: "Warum Elysia wählen"
+    description: "Die Vorteile der Implementierung von Elysia in Ihrer Organisation"
+    cards:
+      - title: "Erhöhte Produktivität"
+        description: "Steigern Sie die Teameffizienz um bis zu 40% durch intelligente Automatisierung."
+        icon: 
+          type: "speed"
+          alignment: "top-big"
+      - title: "Kostenreduzierung"
+        description: "Reduzieren Sie Betriebskosten bei gleichbleibend hoher Servicequalität."
+        icon: 
+          type: "savings"
+          alignment: "top-big"
+      - title: "Skalierbare Lösung"
+        description: "Wächst mit Ihren Geschäftsanforderungen und passt sich verändernden Anforderungen an."
+        icon: 
+          type: "trending_up"
+          alignment: "top-big"
+      - title: "Einfache Integration"
+        description: "Schnelle Einrichtung und nahtlose Integration in bestehende Systeme."
+        icon: 
+          type: "link"
+          alignment: "top-big"
+
+  roi:
+    subtitle: "Return on Investment"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Organisationen, die Elysia implementieren, sehen typischerweise einen Return on Investment 
+      innerhalb von 3-6 Monaten mit:
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "30-40%"
+        description: "Reduzierung der Betriebskosten"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "25-35%"
+        description: "Steigerung der Produktivität"
+        icon:
+          type: "percent"
+          alignment: "top"
+      - title: "60-70%"
+        description: "Zeitersparnis bei Routineaufgaben"
+        icon:
+          type: "percent"
+          alignment: "top"
+
+  demo:
+    subtitle: "Bereit, Ihre Abläufe zu transformieren?"
+    description: >
+      Entdecken Sie, wie Elysia Ihrer Organisation helfen kann, Aufgaben zu automatisieren, 
+      Arbeitsabläufe zu optimieren und die Produktivität zu steigern.
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - title: "Demo planen"
+        description: >
+          Sehen Sie Elysia in Aktion mit einer personalisierten Demonstration, die auf Ihre 
+          Geschäftsanforderungen zugeschnitten ist. Unsere Experten zeigen Ihnen, wie Elysia 
+          Ihre spezifischen Herausforderungen bewältigen kann.
+        icon:
+          type: "calendar_today"
+          alignment: "left-big"
+        buttonText: "Demo anfordern"
+        buttonUrl: "/schedule-demo"
+      - title: "Mit einem Experten sprechen"
+        description: >
+          Haben Sie Fragen zur Implementierung von Elysia in Ihrer Organisation? Unser Team 
+          ist bereit, Ihre Anforderungen zu besprechen und maßgeschneiderte Empfehlungen zu geben.
+        icon:
+          type: "support_agent"
+          alignment: "left-big"
+        buttonText: "Kontakt aufnehmen"
+        buttonUrl: "/contact-us"
+
+  contact:
+    title: "Starten Sie mit Elysia"
+    description: "Bereit, Ihr Unternehmen mit Elysia zu transformieren? Lassen Sie uns Ihre spezifischen Anforderungen besprechen."
+
+  footer:
+    title: "Transformieren Sie Ihre Organisation mit Elysia"
+    description: "Erschließen Sie das Potenzial der KI und geben Sie Ihrem Team die Werkzeuge, die es für den Erfolg braucht."
+    buttonText: "Demo planen"
+    copyright: "Alle Rechte vorbehalten"
+    contact:
+      email:
+        label: "E-Mail"
+      phone:
+        label: "Telefon"
+      address:
+        label: "Adresse"

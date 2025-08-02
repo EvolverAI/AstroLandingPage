@@ -17,27 +17,27 @@ export async function getStaticPaths() {
 const { lang } = Astro.params;
 const language = lang || "en";
 
-// Load page configuration from Elysia-specific language file
+// Load page configuration from B2B-specific language file
 let pageSections: any[] = [];
 try {
-    const langData = await getEntry("languages", `elysia-${language}`);
+    const langData = await getEntry("languages", `b2b-${language}`);
     pageSections = langData?.data?.page_sections || [];
     // Sort sections by order
     pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
 } catch (error) {
     console.warn(
-        "Could not load Elysia page sections for language:",
+        "Could not load B2B page sections for language:",
         language,
         error,
     );
     // Fallback to English if the requested language doesn't exist
     try {
-        const fallbackData = await getEntry("languages", "elysia-en");
+        const fallbackData = await getEntry("languages", "b2b-en");
         pageSections = fallbackData?.data?.page_sections || [];
         pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
     } catch (fallbackError) {
         console.error(
-            "Could not load fallback Elysia page sections:",
+            "Could not load fallback B2B page sections:",
             fallbackError,
         );
     }
@@ -45,29 +45,29 @@ try {
 
 // Dynamic titles and descriptions based on language
 const titles = {
-    en: "Elysia - Your AI-Powered Assistant | EvolverAI",
-    de: "Elysia - Ihr KI-gestützter Assistent | EvolverAI",
-    it: "Elysia - Il tuo Assistente AI | EvolverAI",
+    en: "B2B Outsourcing Solutions - Premium Business Services | EvolverAI",
+    de: "B2B-Outsourcing-Lösungen - Premium-Geschäftsdienste | EvolverAI",
+    it: "Soluzioni di Outsourcing B2B - Servizi Aziendali Premium | EvolverAI",
 };
 
 const descriptions = {
-    en: "Meet Elysia, your intelligent AI assistant designed to enhance productivity and streamline business operations. Powered by cutting-edge AI technology.",
-    de: "Lernen Sie Elysia kennen, Ihren intelligenten KI-Assistenten, der entwickelt wurde, um die Produktivität zu steigern und Geschäftsabläufe zu optimieren.",
-    it: "Incontra Elysia, il tuo assistente AI intelligente progettato per migliorare la produttività e ottimizzare le operazioni aziendali.",
+    en: "Premium B2B outsourcing solutions with strategic partnerships and AI-enhanced services. Transform your operations through our comprehensive business process optimization.",
+    de: "Premium B2B-Outsourcing-Lösungen mit strategischen Partnerschaften und KI-erweiterten Diensten. Transformieren Sie Ihre Abläufe durch unsere umfassende Geschäftsprozessoptimierung.",
+    it: "Soluzioni di outsourcing B2B premium con partnership strategiche e servizi potenziati dall'IA. Trasforma le tue operazioni attraverso la nostra ottimizzazione completa dei processi aziendali.",
 };
 ---
 
 <Layout title={titles[language]} description={descriptions[language]}>
     <Header currentLanguage={language} />
 
-    <main class="space-y-16">
-        <!-- Dynamically render sections from Elysia YAML configuration -->
+    <main class="space-y-0">
+        <!-- Dynamically render sections from B2B YAML configuration -->
         {
             pageSections.map((sectionConfig) => (
                 <DynamicSection
                     sectionConfig={sectionConfig}
                     language={language}
-                    languageFile={`elysia-${language}`}
+                    languageFile={`b2b-${language}`}
                 />
             ))
         }

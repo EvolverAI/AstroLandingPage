@@ -1,0 +1,438 @@
+code: "en"
+name: "English"
+flag: "🇺🇸"
+
+# Page configuration for Workforce Manager - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-wfm-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "use_cases"
+    order: 4
+  - type: "cards"
+    section_id: "benefits"
+    order: 5
+  - type: "cards"
+    section_id: "demo"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      #background: "bg-gradient-to-r from-yellow-100 via-yellow-50 to-gray-100"
+      #background: "bg-gradient-to-r from-blue-900 to-slate-800"
+      background: "bg-slate-800"
+      #text: "text-gray-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md" 
+      # Allowed: text-sm, text-md, text-lg, text-xl, text-2xl, text-3xl
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+sections:
+  about:
+    title: "Workforce Manager"
+    description: >
+      Advanced AI-Powered Workforce Planning & Scheduling Solution
+
+  overview:
+    title: "Workforce Manager Overview"
+    description: >
+      Workforce Manager is an advanced software solution designed to 
+      streamline and optimize all aspects of workforce management. Built 
+      with the latest AI technology, it provides a comprehensive platform 
+      for planning, scheduling, and managing your workforce efficiently.
+    cards:
+      - title: "The Problem"
+        description: "Traditional workforce management methods often result in:"
+        icon: 
+          type: "warning"
+          alignment: "left"
+          color: "text-yellow-100"
+        features:
+          - text: "Inefficient manual scheduling processes"
+            bullet: "error"
+            bulletType: "icon"  
+            bulletColor: "text-red-400"
+          - text: "Difficulty managing shift changes and time-off requests"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Lack of clear communication between management and staff"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Suboptimal workforce utilization and productivity"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+          - text: "Limited visibility into performance metrics and KPIs"
+            bullet: "error"
+            bulletType: "icon"
+            bulletColor: "text-red-400"
+      - title: "Our Solution"
+        description: "Workforce Manager addresses these challenges by providing:"
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Intelligent, AI-powered scheduling algorithms"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Automated shift management and request handling"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Integrated chatbot for seamless communication"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Comprehensive analytics dashboard for performance tracking"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Customizable workflows to match your business processes"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Powered by Advanced AI"
+        description: >
+          At the core of Workforce Manager is our proprietary artificial intelligence engine, 
+          designed to learn from your organization's unique patterns and requirements. 
+          The system continuously improves its recommendations and forecasts based on historical 
+          data, optimizing schedules for maximum efficiency while respecting individual preferences 
+          and constraints.
+
+          Our AI doesn't just react to your needs – it anticipates them, providing proactive 
+          suggestions to improve workforce allocation, identify potential scheduling conflicts 
+          before they occur, and ensure the right people are assigned to the right tasks at the 
+          right time.
+        icon: 
+          type: "psychology"
+          alignment: "left-big"
+
+  features:
+    title: "Key Features"
+    description: >
+      Elysia comes packed with a wide range of features designed to enhance productivity and streamline workflows. 
+      From intelligent automation to advanced analytics, Elysia is equipped to handle the diverse needs of modern organizations.
+
+      All features are designed with flexibility and scalability in mind, ensuring Elysia grows with your business.
+    cards:
+      - title: "AI-Powered Workforce Intelligence"
+        description: >
+          Experience next-generation workforce management with our advanced AI engine that learns and adapts to your organization's unique patterns.
+        icon: 
+          type: "psychology"
+          alignment: "left"
+        features:
+          - text: "Machine learning algorithms that improve over time"
+          - text: "Predictive analytics for demand forecasting"
+          - text: "Intelligent resource allocation recommendations"
+          - text: "Real-time performance optimization"
+        note: >
+          This AI engine processes thousands of data points to provide the most accurate scheduling recommendations.
+      - title: "Intelligent Scheduling"
+        description: >
+          Our AI-powered scheduling engine automatically generates optimal work schedules based on:
+        icon: 
+          type: "refresh"
+          alignment: "left"
+        features:
+          - text: "Employee skills, certifications, and preferences"
+          - text: "Business demand forecasts and peak times"
+          - text: "Legal requirements and compliance rules"
+          - text: "Custom business rules and constraints"
+        note: >
+          The system learns from each scheduling cycle, continuously improving its recommendations over time.
+
+      - title: "AI-Powered Chatbot"
+        description: >
+          Our integrated chatbot streamlines communication and automates routine tasks:
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "Employees can request time off, swap shifts, or check schedules"
+          - text: "Managers receive notifications about urgent staffing issues"
+          - text: "Automated responses to common questions and requests"
+          - text: "Natural language processing for easy, intuitive interactions"
+        note: >
+          The chatbot integrates with popular messaging platforms, making it accessible from anywhere.
+
+  features2:
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    cards:
+      - title: "Advanced Analytics"
+        description: >
+          Comprehensive dashboards with real-time data on:
+        features:
+          - text: "Labor costs and budget tracking"
+          - text: "Productivity metrics by team and individual"
+          - text: "Attendance patterns and trends"
+          - text: "Custom KPIs and performance indicators"
+      - title: "Seamless Integration"
+        description: >
+          Connect with your existing business systems:
+        features:
+          - text: "HR management systems"
+          - text: "Payroll and accounting software"
+          - text: "Time and attendance systems"
+          - text: "CRM and project management tools"
+      - title: "Compliance & Security"
+        description: >
+          Enterprise-grade protection and compliance:
+        features:
+          - text: "Role-based access control"
+          - text: "End-to-end data encryption"
+          - text: "Labor law compliance monitoring"
+          - text: "Audit trails and detailed logs"
+
+  use_cases:
+    subtitle: "Industry Use Cases"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    alignment: "center"
+    cards:
+      - title: "Contact Centers"
+        description: >
+          For contact centers and customer service operations, Workforce Manager provides:
+        icon: 
+          type: "headset_mic"
+          alignment: "left-headline"
+        features:
+          - text: "Optimal agent scheduling based on call volume forecasts"
+            bullet: "check"
+          - text: "Skill-based routing to match customer needs with agent expertise"
+            bullet: "check"
+          - text: "Real-time adherence monitoring and SLA tracking"
+            bullet: "check"
+          - text: "Automated handling of time-off requests and shift swaps"
+            bullet: "check"
+        note:
+          title: "Success Story"
+          content: >
+            "Implementing Workforce Manager reduced our staffing costs by 18% while improving 
+            our customer satisfaction scores by 22%. The AI-powered forecasting is incredibly 
+            accurate, allowing us to staff appropriately for peak periods without overstaffing 
+            during quiet times."
+          signature: "— Operations Director, Global Customer Support Center"
+      - title: "Healthcare"
+        description: >
+          For hospitals and healthcare facilities, Workforce Manager delivers:
+        icon: 
+          type: "local_hospital"
+          alignment: "left-headline"
+        features:
+          - text: "Balanced nurse-to-patient ratios across all departments"
+            bullet: "check"
+          - text: "Shift planning that considers specialized certifications and skills"
+            bullet: "check"
+          - text: "Compliance with legal working hour limits and rest periods"
+            bullet: "check"
+          - text: "Emergency response team scheduling with on-call management"
+            bullet: "check"
+        note:
+          title: "Success Story"
+          content: >
+            "The AI-powered chatbot has transformed how our staff communicate about scheduling. 
+            Nurses can easily request time off or swap shifts from their phones, and managers 
+            have more time to focus on patient care instead of administrative tasks."
+          signature: "— Chief Nursing Officer, Regional Medical Center"
+      - title: "Retail"
+        description: >
+          For retail operations, Workforce Manager enables:
+        icon: 
+          type: "shopping_cart"
+          alignment: "left-headline"
+        features:
+          - text: "Staffing based on foot traffic and sales forecast data"
+            bullet: "check"
+          - text: "Special event and seasonal staffing optimization"
+            bullet: "check"
+          - text: "Multi-location staff allocation and management"
+            bullet: "check"
+          - text: "Labor cost optimization while maintaining service levels"
+            bullet: "check"
+        note:
+          title: "Success Story"
+          content: >
+            "During the holiday season, Workforce Manager helped us reduce overtime by 
+            32% while still maintaining appropriate staffing levels. The easy-to-use 
+            mobile app made it simple for our seasonal employees to view their schedules 
+            and request changes."
+          signature: "— Regional Manager, National Retail Chain"
+      - title: "Manufacturing"
+        description: >
+          For manufacturing environments, Workforce Manager provides:
+        icon: 
+          type: "engineering"
+          alignment: "left-headline"
+        features:
+          - text: "Shift planning that aligns with production schedules"
+            bullet: "check"
+          - text: "Skills-based assignment to production lines and stations"
+            bullet: "check"
+          - text: "Safety certification tracking and compliance management"
+            bullet: "check"
+        note:
+          title: "Success Story"
+          content: >
+            "Workforce Manager's analytics have given us unprecedented visibility into our 
+            labor efficiency. We've been able to identify bottlenecks in our processes and 
+            optimize our staffing accordingly, leading to a 15% increase in output with the 
+            same workforce."
+          signature: "— Production Manager, Automotive Parts Manufacturer"
+
+  benefits:
+    subtitle: "Key Benefits"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    alignment: "center"
+    cards:
+      - title: "Cost Reduction"
+        icon: 
+          type: "savings"
+          alignment: "top-big"
+        features:
+          - text: "Reduce overtime costs by up to 25%"
+            bullet: "check"
+          - text: "Lower administrative overhead by automating scheduling tasks"
+            bullet: "check"
+          - text: "Optimize workforce allocation based on actual needs"
+            bullet: "check"
+          - text: "Minimize costly under and overstaffing scenarios"
+            bullet: "check"
+      - title: "Productivity Boost"
+        icon: 
+          type: "moving"
+          alignment: "top-big"
+        features:
+          - text: "Increase overall team productivity by 15-30%"
+            bullet: "check"
+          - text: "Match employee skills to task requirements"
+            bullet: "check"
+          - text: "Reduce time spent on administrative scheduling tasks"
+            bullet: "check"
+          - text: "Streamline communication around shift changes"
+            bullet: "check"
+      - title: "Employee Satisfaction"
+        icon: 
+          type: "sentiment_very_satisfied"
+          alignment: "top-big"
+        features:
+          - text: "Improve work-life balance with fair scheduling"
+            bullet: "check"
+          - text: "Increase transparency in shift assignments"
+            bullet: "check"
+          - text: "Empower employees with self-service options"
+            bullet: "check"
+          - text: "Reduce scheduling conflicts and last-minute changes"
+            bullet: "check"
+
+  demo:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Ready to Transform Your Workforce Management?"
+        description: >
+          Take the first step toward optimizing your workforce operations 
+          with our advanced AI-powered solution. Our team of experts is ready 
+          to provide a personalized demonstration and discuss how Workforce 
+          Manager can be tailored to your specific business needs.
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        icon:
+          type: "calendar_today"
+          alignment: "left-big"
+        features:
+          - text: "Free initial consultation and needs assessment"
+            bullet: "check"
+          - text: "Customized product demonstration"
+            bullet: "check"
+          - text: "Implementation roadmap and ROI analysis"
+            bullet: "check"
+          - text: "Ongoing support and training from our expert team"
+            bullet: "check"
+        buttonText: "Request Demo"
+        buttonUrl: "/schedule-wfm-demo"
+
+  contact:
+    title: "Get Started with Elysia"
+    description: "Ready to transform your business with Elysia? Let's discuss your specific requirements."
+
+  footer:
+    title: "Transform your organization with Elysia"
+    description: "Unlock the potential of AI and give your team the tools they need to succeed."
+    buttonText: "Schedule a Demo"
+    copyright: "All rights reserved"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Phone"
+      address:
+        label: "Address"
