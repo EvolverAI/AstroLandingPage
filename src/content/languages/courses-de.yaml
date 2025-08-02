@@ -1,0 +1,394 @@
+code: "de"
+name: "Deutsch"
+flag: "🇩🇪"
+
+# Page configuration for Courses - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-brainstorming-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "learning-approach"
+    order: 2.1
+  - type: "cards"
+    section_id: "courses"
+    order: 3
+  - type: "cards"
+    section_id: "benefits"
+    order: 4
+  - type: "cards"
+    section_id: "delivery-methods"
+    order: 5
+  - type: "cards"
+    section_id: "enrollment"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md" 
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+sections:
+  about:
+    title: "KI-Kurse & Schulungen"
+    description: >
+      Berufliche Weiterentwicklung in Künstlicher Intelligenz & Machine Learning
+
+  overview:
+    subtitle: "Transformieren Sie Ihre Karriere mit KI-Bildung"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    description: >
+      Unsere umfassenden KI-Trainingsprogramme sind darauf ausgelegt, Fachkräfte 
+      mit dem Wissen und den Fähigkeiten auszustatten, die sie benötigen, um im 
+      sich schnell entwickelnden Bereich der künstlichen Intelligenz zu excellieren. 
+      Von grundlegenden Konzepten bis hin zu fortgeschrittenen Implementierungen 
+      bieten unsere Kurse praktische, hands-on Lernerfahrungen.
+    cards:
+      - title: "Warum KI-Fähigkeiten wichtig sind"
+        description: "Die Nachfrage nach KI-Fachkräften wächst weiterhin in allen Branchen:"
+        icon: 
+          type: "trending_up"
+          alignment: "left"
+          color: "text-blue-400"
+        features:
+          - text: "KI-Stellenausschreibungen sind in den letzten 5 Jahren um 250% gestiegen"
+            bullet: "analytics"
+            bulletType: "icon"  
+            bulletColor: "text-blue-400"
+          - text: "Unternehmen investieren stark in die KI-Transformation"
+            bullet: "business_center"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "KI-Fachkräfte verdienen 30-50% höhere Gehälter"
+            bullet: "attach_money"
+            bulletType: "icon"
+            bulletColor: "text-yellow-400"
+          - text: "Branchenübergreifende Anwendungen schaffen vielfältige Möglichkeiten"
+            bullet: "diversity_3"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+      - title: "Unser Trainings-Vorteil"
+        description: "Was unsere KI-Trainingsprogramme auszeichnet:"
+        icon: 
+          type: "school"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Branchenexperten mit echter KI-Implementierungserfahrung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Hands-on Projekte mit modernsten Tools und Frameworks"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Flexible Lernpfade angepasst an Ihr Erfahrungsniveau"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Kontinuierliche Unterstützung und Mentoring während Ihrer Reise"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  learning-approach:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Lernen durch Tun"
+        description: >
+          Unsere Trainingsmethodik betont praktische Anwendung über theoretische 
+          Konzepte. Jeder Kurs beinhaltet reale Projekte, die tatsächliche 
+          Geschäftsszenarien simulieren und sicherstellen, dass Sie praktische 
+          Erfahrung mit den Tools und Techniken sammeln, die in der professionellen 
+          KI-Entwicklung verwendet werden.
+
+          Sie arbeiten mit beliebten Frameworks wie TensorFlow, PyTorch und 
+          scikit-learn, während Sie lernen, Modelle mit Cloud-Plattformen und 
+          modernen MLOps-Praktiken zu deployen. Am Ende jedes Kurses haben Sie 
+          ein Portfolio von Projekten, das Ihre Fähigkeiten potenziellen 
+          Arbeitgebern demonstriert.
+        icon: 
+          type: "build"
+          alignment: "left-big"
+
+  courses:
+    subtitle: "Kurskatalog"
+    description: >
+      Wählen Sie aus unserem umfassenden Angebot an KI- und Machine Learning-Kursen, 
+      die für verschiedene Fähigkeitsniveaus und Karriereziele entwickelt wurden.
+    cards:
+      - title: "KI-Grundlagen"
+        description: >
+          Perfekt für Anfänger, die KI-Konzepte und -Anwendungen verstehen möchten.
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+        features:
+          - text: "Einführung in KI-, ML- und Deep Learning-Konzepte"
+          - text: "Python-Programmierung für Data Science"
+          - text: "Grundlegende Statistik und Mathematik für KI"
+          - text: "Hands-on Projekte mit beliebten Datensätzen"
+        note: >
+          Dauer: 8 Wochen | Voraussetzungen: Grundlegende Programmierkennnisse
+      - title: "Machine Learning Engineer"
+        description: >
+          Umfassende Schulung zum Erstellen und Bereitstellen von ML-Modellen in der Produktion.
+        icon: 
+          type: "precision_manufacturing"
+          alignment: "left"
+        features:
+          - text: "Fortgeschrittene ML-Algorithmen und Modellauswahl"
+          - text: "Feature Engineering und Datenvorverarbeitung"
+          - text: "Modell-Deployment und MLOps-Praktiken"
+          - text: "Leistungsüberwachung und Modellwartung"
+        note: >
+          Dauer: 12 Wochen | Voraussetzungen: Programmiererfahrung, grundlegende Statistik
+      - title: "Deep Learning Spezialist"
+        description: >
+          Fortgeschrittener Kurs mit Fokus auf neuronale Netze und Deep Learning-Anwendungen.
+        icon: 
+          type: "psychology"
+          alignment: "left"
+        features:
+          - text: "Neuronale Netzwerkarchitekturen und Optimierung"
+          - text: "Computer Vision und Bildverarbeitung"
+          - text: "Natürliche Sprachverarbeitung und Transformer"
+          - text: "Generative KI und große Sprachmodelle"
+        note: >
+          Dauer: 10 Wochen | Voraussetzungen: ML-Grundlagen, lineare Algebra
+      - title: "KI für Unternehmensführer"
+        description: >
+          Strategischer Kurs für Führungskräfte und Manager, die KI-Initiativen implementieren.
+        icon: 
+          type: "business_center"
+          alignment: "left"
+        features:
+          - text: "KI-Strategie und Business Case-Entwicklung"
+          - text: "Verständnis von KI-Fähigkeiten und -Grenzen"
+          - text: "Management von KI-Projekten und -Teams"
+          - text: "Ethische KI und verantwortliche Implementierung"
+        note: >
+          Dauer: 4 Wochen | Voraussetzungen: Geschäfts- oder Managementerfahrung
+      - title: "Computer Vision Meisterschaft"
+        description: >
+          Spezialisierte Schulung in Bild- und Videoanalyse mit KI.
+        icon: 
+          type: "visibility"
+          alignment: "left"
+        features:
+          - text: "Bildklassifikation und Objekterkennung"
+          - text: "Gesichtserkennung und biometrische Systeme"
+          - text: "Medizinische Bildgebung und diagnostische Anwendungen"
+          - text: "Echtzeit-Videoverarbeitung und -analyse"
+        note: >
+          Dauer: 8 Wochen | Voraussetzungen: Python, grundlegende ML-Kenntnisse
+      - title: "NLP & Sprachmodelle"
+        description: >
+          Fokus auf natürliche Sprachverarbeitung und konversationelle KI.
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "Textverarbeitung und Sentiment-Analyse"
+          - text: "Chatbots und konversationelle Schnittstellen"
+          - text: "Große Sprachmodelle und Fine-Tuning"
+          - text: "Dokumentenanalyse und Informationsextraktion"
+        note: >
+          Dauer: 8 Wochen | Voraussetzungen: Python, grundlegende ML-Kenntnisse
+
+  benefits:
+    subtitle: "Lernvorteile"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    alignment: "center"
+    cards:
+      - title: "Karriere-Advancement"
+        icon: 
+          type: "trending_up"
+          alignment: "top-big"
+        features:
+          - text: "Verdienstpotenzial um 30-50% steigern"
+            bullet: "check"
+          - text: "Zugang zu gefragten KI-Rollen"
+            bullet: "check"
+          - text: "Führungsmöglichkeiten in KI-Initiativen"
+            bullet: "check"
+          - text: "Branchenanerkennung und Glaubwürdigkeit"
+            bullet: "check"
+      - title: "Praktische Fähigkeiten"
+        icon: 
+          type: "build"
+          alignment: "top-big"
+        features:
+          - text: "Hands-on Erfahrung mit echten Datensätzen"
+            bullet: "check"
+          - text: "Portfolio abgeschlossener KI-Projekte"
+            bullet: "check"
+          - text: "Branchenstandard-Tools und -Frameworks"
+            bullet: "check"
+          - text: "Best Practices für Produktions-Deployment"
+            bullet: "check"
+      - title: "Kontinuierliche Unterstützung"
+        icon: 
+          type: "support_agent"
+          alignment: "top-big"
+        features:
+          - text: "Zugang zu erfahrenen Dozenten und Mentoren"
+            bullet: "check"
+          - text: "Peer-Learning-Community und Networking"
+            bullet: "check"
+          - text: "Karriereberatung und Jobvermittlungshilfe"
+            bullet: "check"
+          - text: "Lebenslanger Zugang zu Kursmaterialien"
+            bullet: "check"
+
+  delivery-methods:
+    subtitle: "Flexible Lernoptionen"
+    description: >
+      Wählen Sie das Lernformat, das am besten zu Ihrem Zeitplan und Ihren Lernpräferenzen passt.
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    cards:
+      - title: "Live Online-Unterricht"
+        description: >
+          Interaktive Sitzungen mit Echtzeit-Q&A und Gruppenaktivitäten.
+        icon: 
+          type: "video_call"
+          alignment: "top"
+        features:
+          - text: "Wöchentliche Live-Sitzungen mit Dozenten"
+          - text: "Echtzeit-Interaktion mit Kommilitonen"
+          - text: "Sofortiges Feedback zu Projekten"
+          - text: "Flexible Abend- und Wochenendoptionen"
+      - title: "Selbstbestimmtes Lernen"
+        description: >
+          Studieren Sie in Ihrem eigenen Tempo mit aufgezeichneten Vorlesungen und Materialien.
+        icon: 
+          type: "schedule"
+          alignment: "top"
+        features:
+          - text: "24/7 Zugang zu allen Kursmaterialien"
+          - text: "Fortschrittsverfolgung und Meilensteine"
+          - text: "Optionale Mentor-Check-ins"
+          - text: "Bis zu 12 Monate zum Abschluss"
+      - title: "Hybrid-Programme"
+        description: >
+          Kombination aus Live-Sitzungen und selbstbestimmten Komponenten.
+        icon: 
+          type: "sync"
+          alignment: "top"
+        features:
+          - text: "Mix aus Live- und aufgezeichneten Inhalten"
+          - text: "Flexible Teilnahmeoptionen"
+          - text: "Regelmäßige Projektbesprechungen"
+          - text: "Das Beste aus beiden Lernansätzen"
+      - title: "Unternehmensschulungen"
+        description: >
+          Maßgeschneiderte Programme für Teams und Organisationen.
+        icon: 
+          type: "groups"
+          alignment: "top"
+        features:
+          - text: "Auf Ihre Bedürfnisse zugeschnittener Lehrplan"
+          - text: "Vor-Ort- oder virtuelle Durchführung"
+          - text: "Gruppenrabatte verfügbar"
+          - text: "Benutzerdefinierte Projektfokusbereiche"
+
+  enrollment:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Bereit, Ihre KI-Reise zu beginnen?"
+        description: >
+          Schließen Sie sich Tausenden von Fachkräften an, die ihre Karriere 
+          durch unsere umfassenden KI-Trainingsprogramme vorangebracht haben. 
+          Unsere erfahrenen Dozenten und bewährten Lehrpläne geben Ihnen die 
+          Fähigkeiten und das Vertrauen, die Sie benötigen, um in der 
+          KI-getriebenen Zukunft der Arbeit zu excellieren.
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        icon:
+          type: "school"
+          alignment: "left-big"
+        features:
+          - text: "Kostenlose Beratung zur Auswahl des richtigen Kurses"
+            bullet: "check"
+          - text: "Flexible Zahlungsoptionen und Finanzierung verfügbar"
+            bullet: "check"
+          - text: "30-Tage-Zufriedenheitsgarantie"
+            bullet: "check"
+          - text: "Branchenweit anerkannte Zertifikate nach Abschluss"
+            bullet: "check"
+        buttonText: "Jetzt Anmelden"
+        buttonUrl: "/enroll-courses"
+
+  contact:
+    title: "Beginnen Sie mit KI-Training"
+    description: "Bereit, Ihre Karriere mit KI-Fähigkeiten zu transformieren? Lassen Sie uns Ihre Lernziele besprechen."
+
+  footer:
+    title: "Transformieren Sie Ihre Karriere mit KI-Bildung"
+    description: "Erschließen Sie neue Möglichkeiten und fördern Sie Ihre berufliche Entwicklung."
+    buttonText: "Kurse Erkunden"
+    copyright: "Alle Rechte vorbehalten"
+    contact:
+      email:
+        label: "E-Mail"
+      phone:
+        label: "Telefon"
+      address:
+        label: "Adresse"

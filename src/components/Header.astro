@@ -25,39 +25,34 @@ const { currentLanguage = "en" } = Astro.props;
     <!-- Desktop Navigation -->
     <nav id="menu" class="hidden md:flex items-center gap-6">
       <a
-        href="/#about"
+        href={`/${currentLanguage}#about`}
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'company')"
       >
         <i class="material-icons text-base leading-none mr-2">business</i
         >Company
       </a>
       <a
-        href="/b2b"
+        href={`/${currentLanguage}/b2b`}
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'b2b')"
       >
         <i class="material-icons text-base leading-none mr-2">handshake</i>B2B
       </a>
       <a
-        href="/#products"
+        href={`/${currentLanguage}#products`}
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'products')"
       >
         <i class="material-icons text-base leading-none mr-2">settings</i
         >Products
       </a>
       <a
-        href="/courses"
+        href={`/${currentLanguage}/courses`}
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'courses')"
       >
         <i class="material-icons text-base leading-none mr-2">school</i>Courses
       </a>
       <a
-        href="/#contact"
+        href={`/${currentLanguage}#contact`}
         class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-        onclick="handleNavigation(event, 'contact')"
       >
         <i class="material-icons text-base leading-none mr-2">headset_mic</i
         >Contact

@@ -13,10 +13,10 @@ page_sections:
     order: 2
     background_image: "/img/evolverai-web-company-bg.jpg"
   - type: "cards"
-    section_id: "divisions"
+    section_id: "services"
     order: 3
   - type: "cards"
-    section_id: "services"
+    section_id: "divisions"
     order: 4
   - type: "content_header"
     section_id: "brainstorming"

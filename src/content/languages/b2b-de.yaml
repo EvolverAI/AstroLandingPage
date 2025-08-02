@@ -1,0 +1,670 @@
+code: "de"
+name: "Deutsch"
+flag: "🇩🇪"
+
+# Seitenkonfiguration für B2B - definiert Reihenfolge und Typen der Abschnitte
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "cards"
+    section_id: "company-background"
+    order: 2
+  - type: "cards"
+    section_id: "leadership"
+    order: 4
+  - type: "cards"
+    section_id: "team-structure"
+    order: 5
+  - type: "cards"
+    section_id: "operation-manager"
+    order: 5.1
+  - type: "cards"
+    section_id: "support-structure"
+    order: 5.2
+  - type: "cards"
+    section_id: "integrated-approach"
+    order: 5.3
+  - type: "cards"
+    section_id: "location-infrastructure"
+    order: 6
+  - type: "cards"
+    section_id: "scalability"
+    order: 6.1
+  - type: "cards"
+    section_id: "compliance-security"
+    order: 7
+  - type: "cards"
+    section_id: "data-privacy"
+    order: 7.1
+  - type: "cards"
+    section_id: "operational-complexity"
+    order: 8
+  - type: "cards"
+    section_id: "partnership"
+    order: 8.1
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Standardkonfiguration für Karten und Komponenten
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md" 
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+sections:
+  about:
+    title: "Premium B2B Outsourcing-Lösungen"
+    description: >
+      Transformation von Geschäftsprozessen durch strategische Partnerschaften und KI-gestützte Services
+
+  overview:
+    title: "Warum EvolverAI für B2B Outsourcing wählen"
+    description: >
+      Wir bieten umfassende B2B Outsourcing-Lösungen, die es Ihnen ermöglichen, sich 
+      auf Ihr Kerngeschäft zu konzentrieren, während wir spezialisierte Prozesse mit 
+      Exzellenz abwickeln. Unser strategischer Ansatz kombiniert modernste Technologie 
+      mit erfahrenen personellen Ressourcen, um messbare Ergebnisse zu liefern.
+    cards:
+      - title: "Kostenoptimierung"
+        description: "Erreichen Sie erhebliche Kosteneinsparungen bei außergewöhnlicher Qualität:"
+        icon: 
+          type: "savings"
+          alignment: "left"
+          color: "text-green-400"
+        features:
+          - text: "Reduzierung der Betriebskosten bei Beibehaltung außergewöhnlicher Qualität"
+            bullet: "check"
+            bulletType: "icon"  
+            bulletColor: "text-green-400"
+          - text: "Optimierte Belegschaft und effiziente Prozesse"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Geringerer Verwaltungsaufwand durch Automatisierung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Flexible Preismodelle passend zu Ihrem Budget"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+      - title: "Operative Exzellenz"
+        description: "Profitieren Sie von unseren bewährten Methoden und kontinuierlichen Verbesserungen:"
+        icon: 
+          type: "precision_manufacturing"
+          alignment: "left"
+          color: "text-blue-400"
+        features:
+          - text: "Bewährte Methoden für konstant hochwertige Ergebnisse"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+          - text: "Kontinuierlicher Verbesserungsansatz"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+          - text: "Fortschrittliche Qualitätskontrollsysteme"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+          - text: "Echtzeit-Leistungsüberwachung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-blue-400"
+      - title: "Geschäftsbeschleunigung"
+        description: "Skalieren Sie schnell und passen Sie sich an veränderte Marktbedingungen an:"
+        icon: 
+          type: "rocket_launch"
+          alignment: "left"
+          color: "text-purple-400"
+        features:
+          - text: "Flexible Infrastruktur und skalierbare Belegschaft"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+          - text: "Schnelle Anpassung an veränderte Marktbedingungen"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+          - text: "Schnelle Skalierungsfähigkeiten"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+          - text: "Strategische Wachstumsförderung"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+
+  company-background:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Unternehmenshintergrund & Führung"
+        icon: 
+          image: "/img/InfiniteWorkforceLogo.png"
+          alignment: "top-big"
+        
+        description: |
+          Infinite Workforce Shpk ist unsere operative Einheit in Albanien, die sich vollständig im 
+          Besitz der EvolverAI GmbH befindet. Diese strategische Investition demonstriert unser 
+          Engagement für die Schaffung nachhaltiger, hochwertiger Outsourcing-Operationen, die sich 
+          auf Datenqualitätskontrolle und Geschäftsprozessoptimierung spezialisieren.
+
+          Wir haben diese Einheit speziell darauf ausgelegt, eine qualifizierte, gut ausgebildete 
+          Belegschaft mit einer optimierten Kostenstruktur bereitzustellen und dabei Wert für unsere 
+          Kunden zu schaffen, während wir die höchsten Standards der Serviceexzellenz beibehalten.
+
+          Was uns von anderen Outsourcing-Anbietern unterscheidet, ist unser Engagement für unsere 
+          Mitarbeiter. Wir bieten höhere Vergütungen als lokale Konkurrenten, was zu deutlich 
+          niedrigeren Mitarbeiterfluktuation geführt hat. Diese Stabilität ermöglicht es uns, eine 
+          Kultur des Verdienstes und kontinuierlichen beruflichen Wachstums zu fördern und 
+          sicherzustellen, dass unsere Kunden von erfahrenen Teams profitieren, die ihre 
+          Geschäftsanforderungen verstehen.
+
+          Unser albanisches Team spezialisiert sich auf BPO-Operationen und nutzt unsere proprietäre 
+          Workforce Manager-Plattform, automatisierte Qualitätskontrollsysteme und fortschrittliche 
+          KPI-Extraktionstools, um außergewöhnliche Ergebnisse für Kunden in den Bereichen 
+          Medienmessung und Marktforschung zu liefern.
+
+  company-background1:
+    subtitle: "Unternehmenshintergrund & Führung"
+    image: "/img/InfiniteWorkforceLogo.png"
+    
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 2
+    cards:
+      - title: "Unsere strategische Investition"
+        description: >
+          Wir haben diese Einheit speziell darauf ausgelegt, eine qualifizierte, gut ausgebildete 
+          Belegschaft mit einer optimierten Kostenstruktur bereitzustellen und dabei Wert für unsere 
+          Kunden zu schaffen, während wir die höchsten Standards der Serviceexzellenz beibehalten.
+
+          Was uns von anderen Outsourcing-Anbietern unterscheidet, ist unser Engagement für unsere 
+          Mitarbeiter. Wir bieten höhere Vergütungen als lokale Konkurrenten, was zu deutlich 
+          niedrigeren Mitarbeiterfluktuationsraten geführt hat.
+        icon: 
+          type: "handshake"
+          alignment: "left-headline"
+        features:
+          - text: "Vollständig eigene Tochtergesellschaft zur Qualitätssicherung"
+          - text: "Höhere Vergütung führt zu geringerer Fluktuation"
+          - text: "Kultur des Verdienstes und kontinuierlichen beruflichen Wachstums"
+          - text: "Erfahrene Teams, die Kundenbedürfnisse verstehen"
+      - title: "Spezialisierte Expertise"
+        description: >
+          Unser albanisches Team spezialisiert sich auf BPO-Operationen und nutzt unsere proprietäre 
+          Workforce Manager-Plattform, automatisierte Qualitätskontrollsysteme und fortschrittliche 
+          KPI-Extraktionstools, um außergewöhnliche Ergebnisse zu liefern.
+        icon: 
+          type: "engineering"
+          alignment: "left-headline"
+        features:
+          - text: "Proprietäre Workforce Manager-Plattform"
+          - text: "Automatisierte Qualitätskontrollsysteme"
+          - text: "Fortschrittliche KPI-Extraktionstools"
+          - text: "Spezialisiert auf Medienmessung und Marktforschung"
+
+  operation-manager:
+    subtitle: "Operation Manager: Ihr strategischer Partner"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    description: |
+      Im Mittelpunkt unseres Service-Delivery-Modells steht der Operation Manager, der als kritische 
+      Verbindung zwischen Ihrer Organisation und unserem BPO-Team fungiert. Diese Rolle geht über das 
+      traditionelle Projektmanagement hinaus und funktioniert als echte Erweiterung Ihres Unternehmens 
+      mit einem tiefen Verständnis für Ihre spezifischen Bedürfnisse und Herausforderungen.
+
+      Der Operation Manager überwacht alle operativen Aspekte Ihrer ausgelagerten Prozesse und 
+      konzentriert sich auf kontinuierliche Verbesserung, transparente Kommunikation und proaktive 
+      Problemlösung. Er wird gründlich mit Ihren Geschäftszielen vertraut und stellt sicher, dass 
+      die Aktivitäten unseres Teams perfekt mit Ihren Erwartungen übereinstimmen.
+    cards:
+      - title: "Prozesseffizienz-Management"
+        description: >
+          Kontinuierliche Analyse und Optimierung von Arbeitsabläufen zur Verbesserung der operativen 
+          Effizienz, Reduzierung von Fehlern und Erreichung schnellerer Bearbeitungszeiten.
+        icon:
+          type: "speed"
+          alignment: "top-big"
+      - title: "Kundenkommunikation & Berichterstattung"
+        description: >
+          Durchführung wöchentlicher Kunden-Updates mit detaillierten Leistungsmetriken, 
+          Fortschrittsberichten und transparenten Diskussionen über Herausforderungen oder Chancen.
+        icon:
+          type: "forum"
+          alignment: "top-big"
+      - title: "Risikominderung & Problemlösung"
+        description: >
+          Proaktive Identifizierung potenzieller Risiken in Arbeitsabläufen, Datengenauigkeit oder 
+          operativen Engpässen und Implementierung effektiver Strategien zur Behebung, bevor sie 
+          die Ergebnisse beeinträchtigen.
+        icon:
+          type: "shield"
+          alignment: "top-big"
+      - title: "Ressourcenmanagement & Teamentwicklung"
+        description: >
+          Sicherstellung optimaler Ressourcenzuteilung und regelmäßige Schulungen zu neuen Tools, 
+          Technologien und Prozessen, um ein hochqualifiziertes und anpassungsfähiges Team zu erhalten.
+        icon:
+          type: "group"
+          alignment: "top-big"
+
+  support-structure:
+    subtitle: "Umfassende Unterstützungsstruktur"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Hinter unserem operativen Kernteam steht eine robuste Unterstützungsinfrastruktur, die darauf 
+      ausgelegt ist, sicherzustellen, dass jeder Aspekt Ihrer ausgelagerten Prozesse reibungslos 
+      funktioniert. Dieses multidisziplinäre Unterstützungsnetzwerk arbeitet zusammen, um Bedürfnisse 
+      zu antizipieren, Herausforderungen zu lösen und kontinuierliche Verbesserungen in allen 
+      Servicebereichen voranzutreiben.
+    icon: 
+      type: "person"
+      alignment: "left"
+    cards:
+      - title: "IT-Support & Infrastruktur"
+        description: >
+          Unser dediziertes IT-Team stellt sicher, dass alle technischen Aspekte Ihrer ausgelagerten 
+          Operationen einwandfrei funktionieren, mit robusten Sicherheitsprotokollen und minimaler Ausfallzeit.
+        icon:
+          type: "computer"
+          alignment: "top-big"
+        features:
+          - text: "Umfassende Disaster-Recovery-Planung und Business-Continuity-Maßnahmen"
+          - text: "Netzwerksicherheit und Überwachung auf Unternehmensebene"
+          - text: "Bereitstellung und Wartung spezialisierter Tools und Anwendungen"
+          - text: "Proaktive Systemüberwachung und präventive Wartung"
+          - text: "Regelmäßige Updates und Sicherheits-Patch-Management"
+      - title: "HR & Talententwicklung"
+        description: >
+          Unser HR-Team konzentriert sich darauf, die besten Talente anzuziehen, zu entwickeln und zu 
+          halten, um Ihre Geschäftsprozesse durch strategische Rekrutierung und berufliche 
+          Wachstumsmöglichkeiten zu unterstützen.
+        icon:
+          type: "people"
+          alignment: "top-big"
+        features:
+          - text: "Strategische Einstellung entsprechend Ihren spezifischen operativen Anforderungen"
+          - text: "Umfassende Talententwicklungsprogramme und Karrierewege"
+          - text: "Mitarbeiterengagement-Initiativen, die Moral und Produktivität steigern"
+          - text: "Wettbewerbsfähige Vergütungspakete, die Top-Talente anziehen und halten"
+          - text: "Regelmäßige Leistungsbeurteilungen und Feedback-Mechanismen"
+      - title: "Verwaltung & Compliance"
+        description: >
+          Unser Verwaltungsteam kümmert sich um alle finanziellen, rechtlichen und Compliance-Angelegenheiten 
+          und stellt sicher, dass die Operationen reibungslos ablaufen, während alle relevanten 
+          Vorschriften eingehalten werden.
+        icon:
+          type: "account_balance"
+          alignment: "top-big"
+        features:
+          - text: "Umfassendes regulatorisches Compliance-Management"
+          - text: "Strategisches Kostenmanagement und transparente Budgetierung"
+          - text: "Effizientes Rechnungsmanagement und Zahlungsabwicklung"
+          - text: "Sorgfältige Steuer-Compliance und genaue Berichterstattung"
+          - text: "Vertragsmanagement und rechtliche Dokumentation"
+
+  leadership:
+    subtitle: "Führung & Beratungsexpertise"
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    description: >
+      Unser Führungsteam bringt jahrzehntelange kombinierte Erfahrung in Technologieimplementierung, 
+      operativer Exzellenz und Geschäftsprozessoptimierung mit. Diese Expertise ermöglicht es uns, 
+      sowohl strategische Beratung als auch praktische Lösungen zu liefern, die messbare Ergebnisse 
+      erzielen.
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    cards:
+      - title: "Branchenwissen"
+        icon: 
+          type: "insights"
+          alignment: "left-big"
+        features:
+          - text: "Tiefe Expertise in TV-Monitoring und Werbeausgaben-Analyse"
+          - text: "Spezialisiertes Wissen über marktspezifische Anforderungen in verschiedenen Regionen"
+          - text: "Bewährte Erfolgsbilanz bei der Entwicklung von Monitoring-Tools in über 40 Ländern"
+          - text: "Umfassendes Verständnis von Medienmessungsmethoden"
+      - title: "Operative Exzellenz"
+        icon: 
+          type: "verified"
+          alignment: "left-big"
+        features:
+          - text: "Nachgewiesener Erfolg beim Aufbau und Training dedizierter QC-Teams"
+          - text: "Etabliertes Netzwerk starker Branchenbeziehungen"
+          - text: "Bewährte Methoden zur Implementierung von Standards und Prozessen"
+          - text: "Konstante Qualität und operative Effizienz"
+
+  integrated-approach:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Unser integrierter Ansatz"
+        description: >
+          Was unsere Teamstruktur wirklich auszeichnet, ist, wie diese Elemente als einheitliches 
+          System zusammenarbeiten. Der Operation Manager koordiniert eng mit jeder Unterstützungsfunktion 
+          und stellt sicher, dass alle Aspekte der Servicebereitstellung synchronisiert und auf Ihre 
+          spezifischen Geschäftsanforderungen ausgerichtet sind. Dieser integrierte Ansatz ermöglicht 
+          es uns, schnell auf sich ändernde Bedürfnisse zu reagieren, Operationen effizient zu skalieren 
+          und konstant außergewöhnliche Ergebnisse zu liefern, die Erwartungen übertreffen.
+        icon:
+          type: "insights"
+          alignment: "left-big"
+
+  team-structure:
+    subtitle: "Teamstruktur & Management-Philosophie"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    description: >
+      Unsere Teamstruktur wurde sorgfältig basierend auf jahrelanger operativer Erfahrung entwickelt. 
+      Wir priorisieren Effizienz, Skalierbarkeit und Qualität, während wir direkte Kommunikationskanäle 
+      mit unseren Kunden aufrechterhalten, um perfekte Ausrichtung auf Geschäftsziele sicherzustellen.
+
+  location-infrastructure:
+    subtitle: "Standort & Infrastruktur"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    cards:
+      - title: "Strategischer Standortvorteil"
+        description: |
+          Unsere strategische Präsenz in Albanien bietet erhebliche Vorteile für unsere Kunden. 
+          Das Land verfügt über einen wettbewerbsfähigen Arbeitsmarkt mit erheblich niedrigeren 
+          Betriebskosten im Vergleich zu westeuropäischen Standorten, was es zu einer wirtschaftlich 
+          sinnvollen Wahl für kosteneffektive Geschäftsprozesse macht, ohne die Qualität zu opfern.
+
+          Albaniens wachsender Technologiesektor wird von einer mehrsprachigen Belegschaft mit 
+          starken Englischkenntnissen und technischer Ausbildung unterstützt. Das Land hat erheblich 
+          in die digitale Infrastruktur investiert und schafft ein Umfeld, das modernen 
+          Geschäftsoperationen förderlich ist.
+
+          Zusätzlich behält Albanien ein stabiles politisches Klima mit geringem geopolitischem 
+          Risiko bei und bietet eine sichere Umgebung für nachhaltige Geschäftsoperationen. Die 
+          strategische Lage des Landes und das Engagement für Wirtschaftsreformen machen es zur 
+          idealen Wahl für Unternehmen, die Kosten optimieren und gleichzeitig Risiken im 
+          Zusammenhang mit politischen Unsicherheiten minimieren möchten.
+        icon: 
+          type: "location_on"
+          alignment: "left"
+      - title: "Unternehmensklasse-Infrastruktur"
+        description: |
+          Unsere Operationen werden von einer sicheren IT-Infrastruktur der Unternehmensklasse 
+          angetrieben, die konstanten Datenschutz und operative Zuverlässigkeit gewährleistet. 
+          Diese Infrastruktur wird durch EvolverAIs fortschrittliche Cloud-Services weiter verstärkt 
+          und kombiniert die Vorteile lokaler Operationen mit globalen Technologiestandards.
+
+          Unser Technologie-Stack verfügt über redundante Systeme, mehrere Backup-Protokolle und 
+          kontinuierliche Überwachung, um hohe Verfügbarkeit auch in schwierigen Situationen zu 
+          gewährleisten. Wir haben branchenführende Sicherheitsmaßnahmen auf jeder Ebene implementiert, 
+          von physischen Zugangskontrollen bis hin zu fortschrittlichem Netzwerkschutz.
+
+          Durch die Nutzung von EvolverAIs proprietärer Cloud-Infrastruktur zusammen mit etablierten 
+          Unternehmenslösungen gewährleisten wir nahtlose Integration mit Kundensystemen bei 
+          gleichzeitiger Einhaltung strenger DSGVO- und anderer Branchenvorschriften. Dieser 
+          hybride Ansatz gibt uns die Flexibilität, unsere Infrastruktur an spezifische 
+          Kundenbedürfnisse anzupassen und dabei konsistente Sicherheitsstandards beizubehalten.
+        icon: 
+          type: "security"
+          alignment: "left"
+
+  scalability:
+    subtitle: "Gebaut für Skalierbarkeit und zukünftiges Wachstum"
+    icon:
+      type: "trending_up"
+      alignment: "left"
+    cards:
+      - title: "Belegschafts-Skalierbarkeit"
+        description: >
+          Unsere Rekrutierungs- und Schulungsprozesse sind darauf ausgelegt, bei Bedarf schnell neue 
+          Talente einzuarbeiten, was es uns ermöglicht, unsere Teamgröße innerhalb von 60 Tagen um 
+          bis zu 200% zu skalieren, während wir Qualitätsstandards beibehalten. Diese Flexibilität 
+          stellt sicher, dass wir plötzliche Arbeitsbelastungserhöhungen bewältigen oder in neue 
+          Servicebereiche expandieren können.
+        icon: 
+          type: "group_add"
+          alignment: "left"
+      - title: "Technische Anpassungsfähigkeit"
+        description: >
+          Unsere cloud-basierte Infrastruktur kann Computing-Ressourcen auf Abruf skalieren und 
+          optimale Leistung auch während Spitzenlastzeiten gewährleisten. Wir verfolgen einen 
+          technologie-agnostischen Ansatz, der es uns ermöglicht, uns mit praktisch jedem 
+          Kundensystem zu integrieren oder neue Technologien zu übernehmen, während sich Ihr 
+          Unternehmen weiterentwickelt.
+        icon: 
+          type: "tune"
+          alignment: "left"
+      - title: "Service-Erweiterung"
+        description: >
+          Unser operatives Modell ist darauf ausgelegt, neue Serviceangebote über unsere aktuellen 
+          Fähigkeiten hinaus einfach zu accommodieren. Wir evaluieren kontinuierlich aufkommende 
+          Technologien und Methoden, die unseren Kunden zugutekommen könnten, was es uns ermöglicht, 
+          innovative Lösungen vorzuschlagen, die sich entwickelnde Geschäftsherausforderungen angehen.
+        icon: 
+          type: "expand_more"
+          alignment: "left"
+
+  compliance-security:
+    subtitle: "Compliance & Sicherheit"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    description: "Einhaltung der DSGVO und Branchensicherheitsstandards"
+    cards:
+      - title: "DSGVO-Compliance"
+        description: >
+          Wir sind vollständig der Einhaltung der Datenschutz-Grundverordnung (DSGVO) verpflichtet 
+          und stellen sicher, dass alle personenbezogenen Daten, die im Namen unserer Kunden 
+          verarbeitet werden, mit höchsten Datenschutz- und Sicherheitsstandards behandelt werden.
+        icon: 
+          type: "gpp_good"
+          alignment: "left"
+      - title: "Sicherheitsinfrastruktur"
+        description: >
+          Unsere Sicherheitsinfrastruktur ist darauf ausgelegt, Ihre Daten auf jeder Ebene zu schützen, 
+          von der physischen Sicherheit in unseren Einrichtungen bis hin zu fortschrittlichen 
+          Cybersicherheitsmaßnahmen für unsere digitalen Assets.
+        icon: 
+          type: "policy"
+          alignment: "left"
+      - title: "Datenschutzmaßnahmen"
+        features:
+          - text: "End-to-End-Verschlüsselung für Daten in Transit und im Ruhezustand"
+          - text: "Regelmäßige Sicherheitsaudits und Penetrationstests"
+          - text: "Strenge Zugangskontrollen und Authentifizierungsprotokolle"
+          - text: "Umfassende Datensicherungs- und Wiederherstellungsverfahren"
+        icon: 
+          type: "gpp_good"
+          alignment: "left"
+      - title: "Compliance-Zertifizierungen"
+        description: >
+          Wir halten die Compliance mit internationalen Sicherheitsstandards aufrecht und unterziehen 
+          uns regelmäßig Audits, um sicherzustellen, dass unsere Sicherheitsmaßnahmen gegen sich 
+          entwickelnde Bedrohungen wirksam bleiben. Unser Team ist in den neuesten Sicherheitsprotokollen 
+          und Best Practices geschult, um Ihre sensiblen Informationen zu schützen.
+        icon: 
+          type: "settings_applications"
+          alignment: "left"
+
+  data-privacy:
+    subtitle: "Umfassende Datenschutzrichtlinien"
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Datenverschlüsselung"
+        description: >
+          Um Daten sowohl bei der Übertragung als auch im Ruhezustand zu schützen, verwenden wir 
+          modernste Verschlüsselungsprotokolle, einschließlich AES-256-Verschlüsselung für 
+          ruhende Daten und TLS 1.2 oder höher für übertragene Daten. Dies stellt sicher, dass 
+          alle sensiblen Daten sicher in unseren Systemen gespeichert und übertragen werden.
+        icon: 
+          type: "enhanced_encryption"
+          alignment: "left"
+      - title: "Datenminimierung"
+        description: >
+          Wir befolgen das Prinzip der Datenminimierung und stellen sicher, dass nur die notwendige 
+          Menge an persönlichen oder sensiblen Daten für die minimal erforderliche Dauer gesammelt, 
+          verarbeitet und aufbewahrt wird. Wir implementieren strenge Datenaufbewahrungsrichtlinien 
+          und stellen sicher, dass nicht mehr benötigte Daten gemäß DSGVO-Richtlinien sicher 
+          vernichtet werden.
+        icon: 
+          type: "data_usage"
+          alignment: "left"
+      - title: "Incident Response und Datenschutzverletzungsmanagement"
+        description: >
+          Wir haben einen umfassenden Incident-Response-Plan etabliert, um potenzielle Datenschutzverletzungen 
+          schnell und effektiv anzugehen. Unser Team führt regelmäßige Übungen und Schulungen durch, 
+          um Bereitschaft im Falle eines Sicherheitsvorfalls sicherzustellen. Wir unterhalten auch 
+          klare Kommunikationskanäle mit betroffenen Parteien und Regulierungsbehörden, um zeitnahe 
+          Berichterstattung und Abhilfe zu erleichtern. Im Falle einer Datenschutzverletzung oder 
+          eines Sicherheitsvorfalls haben wir einen etablierten Incident-Response-Plan. Dies umfasst 
+          sofortige Eindämmungsmaßnahmen, Ursachenanalyse und Kommunikation mit betroffenen Parteien 
+          sowie zeitnahe Benachrichtigung von Regulierungsbehörden gemäß DSGVO und anderen 
+          anwendbaren Vorschriften.
+        icon: 
+          type: "report_problem"
+          alignment: "left"
+      - title: "Drittpartei-Sicherheit und Lieferantenmanagement"
+        description: >
+          Wir unterhalten einen rigorosen Lieferantenmanagement-Prozess und stellen sicher, dass 
+          alle Drittanbieter, mit denen wir arbeiten, unsere Sicherheitsstandards und vertraglichen 
+          Verpflichtungen einhalten. Alle Drittanbieter durchlaufen gründliche Sicherheitsbewertungen 
+          und wir haben klare Vereinbarungen, um sicherzustellen, dass sie die notwendigen 
+          Datenschutz- und Compliance-Anforderungen erfüllen.
+        icon: 
+          type: "settings_applications"
+          alignment: "left"
+    note: >
+      Durch die Integration dieser Sicherheitsmaßnahmen und Compliance-Frameworks in unsere 
+      Operationen stellen wir sicher, dass Ihre Daten nach höchsten Standards geschützt sind 
+      und geben Ihnen die Gewissheit, dass Ihre Informationen in sicheren Händen sind.
+
+  operational-complexity:
+    subtitle: "Bereit, Ihre Geschäftsoperationen zu transformieren?"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    description: >
+      Partnerschaft mit EvolverAI, um unsere Expertise, Infrastruktur und spezialisierte Belegschaft 
+      für Ihren Geschäftserfolg zu nutzen. Lassen Sie uns die operativen Komplexitäten handhaben, 
+      während Sie sich auf strategisches Wachstum konzentrieren.
+    cards:
+      - title: "Kostenoptimierung"
+        description: >
+          Unsere Kostenoptimierungsstrategien konzentrieren sich auf die Reduzierung operativer Ausgaben 
+          bei Beibehaltung der Servicequalität. Wir analysieren Ihre aktuellen Prozesse und identifizieren 
+          Verbesserungsbereiche, um Ihnen erhebliche Kosteneinsparungen zu ermöglichen.
+        icon:
+          type: "monetization_on"
+          alignment: "top"
+      - title: "Operative Exzellenz"
+        description: >
+          Wir nutzen fortschrittliche Automatisierungstechnologien, um Ihre Arbeitsabläufe zu 
+          optimieren und manuelle Aufgaben zu eliminieren. Unser Team arbeitet mit Ihnen zusammen, 
+          um maßgeschneiderte Automatisierungslösungen zu implementieren, die Produktivität steigern 
+          und Fehler reduzieren.
+        icon:
+          type: "precision_manufacturing"
+          alignment: "top"
+      - title: "Geschäftsbeschleunigung"
+        description: >
+          Unsere Datenanalysefähigkeiten ermöglichen es Ihnen, informierte Entscheidungen basierend 
+          auf Echtzeit-Einblicken zu treffen. Wir helfen Ihnen, die Macht Ihrer Daten zu nutzen, 
+          um operative Verbesserungen voranzutreiben und Kundenerfahrungen zu verbessern.
+        icon:
+          type: "rocket_launch"
+          alignment: "top"
+
+  partnership:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Beginnen Sie Ihre Partnerschaftsreise"
+        description: >
+          Planen Sie eine Beratung mit unserem Team, um Ihre spezifischen Geschäftsanforderungen zu 
+          besprechen und zu entdecken, wie unsere B2B Outsourcing-Lösungen Ihnen helfen können, 
+          Ihre operativen Ziele zu erreichen.
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        icon:
+          type: "savings"
+          alignment: "left-big"
+        buttonText: "Beratung anfordern"
+        buttonUrl: "/schedule-b2b-consultation"
+
+  contact:
+    title: "Lassen Sie uns sprechen, erzählen Sie uns von Ihren Bedürfnissen"
+    description: >
+      Partnerschaft mit EvolverAI, um unsere Expertise, Infrastruktur und spezialisierte Belegschaft 
+      für Ihren Geschäftserfolg zu nutzen. Lassen Sie uns die operativen Komplexitäten handhaben, 
+      während Sie sich auf strategisches Wachstum konzentrieren.
+
+  footer:
+    title: "Transformieren Sie Ihre Organisation mit EvolverAI"
+    description: "Erschließen Sie operative Exzellenz und Geschäftswachstum durch unsere umfassenden B2B-Lösungen."
+    buttonText: "Beratung planen"
+    copyright: "Alle Rechte vorbehalten"
+    contact:
+      email:
+        label: "E-Mail"
+      phone:
+        label: "Telefon"
+      address:
+        label: "Adresse"

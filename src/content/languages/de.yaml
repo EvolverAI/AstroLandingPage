@@ -13,10 +13,10 @@ page_sections:
     order: 2
     background_image: "/img/evolverai-web-company-bg.jpg"
   - type: "cards"
-    section_id: "divisions"
+    section_id: "services"
     order: 3
   - type: "cards"
-    section_id: "services"
+    section_id: "divisions"
     order: 4
   - type: "content_header"
     section_id: "brainstorming"
@@ -28,15 +28,18 @@ page_sections:
   - type: "cards"
     section_id: "b2b"
     order: 7
-  - type: "product"
-    section_id: "product_wfm"
+  - type: "cards"
+    section_id: "products"
     order: 8
   - type: "product"
-    section_id: "product_elysia"
+    section_id: "product_wfm"
     order: 9
+  - type: "product"
+    section_id: "product_elysia"
+    order: 10
   - type: "cards"
     section_id: "courses"
-    order: 10
+    order: 11
   - type: "content_header"
     section_id: "contact"
     order: 99
@@ -48,46 +51,49 @@ sections:
     companyNameHighlight: "AI"
     description: >
       Bei EvolverAI spezialisieren wir uns auf die Entwicklung intelligenter, innovativer 
-      Lösungen, die Unternehmen dabei helfen, in der modernen digitalen Landschaft erfolgreich 
-      zu sein. Durch die nahtlose Integration von Künstlicher Intelligenz in Ihre 
-      Geschäftsprozesse helfen wir Ihnen, neue Ebenen von Effizienz, Genauigkeit und Wachstum 
-      zu erschließen.
+      Lösungen, die Unternehmen dabei helfen, in der modernen digitalen Landschaft zu gedeihen. 
+      Durch die nahtlose Integration von Künstlicher Intelligenz in Ihre Geschäftsprozesse 
+      helfen wir Ihnen, neue Ebenen von Effizienz, Genauigkeit und Wachstum zu erschließen.
 
   brainstorming:
     companyName: "Evolver"
     companyNameHighlight: "AI"
     description: >
-      Bei EvolverAI warten wir darauf, dass Sie sich uns auf der Reise von Innovation und 
-      Wachstum anschließen. Wir sind hier, um Ihnen dabei zu helfen, das Potenzial von KI 
+      Bei EvolverAI warten wir darauf, dass Sie sich uns auf der Reise der Innovation und 
+      des Wachstums anschließen. Wir sind hier, um Ihnen zu helfen, das Potenzial der KI 
       zu erschließen und Ihre Geschäftsabläufe zu transformieren. Lassen Sie uns gemeinsam 
       brainstormen und eine hellere Zukunft für Ihr Unternehmen schaffen.
 
   hero:
-    title: "Geschäftstransformation durch KI"
-    subtitle: "Wir glauben an eine Welt, in der Künstliche Intelligenz Komplexität vereinfacht, Kreativität fördert und bedeutungsvolle Innovation vorantreibt."
-    description: "Begleiten Sie uns dabei, die Zukunft intelligenter Geschäftslösungen zu gestalten."
+    title: "Geschäfte durch KI transformieren"
+    subtitle: "Wir glauben an eine Welt, in der Künstliche Intelligenz Komplexität vereinfacht, Kreativität verstärkt und bedeutungsvolle Innovation vorantreibt."
+    description: "Schließen Sie sich uns an bei der Gestaltung der Zukunft intelligenter Geschäftslösungen."
     
   services:
     title: "Was wir tun"
-    description: "Umfassende Künstliche-Intelligenz-Lösungen, maßgeschneidert für Ihre Geschäftsbedürfnisse"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    description: "Umfassende Lösungen für künstliche Intelligenz, maßgeschneidert für Ihre Geschäftsanforderungen"
     cards:
       - title: "Maßgeschneiderte KI-Lösungen"
-        description: "Angepasste Systeme, die Ihre einzigartigen Geschäftsanforderungen erfüllen."
+        description: "Maßgeschneiderte Systeme, die Ihre einzigartigen Geschäftsanforderungen erfüllen."
         icon: 
           type: "check_circle"
           alignment: "top"
-      - title: "Datengestützte Erkenntnisse"
-        description: "Erweiterte Analytik zur Umwandlung Ihrer Daten in umsetzbare Strategien."
+      - title: "Datengesteuerte Erkenntnisse"
+        description: "Fortgeschrittene Analysen zur Umwandlung Ihrer Daten in umsetzbare Strategien."
         icon: 
           type: "insights"
           alignment: "top"
       - title: "Intelligente Automatisierung"
-        description: "Optimierte, skalierbare Arbeitsabläufe, die mit Ihrem Unternehmen wachsen und Betriebskosten reduzieren."
+        description: "Optimierte, skalierbare Workflows, die mit Ihrem Unternehmen wachsen und Betriebskosten reduzieren."
         icon: 
           type: "speed"
           alignment: "top"
       - title: "B2B-Outsourcing"
-        description: "Umfassende Dienstleistungen, die es Ihnen ermöglichen, sich auf Kernkompetenzen zu konzentrieren, während wir uns um spezialisierte Prozesse kümmern."
+        description: "Umfassende Services, die es Ihnen ermöglichen, sich auf Kernkompetenzen zu konzentrieren, während wir spezialisierte Prozesse übernehmen."
         icon: 
           type: "business"
           alignment: "top"
@@ -96,113 +102,127 @@ sections:
 
   divisions:
     title: "Unsere Bereiche"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
     description: >
-      EvolverAI ist mehr als ein Unternehmen — es ist ein multidisziplinäres Ökosystem 
-      der Innovation. Unsere Bereiche erstrecken sich über Spitzentechnologie, Gesundheitswesen, 
-      Gastgewerbe, Bildung, digitales Design und Unternehmensdienstleistungen. Jede Einheit 
-      arbeitet autonom und fokussiert, teilt jedoch das gleiche Engagement: Intelligenz, 
-      Kreativität und Präzision zu nutzen, um die Zukunft zu gestalten. Entdecken Sie, 
-      wie jeder Bereich zu unserer vereinten Mission beiträgt.
+      EvolverAI ist mehr als ein Unternehmen — es ist ein multidisziplinäres Innovationsökosystem. 
+      Unsere Bereiche erstrecken sich über Spitzentechnologie, Gesundheitswesen, Gastgewerbe, 
+      Bildung, digitales Design und Unternehmensdienstleistungen. Jede Einheit arbeitet autonom 
+      und fokussiert, teilt aber dasselbe Engagement: Intelligenz, Kreativität und Präzision 
+      zu nutzen, um die Zukunft zu gestalten. Entdecken Sie, wie jeder Bereich zu unserer 
+      einheitlichen Mission beiträgt.
     cards:
       - title: "EvolverAI Tech"
         description: >
-          Unser Technologiebereich ist das Kernstück der Innovation bei EvolverAI. 
-          Wir spezialisieren uns auf maßgeschneiderte Softwareentwicklung, maschinelle 
-          Lernsysteme, Datentechnik und skalierbare KI-Plattformen, die auf Geschäftsbedürfnisse 
-          zugeschnitten sind. Ob es sich um Cloud-Infrastruktur oder erweiterte Analytik handelt, 
-          EvolverAI Tech verwandelt Komplexität in intelligente, nutzbare Lösungen.
+          Unsere Technologie-Abteilung ist der zentrale Motor, der Innovation bei EvolverAI 
+          vorantreibt. Wir spezialisieren uns auf maßgeschneiderte Softwareentwicklung, 
+          Machine Learning-Systeme, Datentechnik und skalierbare KI-Plattformen, die auf 
+          Geschäftsanforderungen zugeschnitten sind. Ob Cloud-Infrastruktur oder fortgeschrittene 
+          Analysen, EvolverAI Tech verwandelt Komplexität in intelligente, nutzbare Lösungen.
         icon: 
           type: "computer"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/tech"
 
       - title: "EvolverAI Medical"
         description: >
-          An der Schnittstelle von Gesundheitswesen und Künstlicher Intelligenz ist 
-          EvolverAI Medical dem Verbessern von Leben verpflichtet. Wir entwickeln 
-          Diagnoseunterstützungssysteme, medizinische Datenplattformen und patientenzentrierte 
-          KI-Anwendungen, die klinische Entscheidungsfindung, Forschung und Pflegeversorgung 
-          verbessern.
+          An der Schnittstelle zwischen Gesundheitswesen und künstlicher Intelligenz engagiert 
+          sich EvolverAI Medical für die Verbesserung von Leben. Wir entwickeln diagnostische 
+          Unterstützungssysteme, medizinische Datenplattformen und patientenzentrierte KI-Anwendungen, 
+          die klinische Entscheidungsfindung, Forschung und Versorgung verbessern.
         icon: 
           type: "health_and_safety"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/medical"
 
       - title: "EvolverAI Hospitality"
         description: >
-          Durch die Verschmelzung von Technologie mit menschlicher Erfahrung bringt 
-          EvolverAI Hospitality intelligente Lösungen in die Hotel- und Freizeitbranche. 
-          Von intelligenten Gästeservices und Reservierungssystemen bis hin zu 
-          Betriebsautomatisierung und KI-verbesserter Kundenerfahrung — wir helfen 
-          Gastgewerbebetreibern, der Konkurrenz einen Schritt voraus zu sein.
+          Durch die Verbindung von Technologie und menschlicher Erfahrung bringt EvolverAI 
+          Hospitality intelligente Lösungen in die Hotel- und Freizeitbranche. Von intelligenten 
+          Gästeservices und Reservierungssystemen bis hin zu operativer Automatisierung und 
+          KI-gestützter Kundenerfahrung — wir helfen Gastgewerbeanbietern, der Kurve voraus zu bleiben.
         icon: 
           type: "room_service"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/hospitality"
 
       - title: "EvolverAI BPO"
         description: >
-          EvolverAI BPO (Business Process Outsourcing) liefert intelligente 
-          Unterstützungsoperationen für Unternehmen weltweit. Wir kombinieren 
-          Automatisierung, menschliche Expertise und skalierbare Systeme, um 
-          Aufgaben wie Datenmanagement, Kundenservice, Content-Moderation und 
-          administrative Arbeitsabläufe zu optimieren — mit starkem Fokus auf 
-          Effizienz und Qualität.
+          EvolverAI BPO (Business Process Outsourcing) liefert intelligente Support-Operationen 
+          für Unternehmen weltweit. Wir kombinieren Automatisierung, menschliche Expertise und 
+          skalierbare Systeme, um Aufgaben wie Datenmanagement, Kundenservice, Content-Moderation 
+          und administrative Workflows zu rationalisieren — mit starkem Fokus auf Effizienz und Qualität.
         icon: 
           type: "business"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/b2b"
 
       - title: "EvolverAI Academy"
         description: >
-          Bildung treibt den Fortschritt voran. EvolverAI Academy bietet 
-          wirkungsvolle Kurse, Workshops und Mentoring-Programme in KI, 
-          Datenwissenschaft und Technologie. Wir befähigen Einzelpersonen 
-          und Organisationen mit praktischen Fähigkeiten, in einer sich 
-          schnell wandelnden digitalen Welt zu gedeihen — sowohl online 
-          als auch persönlich.
+          Bildung treibt Fortschritt an. EvolverAI Academy bietet hochwertige Kurse, Workshops 
+          und Mentoring-Programme in KI, Data Science und Technologie. Wir befähigen Einzelpersonen 
+          und Organisationen mit praktischen Fähigkeiten, in einer sich schnell wandelnden 
+          digitalen Welt zu gedeihen — sowohl online als auch persönlich.
         icon: 
           type: "school"
           color: "#F5F5F5"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/academy"
 
       - title: "PixelCraft by EvolverAI"
         description: >
-          PixelCraft ist unser kreatives Kraftwerk — ein Designlabor, wo 
-          Kunst auf Intelligenz trifft. Wir erstellen KI-unterstützte 
-          Illustrationen, Pixel-Art, Branding-Kits und visuelle Inhalte 
-          für Spiele, Merchandise und digitale Kampagnen. Der Geist ist 
+          PixelCraft ist unser kreatives Kraftwerk — ein Design-Labor, wo Kunst auf Intelligenz 
+          trifft. Wir erstellen KI-gestützte Illustrationen, Pixel Art, Branding-Kits und 
+          visuelle Inhalte für Spiele, Merchandise und digitale Kampagnen. Der Geist ist 
           spielerisch, aber die Ausführung ist professionell.
         icon: 
           type: "palette"
-          alignment: "top"
+          alignment: "left-headline"
+        linkText: "Mehr erfahren"
+        linkUrl: "/pixelcraft"
 
   features:
     title: "EvolverAI: Exzellenz neu definieren"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
     cards:
       - title: "Praktische KI-Anwendungen"
-        description: "Lieferung praktischer KI-Anwendungen, die sofortigen Wert schaffen."
+        description: "Bereitstellung praktischer KI-Anwendungen, die sofortigen Wert schaffen."
         icon: 
           type: "check_circle"
           alignment: "top"
-      - title: "Kundenzusammenarbeit"
+      - title: "Kundenkooperation"
         description: "Enge Zusammenarbeit mit unseren Kunden, um ihre Herausforderungen und Ziele zu verstehen."
         icon: 
           type: "handshake"
           alignment: "top"
       - title: "Zukunftsorientierte Technologie"
-        description: "Beibehaltung eines zukunftsorientierten Ansatzes für Technologie und Innovation."
+        description: "Einen zukunftsorientierten Ansatz für Technologie und Innovation beibehalten."
         icon: 
           type: "lightbulb"
           alignment: "top"
+
   b2b:
-    title: "B2B-Outsourcing-Dienstleistungen"
+    title: "B2B-Outsourcing-Services"
     description: >
-      Umfassende Outsourcing-Lösungen, die es Ihnen ermöglichen, sich auf Ihr 
-      Kerngeschäft zu konzentrieren, während wir spezialisierte Prozesse übernehmen.
+      Umfassende Outsourcing-Lösungen, die es Ihnen ermöglichen, sich auf Ihr Kerngeschäft 
+      zu konzentrieren, während wir spezialisierte Prozesse handhaben.
     buttonText: "Partner werden"
     buttonUrl: "/b2b"
     buttonColor: "bg-green-600 hover:bg-green-700"
     responsiveColumns:
       mobile: 1
-      tablet: 1
-      desktop: 1
+      tablet: 4
+      desktop: 4
     cards:
       - title: "IT-Infrastruktur-Management"
         description: "Gewährleistung optimaler Leistung und Sicherheit Ihrer IT-Infrastruktur."
@@ -214,8 +234,8 @@ sections:
         icon: 
           type: "expand_more"
           alignment: "top"
-      - title: "Kundenservice-Dienstleistungen"
-        description: "Bereitstellung reaktionsfähiger und effektiver Unterstützung für Ihre Kunden."
+      - title: "Kundensupport-Services"
+        description: "Bereitstellung reaktionsschneller und effektiver Unterstützung für Ihre Kunden."
         icon: 
           type: "business"
           alignment: "top"
@@ -224,27 +244,42 @@ sections:
         icon: 
           type: "autorenew"
           alignment: "top"
-      - title: "Haben wir Ihre Aufmerksamkeit?"
-        description: "Entdecken Sie, wie unsere B2B-Outsourcing-Dienstleistungen Ihrem Unternehmen nutzen können."
-        icon: 
-          type: "star"
-          alignment: "top"
-        linkText: "Mehr erfahren"
-        linkUrl: "/b2b"
 
   contact:
     title: "Kontakt aufnehmen"
     description: "Bereit, Ihr Unternehmen mit KI zu transformieren? Lassen Sie uns über Ihr Projekt sprechen."
+
+  products:
+    title: "Unsere fertigen Lösungen"
+    description: "Das sind unsere Software-Lösungen, die darauf ausgelegt sind, Ihre Geschäftsherausforderungen zu bewältigen."
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    cards:
+      - title: "Workforce Manager"
+        description: "Ein fortschrittliches Tool zur Optimierung der Schichtplanung und Personalverwaltung."
+        icon: 
+          type: "clock"
+          alignment: "top"
+        linkText: "Mehr erfahren"
+        linkUrl: "#product_wfm"
+      - title: "Elysia"
+        description: "Ihr KI-gestützter Assistent für verbesserte Produktivität."
+        icon: 
+          type: "assistant"
+          alignment: "top"
+        linkText: "Mehr erfahren"
+        linkUrl: "#product_elysia"
 
   product_wfm:
     subtitle: "Workforce Manager"
     image: "/img/evolverai-web-wfm-bg.png"
     imagePosition: "right"
     description: >
-      Workforce Manager ist ein fortschrittliches Tool, das entwickelt wurde, um 
-      Schichtplanung und Personalmanagement zu optimieren. Nutzen Sie die Kraft 
-      von KI und einem automatisierten Chatbot für effiziente Kommunikation, 
-      Terminplanung und Produktivitätssteigerungen.
+      Workforce Manager ist ein fortschrittliches Tool, das darauf ausgelegt ist, Schichtplanung 
+      und Personalverwaltung zu optimieren. Nutzen Sie die Kraft der KI und eines automatisierten 
+      Chatbots für effiziente Kommunikation, Terminplanung und Produktivitätssteigerungen.
     buttonText: "Mehr erfahren"
     buttonUrl: "/wfm"
     buttonColor: "bg-purple-600 hover:bg-purple-700"
@@ -255,27 +290,31 @@ sections:
     imagePosition: "left"
     description: >
       Elysia ist mehr als nur ein Bot—sie ist der neue beste Freund Ihrer Organisation. 
-      Angetrieben von modernster KI rationalisiert Elysia Abläufe durch Automatisierung 
-      wiederholender Aufgaben und Reduzierung von Arbeitslasten, wodurch Ihr Team mehr 
-      Zeit hat, sich auf das zu konzentrieren, was wirklich wichtig ist. Ob es sich um 
-      Workflow-Management, Bearbeitung von Routineanfragen oder Prozessoptimierung handelt, 
-      Elysia arbeitet unermüdlich im Hintergrund, um Effizienz und Produktivität zu steigern. 
-      Verabschieden Sie sich von manueller Arbeit und begrüßen Sie eine intelligentere, 
-      nahtlosere Arbeitsweise. Transformieren Sie Ihre Organisation mit Elysia und 
-      erschließen Sie das Potenzial von KI heute!
+      Angetrieben von hochmoderner KI optimiert Elysia Abläufe durch Automatisierung 
+      wiederkehrender Aufgaben und Reduzierung von Arbeitslasten, wodurch Ihr Team mehr 
+      Zeit hat, sich auf das zu konzentrieren, was wirklich wichtig ist. Ob es um die 
+      Verwaltung von Workflows, die Bearbeitung routinemäßiger Anfragen oder die Optimierung 
+      von Prozessen geht, Elysia arbeitet unermüdlich im Hintergrund, um Effizienz und 
+      Produktivität zu steigern. Verabschieden Sie sich von manueller Arbeit und begrüßen 
+      Sie eine intelligentere, nahtlosere Art zu arbeiten. Transformieren Sie Ihre Organisation 
+      mit Elysia und erschließen Sie noch heute das Potenzial der KI!
     buttonText: "Elysia entdecken"
     buttonUrl: "/elysia"
     buttonColor: "bg-pink-600 hover:bg-pink-700"
 
   courses:
     title: "KI-Kurse & Schulungen"
-    description: "Verbessern Sie Ihre Fähigkeiten mit unseren umfassenden KI- und Datenwissenschaftskursen."
+    description: "Verbessern Sie Ihre Fähigkeiten mit unseren umfassenden KI- und Data Science-Kursen."
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
     cards:
       - title: "KI-Grundlagen"
         icon: 
           type: "school"
           alignment: "left"
-        description: "Lernen Sie die Grundlagen der Künstlichen Intelligenz und ihrer Anwendungen."
+        description: "Lernen Sie die Grundlagen der künstlichen Intelligenz und ihre Anwendungen."
         features:
           - text: "Was ist ein LLM (Large Language Model)"
             bullet: "psychology"
@@ -290,7 +329,7 @@ sections:
             bulletType: "icon"
             bulletColor: "text-green-400"
             badges:
-              - text: "Kern"
+              - text: "Basis"
                 color: "bg-green-500"
                 tooltip: "Kernkonzept"
           - text: "Generative KI und ihre Anwendungen"
@@ -309,24 +348,24 @@ sections:
         icon: 
           type: "school"
           alignment: "left"
-        description: "Fortgeschrittene Techniken im maschinellen Lernen und in der Datenwissenschaft."
+        description: "Fortgeschrittene Techniken in Machine Learning und Data Science."
         features:
-          - text: "Deep Learning und neuronale Netzwerke"
+          - text: "Deep Learning und neuronale Netze"
             bullet: "▶"
             bulletType: "symbol"
             bulletColor: "text-orange-400"
             badges:
               - text: "Experte"
                 color: "bg-green-400"
-                tooltip: "Meisterschaftsabzeichen"
-          - text: "Erweiterte Algorithmen und Modelloptimierung"
+                tooltip: "Meisterschafts-Badge"
+          - text: "Fortgeschrittene Algorithmen und Modelloptimierung"
             bullet: "▶"
             bulletType: "symbol"
             bulletColor: "text-orange-400"
             badges:
               - text: "Experte"
                 color: "bg-green-400"
-                tooltip: "Meisterschaftsabzeichen"
+                tooltip: "Meisterschafts-Badge"
           - text: "Implementierung realer Projekte"
             bullet: "▶"
             bulletType: "symbol"
@@ -334,7 +373,7 @@ sections:
             badges:
               - text: "Experte"
                 color: "bg-green-400"
-                tooltip: "Meisterschaftsabzeichen"
+                tooltip: "Meisterschafts-Badge"
         buttonText: "Jetzt anmelden"
         buttonUrl: "/enroll/ai-machine-learning"
 
@@ -346,35 +385,35 @@ sections:
         icon: 
           type: "school"
           alignment: "left"
-        description: "Verständnis der ethischen Implikationen und Governance von KI-Systemen."
+        description: "Verstehen der ethischen Implikationen und Governance von KI-Systemen."
         features:
-          - text: "Ethische Rahmen für KI-Entwicklung"
+          - text: "Ethische Rahmenwerke für KI-Entwicklung"
             bulletType: "dot"
             bulletColor: "text-red-400"
             badges:
               - text: "Ethik"
                 color: "bg-red-500"
-                tooltip: "Ethik zertifiziert"
-          - text: "Bias-Erkennung und Minderungsstrategien"
+                tooltip: "Ethik-zertifiziert"
+          - text: "Bias-Erkennungs- und Minderungsstrategien"
             bulletType: "dot"
             bulletColor: "text-yellow-400"
             badges:
               - text: "Fortgeschritten"
                 color: "bg-yellow-500"
-                tooltip: "Fortgeschrittenes Niveau"
-          - text: "Regulatorische Compliance und bewährte Praktiken"
+                tooltip: "Fortgeschrittenes Level"
+          - text: "Regulatorische Compliance und Best Practices"
             bulletType: "dot"
             bulletColor: "text-green-400"
             badges:
               - text: "Compliance"
                 color: "bg-green-500"
-                tooltip: "Compliance bereit"
+                tooltip: "Compliance-bereit"
         buttonText: "Jetzt anmelden"
         buttonUrl: "/enroll/ai-ethics-governance"
 
   footer:
     title: "Lassen Sie uns sprechen, erzählen Sie uns von Ihren Bedürfnissen"
-    description: "Wir sind hier, um Ihnen dabei zu helfen, das Potenzial von KI zu erschließen und Ihre Geschäftsabläufe zu transformieren. Lassen Sie uns gemeinsam brainstormen und eine hellere Zukunft für Ihr Unternehmen schaffen."
+    description: "Wir sind hier, um Ihnen zu helfen, das Potenzial der KI zu erschließen und Ihre Geschäftsabläufe zu transformieren. Lassen Sie uns gemeinsam brainstormen und eine hellere Zukunft für Ihr Unternehmen schaffen."
     buttonText: "Erzählen Sie uns von Ihrem Projekt"
     copyright: "Alle Rechte vorbehalten"
     contact:
@@ -388,7 +427,7 @@ sections:
 b2b_sections:
   - type: "hero"
     title: "Premium B2B-Outsourcing-Lösungen"
-    subtitle: "Transformation von Operationen durch strategische Partnerschaften und KI-verstärkte Dienstleistungen"
+    subtitle: "Transformation von Abläufen durch strategische Partnerschaften und KI-gestützte Services"
 
   - type: "cards_section"
     title: "Unternehmenshintergrund & Führung"
@@ -400,25 +439,24 @@ b2b_sections:
       - image_title: /img/b2b-background.png
         description: >
           Infinite Workforce Shpk ist unsere operative Einheit in Albanien, vollständig im 
-          Besitz der EvolverAI GmbH. Diese strategische Investition demonstriert unser 
-          Engagement für die Schaffung nachhaltiger, hochwertiger Outsourcing-Operationen, 
-          die sich der Datenqualitätskontrolle und Geschäftsprozessoptimierung widmen.
+          Besitz der EvolverAI GmbH. Diese strategische Investition demonstriert unser Engagement 
+          für die Schaffung nachhaltiger, hochwertiger Outsourcing-Operationen, die der 
+          Datenqualitätskontrolle und Geschäftsprozessoptimierung gewidmet sind.
 
-          Wir haben diese Einheit speziell entworfen, um eine qualifizierte, gut ausgebildete 
-          Belegschaft zu einer optimierten Kostenstruktur bereitzustellen, wodurch Wert für 
-          unsere Kunden geschaffen wird, während die höchsten Standards der Service-Exzellenz 
-          beibehalten werden.
+          Wir haben diese Einheit speziell dafür konzipiert, eine qualifizierte, gut ausgebildete 
+          Belegschaft mit einer optimierten Kostenstruktur bereitzustellen, um Wert für unsere 
+          Kunden zu schaffen und gleichzeitig höchste Standards der Service-Exzellenz zu wahren.
 
           Was uns von anderen Outsourcing-Anbietern unterscheidet, ist unser Engagement für 
-          unsere Mitarbeiter. Wir bieten höhere Vergütung als lokale Wettbewerber, was zu 
+          unsere Mitarbeiter. Wir bieten höhere Vergütung als lokale Konkurrenten, was zu 
           deutlich niedrigeren Mitarbeiterfluktuation geführt hat. Diese Stabilität ermöglicht 
-          es uns, eine Kultur der Leistung und kontinuierlichen beruflichen Wachstums zu fördern, 
-          die sicherstellt, dass unsere Kunden von erfahrenen Teams profitieren, die ihre 
-          Geschäftsbedürfnisse verstehen.
+          es uns, eine Kultur des Verdienstes und kontinuierlichen beruflichen Wachstums zu 
+          fördern, wodurch sichergestellt wird, dass unsere Kunden von erfahrenen Teams 
+          profitieren, die ihre Geschäftsbedürfnisse verstehen.
 
-          Unser albanisches Team spezialisiert sich auf BPO-Operationen und nutzt unsere 
-          proprietäre Workforce Manager-Plattform, automatisierte Qualitätskontrollsysteme 
-          und erweiterte KPI-Extraktionstools, um außergewöhnliche Ergebnisse für Kunden 
+          Unser in Albanien ansässiges Team spezialisiert sich auf BPO-Operationen und nutzt 
+          unsere proprietäre Workforce Manager-Plattform, automatisierte Quality Control-Systeme 
+          und fortschrittliche KPI-Extraktionstools, um außergewöhnliche Ergebnisse für Kunden 
           in den Bereichen Medienmessung und Marktforschung zu liefern.
 
   - type: "cards_section"
@@ -429,9 +467,9 @@ b2b_sections:
         alignment: "left"
     description: >
       Unser Führungsteam bringt jahrzehntelange kombinierte Erfahrung in Technologieimplementierung, 
-      operationaler Exzellenz und Geschäftsprozessoptimierung mit. Diese Expertise ermöglicht 
-      es uns, sowohl strategische Beratung als auch praktische Lösungen zu liefern, die 
-      messbare Ergebnisse für unsere Kunden erzielen.
+      operativer Exzellenz und Geschäftsprozessoptimierung mit. Diese Expertise ermöglicht es 
+      uns, sowohl strategische Anleitung als auch praktische Lösungen zu liefern, die messbare 
+      Ergebnisse für unsere Kunden erzielen.
     responsiveColumns:
       - mobile: 1
         tablet: 2
@@ -445,15 +483,14 @@ b2b_sections:
           color: "#F5F5F5"
           alignment: "left"
       - description: >
-          Nachgewiesene Erfolgsbilanz in der Entwicklung und Implementierung von 
-          Monitoring-Tools in mehr als 40 Ländern auf allen Kontinenten
+          Bewährte Erfolgsbilanz in der Entwicklung und Implementierung von Monitoring-Tools 
+          in mehr als 40 Ländern auf allen Kontinenten
         icon: 
           type: "world"
           color: "#F5F5F5"
           alignment: "left"
       - description: >
-          Umfassendes Verständnis von Medienmessungsmethodologien und 
-          Qualitätskontrollprozessen
+          Umfassendes Verständnis von Medienmessungsmethoden und Qualitätskontrollprozessen
         icon: 
           type: "chart"
           color: "#F5F5F5"

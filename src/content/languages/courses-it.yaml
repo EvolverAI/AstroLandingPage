@@ -1,0 +1,392 @@
+code: "it"
+name: "Italiano"
+flag: "🇮🇹"
+
+# Page configuration for Courses - defines sections order and types
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-brainstorming-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "learning-approach"
+    order: 2.1
+  - type: "cards"
+    section_id: "courses"
+    order: 3
+  - type: "cards"
+    section_id: "benefits"
+    order: 4
+  - type: "cards"
+    section_id: "delivery-methods"
+    order: 5
+  - type: "cards"
+    section_id: "enrollment"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+# Defaults configuration for cards and components
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+      background: 
+        color: "bg-gray-100"
+        style: "rounded-lg shadow-md"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md" 
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+sections:
+  about:
+    title: "Corsi e Formazione IA"
+    description: >
+      Sviluppo Professionale in Intelligenza Artificiale e Machine Learning
+
+  overview:
+    subtitle: "Trasforma la Tua Carriera con l'Educazione IA"
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    description: >
+      I nostri programmi di formazione IA completi sono progettati per equipaggiare 
+      i professionisti con le conoscenze e le competenze necessarie per eccellere 
+      nel campo in rapida evoluzione dell'intelligenza artificiale. Dai concetti 
+      fondamentali alle implementazioni avanzate, i nostri corsi forniscono 
+      esperienze di apprendimento pratiche e hands-on.
+    cards:
+      - title: "Perché le Competenze IA Sono Importanti"
+        description: "La domanda di professionisti IA continua a crescere in tutti i settori:"
+        icon: 
+          type: "trending_up"
+          alignment: "left"
+          color: "text-blue-400"
+        features:
+          - text: "Le offerte di lavoro IA sono aumentate del 250% negli ultimi 5 anni"
+            bullet: "analytics"
+            bulletType: "icon"  
+            bulletColor: "text-blue-400"
+          - text: "Le aziende stanno investendo pesantemente nella trasformazione IA"
+            bullet: "business_center"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "I professionisti IA guadagnano il 30-50% in più"
+            bullet: "attach_money"
+            bulletType: "icon"
+            bulletColor: "text-yellow-400"
+          - text: "Le applicazioni trasversali creano opportunità diverse"
+            bullet: "diversity_3"
+            bulletType: "icon"
+            bulletColor: "text-purple-400"
+      - title: "Il Nostro Vantaggio Formativo"
+        description: "Cosa rende speciali i nostri programmi di formazione IA:"
+        icon: 
+          type: "school"
+          alignment: "left"
+          color: "text-green-500"
+        features:
+          - text: "Esperti del settore con esperienza reale nell'implementazione IA"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Progetti pratici utilizzando strumenti e framework all'avanguardia"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Percorsi di apprendimento flessibili su misura per il tuo livello"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+          - text: "Supporto continuo e mentoring durante tutto il percorso"
+            bullet: "check"
+            bulletType: "icon"
+            bulletColor: "text-green-400"
+
+  learning-approach:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Imparare Facendo"
+        description: >
+          La nostra metodologia di formazione enfatizza l'applicazione pratica 
+          rispetto ai concetti teorici. Ogni corso include progetti del mondo reale 
+          che simulano scenari aziendali effettivi, assicurando che tu acquisisca 
+          esperienza pratica con gli strumenti e le tecniche utilizzate nello 
+          sviluppo IA professionale.
+
+          Lavorerai con framework popolari come TensorFlow, PyTorch e scikit-learn, 
+          mentre impari a distribuire modelli utilizzando piattaforme cloud e 
+          pratiche MLOps moderne. Alla fine di ogni corso, avrai un portfolio 
+          di progetti che dimostrano le tue capacità ai potenziali datori di lavoro.
+        icon: 
+          type: "build"
+          alignment: "left-big"
+
+  courses:
+    subtitle: "Catalogo Corsi"
+    description: >
+      Scegli dalla nostra gamma completa di corsi IA e machine learning, 
+      progettati per diversi livelli di competenza e obiettivi di carriera.
+    cards:
+      - title: "Fondamentali IA"
+        description: >
+          Perfetto per principianti che vogliono comprendere concetti e applicazioni IA.
+        icon: 
+          type: "lightbulb"
+          alignment: "left"
+        features:
+          - text: "Introduzione ai concetti di IA, ML e Deep Learning"
+          - text: "Programmazione Python per data science"
+          - text: "Statistica e matematica di base per l'IA"
+          - text: "Progetti pratici con dataset popolari"
+        note: >
+          Durata: 8 settimane | Prerequisiti: Conoscenze di programmazione di base
+      - title: "Ingegnere Machine Learning"
+        description: >
+          Formazione completa per costruire e distribuire modelli ML in produzione.
+        icon: 
+          type: "precision_manufacturing"
+          alignment: "left"
+        features:
+          - text: "Algoritmi ML avanzati e selezione del modello"
+          - text: "Feature engineering e preprocessamento dati"
+          - text: "Distribuzione del modello e pratiche MLOps"
+          - text: "Monitoraggio delle prestazioni e manutenzione del modello"
+        note: >
+          Durata: 12 settimane | Prerequisiti: Esperienza di programmazione, statistica di base
+      - title: "Specialista Deep Learning"
+        description: >
+          Corso avanzato focalizzato su reti neurali e applicazioni deep learning.
+        icon: 
+          type: "psychology"
+          alignment: "left"
+        features:
+          - text: "Architetture di reti neurali e ottimizzazione"
+          - text: "Computer vision e elaborazione delle immagini"
+          - text: "Elaborazione del linguaggio naturale e transformer"
+          - text: "IA generativa e modelli linguistici di grandi dimensioni"
+        note: >
+          Durata: 10 settimane | Prerequisiti: Fondamentali ML, algebra lineare
+      - title: "IA per Leader Aziendali"
+        description: >
+          Corso strategico per dirigenti e manager che implementano iniziative IA.
+        icon: 
+          type: "business_center"
+          alignment: "left"
+        features:
+          - text: "Strategia IA e sviluppo del business case"
+          - text: "Comprensione delle capacità e limitazioni dell'IA"
+          - text: "Gestione di progetti e team IA"
+          - text: "IA etica e implementazione responsabile"
+        note: >
+          Durata: 4 settimane | Prerequisiti: Esperienza aziendale o manageriale
+      - title: "Padronanza Computer Vision"
+        description: >
+          Formazione specializzata nell'analisi di immagini e video usando l'IA.
+        icon: 
+          type: "visibility"
+          alignment: "left"
+        features:
+          - text: "Classificazione delle immagini e rilevamento oggetti"
+          - text: "Riconoscimento facciale e sistemi biometrici"
+          - text: "Imaging medico e applicazioni diagnostiche"
+          - text: "Elaborazione video in tempo reale e analisi"
+        note: >
+          Durata: 8 settimane | Prerequisiti: Python, conoscenze ML di base
+      - title: "NLP e Modelli Linguistici"
+        description: >
+          Focus sull'elaborazione del linguaggio naturale e IA conversazionale.
+        icon: 
+          type: "chat"
+          alignment: "left"
+        features:
+          - text: "Elaborazione del testo e analisi del sentiment"
+          - text: "Chatbot e interfacce conversazionali"
+          - text: "Modelli linguistici di grandi dimensioni e fine-tuning"
+          - text: "Analisi di documenti ed estrazione di informazioni"
+        note: >
+          Durata: 8 settimane | Prerequisiti: Python, conoscenze ML di base
+
+  benefits:
+    subtitle: "Benefici dell'Apprendimento"
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    alignment: "center"
+    cards:
+      - title: "Avanzamento di Carriera"
+        icon: 
+          type: "trending_up"
+          alignment: "top-big"
+        features:
+          - text: "Aumenta il potenziale di guadagno del 30-50%"
+            bullet: "check"
+          - text: "Accesso a ruoli IA ad alta domanda"
+            bullet: "check"
+          - text: "Opportunità di leadership nelle iniziative IA"
+            bullet: "check"
+          - text: "Riconoscimento e credibilità del settore"
+            bullet: "check"
+      - title: "Competenze Pratiche"
+        icon: 
+          type: "build"
+          alignment: "top-big"
+        features:
+          - text: "Esperienza pratica con dataset reali"
+            bullet: "check"
+          - text: "Portfolio di progetti IA completati"
+            bullet: "check"
+          - text: "Strumenti e framework standard del settore"
+            bullet: "check"
+          - text: "Best practice per il deployment in produzione"
+            bullet: "check"
+      - title: "Supporto Continuo"
+        icon: 
+          type: "support_agent"
+          alignment: "top-big"
+        features:
+          - text: "Accesso a istruttori esperti e mentori"
+            bullet: "check"
+          - text: "Comunità di apprendimento tra pari e networking"
+            bullet: "check"
+          - text: "Orientamento professionale e assistenza nel trovare lavoro"
+            bullet: "check"
+          - text: "Accesso a vita ai materiali del corso"
+            bullet: "check"
+
+  delivery-methods:
+    subtitle: "Opzioni di Apprendimento Flessibili"
+    description: >
+      Scegli il formato di apprendimento che si adatta meglio ai tuoi orari e preferenze.
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    cards:
+      - title: "Lezioni Online dal Vivo"
+        description: >
+          Sessioni interattive con Q&A in tempo reale e attività di gruppo.
+        icon: 
+          type: "video_call"
+          alignment: "top"
+        features:
+          - text: "Sessioni dal vivo settimanali con istruttori"
+          - text: "Interazione in tempo reale con i compagni"
+          - text: "Feedback immediato sui progetti"
+          - text: "Opzioni flessibili serali e nei weekend"
+      - title: "Apprendimento Autogestito"
+        description: >
+          Studia al tuo ritmo con lezioni registrate e materiali.
+        icon: 
+          type: "schedule"
+          alignment: "top"
+        features:
+          - text: "Accesso a tutti i materiali del corso 24/7"
+          - text: "Monitoraggio dei progressi e traguardi"
+          - text: "Check-in opzionali con mentori"
+          - text: "Fino a 12 mesi per completare"
+      - title: "Programmi Ibridi"
+        description: >
+          Combinazione di sessioni dal vivo e componenti autogestite.
+        icon: 
+          type: "sync"
+          alignment: "top"
+        features:
+          - text: "Mix di contenuti dal vivo e registrati"
+          - text: "Opzioni di partecipazione flessibili"
+          - text: "Revisioni regolari dei progetti"
+          - text: "Il meglio di entrambi gli approcci di apprendimento"
+      - title: "Formazione Aziendale"
+        description: >
+          Programmi personalizzati per team e organizzazioni.
+        icon: 
+          type: "groups"
+          alignment: "top"
+        features:
+          - text: "Curriculum su misura per le tue esigenze"
+          - text: "Consegna in sede o virtuale"
+          - text: "Sconti di gruppo disponibili"
+          - text: "Aree di focus per progetti personalizzati"
+
+  enrollment:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - title: "Pronto a Iniziare il Tuo Percorso IA?"
+        description: >
+          Unisciti a migliaia di professionisti che hanno fatto avanzare le loro 
+          carriere attraverso i nostri programmi di formazione IA completi. I nostri 
+          istruttori esperti e il curriculum collaudato ti daranno le competenze e 
+          la fiducia necessarie per eccellere nel futuro del lavoro guidato dall'IA.
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        icon:
+          type: "school"
+          alignment: "left-big"
+        features:
+          - text: "Consulenza gratuita per scegliere il corso giusto"
+            bullet: "check"
+          - text: "Opzioni di pagamento flessibili e finanziamenti disponibili"
+            bullet: "check"
+          - text: "Garanzia di soddisfazione di 30 giorni"
+            bullet: "check"
+          - text: "Certificati riconosciuti dal settore al completamento"
+            bullet: "check"
+        buttonText: "Iscriviti Ora"
+        buttonUrl: "/enroll-courses"
+
+  contact:
+    title: "Inizia con la Formazione IA"
+    description: "Pronto a trasformare la tua carriera con le competenze IA? Discutiamo i tuoi obiettivi di apprendimento."
+
+  footer:
+    title: "Trasforma la tua carriera con l'educazione IA"
+    description: "Sblocca nuove opportunità e fai avanzare il tuo sviluppo professionale."
+    buttonText: "Esplora i Corsi"
+    copyright: "Tutti i diritti riservati"
+    contact:
+      email:
+        label: "Email"
+      phone:
+        label: "Telefono"
+      address:
+        label: "Indirizzo"

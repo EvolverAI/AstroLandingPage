@@ -185,7 +185,7 @@ function generateLanguageUrl(
 </div>
 
 <script>
-    // Dynamic URL generation function
+    // Dynamic URL generation function (simplified for new routing)
     function generateLanguageUrl(targetLangCode, currentPath) {
         // Remove leading slash for processing
         const path = currentPath.startsWith("/")
@@ -198,43 +198,19 @@ function generateLanguageUrl(
             .filter((segment) => segment.length > 0);
 
         if (segments.length === 0) {
-            // Root path, just return language code
+            // Root path, return language code
             return `/${targetLangCode}`;
         }
 
         const supportedLanguages = ["en", "de", "it"];
 
-        // Check different URL patterns
-        if (segments.length === 1) {
-            // Pattern: /en or /de or /page
-            if (supportedLanguages.includes(segments[0])) {
-                // It's a language code, replace it
-                return `/${targetLangCode}`;
-            } else {
-                // It's a page, append language
-                return `/${segments[0]}/${targetLangCode}`;
-            }
-        } else if (segments.length >= 2) {
-            // Pattern: /page/en or /en/page or more complex
-
-            // Check if first segment is a language code
-            if (supportedLanguages.includes(segments[0])) {
-                // Pattern: /en/page/... - replace first segment
-                segments[0] = targetLangCode;
-            } else if (supportedLanguages.includes(segments[1])) {
-                // Pattern: /page/en/... - replace second segment
-                segments[1] = targetLangCode;
-            } else {
-                // No language code found, check if it's a known page pattern
-                const knownPages = ["elysia", "wfm", "b2b", "courses"];
-                if (knownPages.includes(segments[0])) {
-                    // Pattern: /page/... - append language as second segment
-                    segments.splice(1, 0, targetLangCode);
-                } else {
-                    // Default: prepend language code
-                    segments.unshift(targetLangCode);
-                }
-            }
+        // Check if first segment is a language code
+        if (supportedLanguages.includes(segments[0])) {
+            // Replace the language code
+            segments[0] = targetLangCode;
+        } else {
+            // Prepend the language code
+            segments.unshift(targetLangCode);
         }
 
         return "/" + segments.join("/");

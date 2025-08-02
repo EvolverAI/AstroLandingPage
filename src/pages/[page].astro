@@ -1,8 +1,31 @@
 ---
+// Page redirector - catches /pagename and redirects to /{lang}/pagename
 
+export async function getStaticPaths() {
+    const AVAILABLE_PAGES = ["b2b", "wfm", "elysia", "courses"];
+    const paths: any[] = [];
+
+    // Generate paths for all available pages without language prefix
+    AVAILABLE_PAGES.forEach((page) => {
+        paths.push({
+            params: { page: page },
+            props: { pageName: page },
+        });
+    });
+
+    return paths;
+}
+
+const { page } = Astro.params;
+const { pageName } = Astro.props;
+
+console.log(
+    "🔀 Page redirector - Page:",
+    page,
+    "Redirecting to language version",
+);
 ---
 
-// Main index page - handles automatic language detection and redirection
 <html lang="en">
     <head>
         <meta charset="UTF-8" />
@@ -10,7 +33,7 @@
         <title>EvolverAI - Redirecting...</title>
         <meta
             name="description"
-            content="EvolverAI - Integrated AI Solutions"
+            content={`Redirecting to ${pageName} page in your preferred language`}
         />
         <style>
             body {
@@ -48,10 +71,10 @@
     <body>
         <div class="loader">
             <div class="spinner"></div>
-            <p>Detecting your language preference...</p>
+            <p>Redirecting to {pageName} page in your preferred language...</p>
         </div>
 
-        <script>
+        <script define:vars={{ pageName }}>
             function redirectToLanguagePage() {
                 const supportedLanguages = ["en", "de", "it"];
                 let targetLanguage = localStorage.getItem(
@@ -75,9 +98,12 @@
                     );
                 }
 
-                // Redirect to appropriate language page, preserving hash
+                // Redirect to appropriate language page, preserving hash and query params
                 const hash = window.location.hash || "";
-                const redirectPath = `/${targetLanguage}${hash}`;
+                const search = window.location.search || "";
+                const redirectPath = `/${targetLanguage}/${pageName}${search}${hash}`;
+
+                console.log(`🔀 Redirecting /${pageName} → ${redirectPath}`);
 
                 setTimeout(() => {
                     window.location.href = redirectPath;

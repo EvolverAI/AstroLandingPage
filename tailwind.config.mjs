@@ -7,10 +7,7 @@ export default {
     safelist: [
         // Button colors pattern - ensures all button color variations are included
         {
-            pattern: /^bg-(blue|green|purple|pink|indigo|red|yellow|orange|teal|cyan|slate|gray)-(500|600|700)$/,
-        },
-        {
-            pattern: /^hover:bg-(blue|green|purple|pink|indigo|red|yellow|orange|teal|cyan|slate|gray)-(500|600|700)$/,
+            pattern: /^bg-(blue|green|purple|pink|indigo|red|yellow|orange|teal|cyan|slate|gray)-(400|500|600|700)$/,
         },
         {
             pattern: /^text-(blue|green|purple|pink|indigo|red|yellow|orange|teal|cyan|slate|gray)-(400|500|600)$/,
