@@ -368,17 +368,19 @@ app.get('/api/git/status', (req, res) => {
 
 app.post('/api/git/commit', (req, res) => {
   const { message = 'Content update via admin editor' } = req.body;
+  const env = { ...process.env, PATH: process.env.PATH };
   try {
-    execSync('git add -A', { cwd: ROOT });
-    execSync(`git commit -m "${message.replace(/"/g, "'")}"`, { cwd: ROOT });
+    execSync('git add -A', { cwd: ROOT, env });
+    execSync(`git commit -m "${message.replace(/"/g, "'")}"`, { cwd: ROOT, env });
     res.json({ ok: true });
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.stderr?.toString() || err.message });
   }
 });
 
 app.post('/api/git/push', (req, res) => {
-  exec('git push', { cwd: ROOT }, (err, stdout, stderr) => {
+  const env = { ...process.env, PATH: process.env.PATH };
+  exec('git push', { cwd: ROOT, env }, (err, stdout, stderr) => {
     if (err) return res.status(500).json({ error: stderr || err.message });
     res.json({ ok: true, output: stdout });
   });

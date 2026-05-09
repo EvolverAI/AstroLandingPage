@@ -1,23 +1,33 @@
 ---
 import "../styles/global.css";
-import { ViewTransitions } from 'astro:transitions';
+import { ViewTransitions } from "astro:transitions";
 import StructuredData from "../components/StructuredData.astro";
 import CookieBanner from "../components/CookieBanner.astro";
 import Analytics from "../components/Analytics.astro";
-import fs from 'node:fs';
-import path from 'node:path';
+import fs from "node:fs";
+import path from "node:path";
 
 // Load design settings overrides (written by admin design panel)
-let designOverrides = '';
+let designOverrides = "";
 try {
-  const settingsPath = path.join(process.cwd(), 'src/content/design-settings.json');
+  const settingsPath = path.join(
+    process.cwd(),
+    "src/content/design-settings.json",
+  );
   if (fs.existsSync(settingsPath)) {
-    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    const settings = JSON.parse(fs.readFileSync(settingsPath, "utf-8"));
     if (Object.keys(settings).length > 0) {
-      designOverrides = ':root{' + Object.entries(settings).map(([k,v]) => `${k}:${v}`).join(';') + '}';
+      designOverrides =
+        ":root{" +
+        Object.entries(settings)
+          .map(([k, v]) => `${k}:${v}`)
+          .join(";") +
+        "}";
     }
   }
-} catch { /* non-fatal */ }
+} catch {
+  /* non-fatal */
+}
 
 export interface Props {
   title: string;
@@ -46,7 +56,10 @@ const canonicalUrl = `${BASE_URL}${canonicalPath}`;
 ---
 
 <!doctype html>
-<html lang={language} dir={language === 'ar' || language === 'he' ? 'rtl' : 'ltr'}>
+<html
+  lang={language}
+  dir={language === "ar" || language === "he" ? "rtl" : "ltr"}
+>
   <head>
     <meta charset="UTF-8" />
     <meta
@@ -54,7 +67,16 @@ const canonicalUrl = `${BASE_URL}${canonicalPath}`;
       content="width=device-width, initial-scale=1.0, viewport-fit=cover"
     />
     <meta name="description" content={description} />
-    {(noindex || nofollow) && <meta name="robots" content={[noindex && 'noindex', nofollow && 'nofollow'].filter(Boolean).join(', ')} />}
+    {
+      (noindex || nofollow) && (
+        <meta
+          name="robots"
+          content={[noindex && "noindex", nofollow && "nofollow"]
+            .filter(Boolean)
+            .join(", ")}
+        />
+      )
+    }
     <meta name="theme-color" content="#0a0f1e" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -203,7 +225,8 @@ const canonicalUrl = `${BASE_URL}${canonicalPath}`;
     <a
       href="#main-content"
       class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:font-semibold focus:shadow-lg"
-    >Skip to main content</a>
+      >Skip to main content</a
+    >
     <slot />
     <CookieBanner />
     <Analytics />
@@ -326,10 +349,16 @@ const canonicalUrl = `${BASE_URL}${canonicalPath}`;
 
       // Global error monitoring
       window.onerror = (msg, src, line, col, err) => {
-        console.error('[EvolverAI Error]', { msg, src, line, col, stack: err?.stack });
+        console.error("[EvolverAI Error]", {
+          msg,
+          src,
+          line,
+          col,
+          stack: err?.stack,
+        });
       };
-      window.addEventListener('unhandledrejection', (e) => {
-        console.error('[EvolverAI UnhandledRejection]', e.reason);
+      window.addEventListener("unhandledrejection", (e) => {
+        console.error("[EvolverAI UnhandledRejection]", e.reason);
       });
     </script>
   </body>

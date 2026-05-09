@@ -38,9 +38,7 @@ const {
                             {title}
                         </h2>
                     )}
-                    {description && (
-                        <p class="text-slate-400">{description}</p>
-                    )}
+                    {description && <p class="text-slate-400">{description}</p>}
                 </div>
             )
         }
@@ -69,7 +67,10 @@ const {
                         )}
                         <div
                             class="stat-counter text-4xl md:text-5xl font-extrabold text-white tracking-tight"
-                            data-target={String(stat.value).replace(/[^0-9.]/g, "")}
+                            data-target={String(stat.value).replace(
+                                /[^0-9.]/g,
+                                "",
+                            )}
                             data-prefix={stat.prefix || ""}
                             data-suffix={stat.suffix || ""}
                         >

@@ -235,7 +235,9 @@ const mergedSection = {
             title={sectionContent?.title}
             description={sectionContent?.description}
             items={sectionContent?.items || []}
-            layout={sectionLayout?.layout ?? sectionContent?.layout ?? "accordion"}
+            layout={
+                sectionLayout?.layout ?? sectionContent?.layout ?? "accordion"
+            }
             language={language}
         />
     )
@@ -259,7 +261,11 @@ const mergedSection = {
             sectionId={section_id}
             title={sectionContent?.title}
             description={sectionContent?.description}
-            billingToggle={sectionLayout?.billingToggle ?? sectionContent?.billingToggle ?? false}
+            billingToggle={
+                sectionLayout?.billingToggle ??
+                sectionContent?.billingToggle ??
+                false
+            }
             plans={sectionContent?.plans || []}
             language={language}
         />
@@ -285,11 +291,24 @@ const mergedSection = {
             title={sectionContent?.title}
             description={sectionContent?.description}
             primaryCta={sectionContent?.primaryCta}
-            primaryCtaUrl={sectionLayout?.primaryCtaUrl ?? sectionContent?.primaryCtaUrl}
+            primaryCtaUrl={
+                sectionLayout?.primaryCtaUrl ?? sectionContent?.primaryCtaUrl
+            }
             secondaryCta={sectionContent?.secondaryCta}
-            secondaryCtaUrl={sectionLayout?.secondaryCtaUrl ?? sectionContent?.secondaryCtaUrl}
-            backgroundStyle={sectionLayout?.backgroundStyle ?? sectionContent?.backgroundStyle ?? "gradient"}
-            backgroundImage={sectionLayout?.backgroundImage ?? sectionContent?.backgroundImage ?? background_image}
+            secondaryCtaUrl={
+                sectionLayout?.secondaryCtaUrl ??
+                sectionContent?.secondaryCtaUrl
+            }
+            backgroundStyle={
+                sectionLayout?.backgroundStyle ??
+                sectionContent?.backgroundStyle ??
+                "gradient"
+            }
+            backgroundImage={
+                sectionLayout?.backgroundImage ??
+                sectionContent?.backgroundImage ??
+                background_image
+            }
             language={language}
         />
     )
@@ -303,7 +322,9 @@ const mergedSection = {
             description={sectionContent?.description}
             videoUrl={sectionLayout?.videoUrl ?? sectionContent?.videoUrl}
             thumbnail={sectionLayout?.thumbnail ?? sectionContent?.thumbnail}
-            autoplay={sectionLayout?.autoplay ?? sectionContent?.autoplay ?? false}
+            autoplay={
+                sectionLayout?.autoplay ?? sectionContent?.autoplay ?? false
+            }
             loop={sectionLayout?.loop ?? sectionContent?.loop ?? false}
             language={language}
         />
@@ -330,7 +351,9 @@ const mergedSection = {
             title={sectionContent?.title}
             description={sectionContent?.description}
             items={sectionContent?.items || []}
-            layout={sectionLayout?.layout ?? sectionContent?.layout ?? "vertical"}
+            layout={
+                sectionLayout?.layout ?? sectionContent?.layout ?? "vertical"
+            }
             language={language}
         />
     )
@@ -342,7 +365,9 @@ const mergedSection = {
             sectionId={section_id}
             title={sectionContent?.title}
             logos={sectionContent?.logos || []}
-            scrolling={sectionLayout?.scrolling ?? sectionContent?.scrolling ?? true}
+            scrolling={
+                sectionLayout?.scrolling ?? sectionContent?.scrolling ?? true
+            }
             language={language}
         />
     )

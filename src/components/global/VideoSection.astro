@@ -22,17 +22,26 @@ const {
 } = Astro.props;
 
 // Parse YouTube / Vimeo URLs into embed URLs
-function getEmbedUrl(url: string): { embed: string; type: "youtube" | "vimeo" | "native" | "unknown" } {
+function getEmbedUrl(url: string): {
+    embed: string;
+    type: "youtube" | "vimeo" | "native" | "unknown";
+} {
     if (!url) return { embed: "", type: "unknown" };
     // YouTube
     const ytMatch = url.match(
-        /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+        /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/,
     );
     if (ytMatch) {
         const params = new URLSearchParams({ rel: "0" });
         if (autoplay) params.set("autoplay", "1");
-        if (loop) { params.set("loop", "1"); params.set("playlist", ytMatch[1]); }
-        return { embed: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?${params}`, type: "youtube" };
+        if (loop) {
+            params.set("loop", "1");
+            params.set("playlist", ytMatch[1]);
+        }
+        return {
+            embed: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?${params}`,
+            type: "youtube",
+        };
     }
     // Vimeo
     const vmMatch = url.match(/vimeo\.com\/(\d+)/);
@@ -40,7 +49,10 @@ function getEmbedUrl(url: string): { embed: string; type: "youtube" | "vimeo" | 
         const params = new URLSearchParams({ dnt: "1" });
         if (autoplay) params.set("autoplay", "1");
         if (loop) params.set("loop", "1");
-        return { embed: `https://player.vimeo.com/video/${vmMatch[1]}?${params}`, type: "vimeo" };
+        return {
+            embed: `https://player.vimeo.com/video/${vmMatch[1]}?${params}`,
+            type: "vimeo",
+        };
     }
     // Native video file
     if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
@@ -142,8 +154,9 @@ const sectionUid = `video-${sectionId}`;
             el.addEventListener("click", () => {
                 const embed = el.dataset.embed!;
                 const iframe = document.createElement("iframe");
-                iframe.src =
-                    embed.includes("?") ? embed + "&autoplay=1" : embed + "?autoplay=1";
+                iframe.src = embed.includes("?")
+                    ? embed + "&autoplay=1"
+                    : embed + "?autoplay=1";
                 iframe.allow =
                     "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
                 iframe.allowFullscreen = true;
