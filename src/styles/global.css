@@ -564,6 +564,19 @@
     color: var(--color-text-secondary) !important;
   }
 
+  /* CardContent subsection titles and feature icons (text-yellow-300 is illegible on white) */
+  .card-base .text-yellow-300 {
+    color: var(--color-text-accent) !important;
+  }
+
+  /* CardContent callout box (bg-blue-900/30 is dark navy — flip to light blue) */
+  .card-base [class*="bg-blue-900"] {
+    background-color: rgba(219, 234, 254, 0.6) !important;
+  }
+  .card-base [class*="border-blue-800"] {
+    border-color: rgba(147, 197, 253, 0.5) !important;
+  }
+
   /* Card glass variant — keep semi-transparent but light */
   .card-glass {
     background: rgba(255, 255, 255, 0.7) !important;

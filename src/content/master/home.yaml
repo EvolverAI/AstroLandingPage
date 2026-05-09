@@ -197,13 +197,17 @@ footer:
     phone_label: Phone
     address_label: Address
     email: info@evolverai.ch
-    phone: "+41 79 215 6801"
-    address: "EvolverAI GmbH\nZwydenweg 3\nCH-6052 Hergiswil\nSwitzerland"
+    phone: +41 79 215 6801
+    address: |-
+      EvolverAI GmbH
+      Zwydenweg 3
+      CH-6052 Hergiswil
+      Switzerland
   social:
-    linkedin: "https://linkedin.com/company/evolverai"
-    twitter: "https://twitter.com/evolverai"
-    instagram: "https://instagram.com/evolverai"
-    facebook: "https://facebook.com/evolverai"
+    linkedin: https://linkedin.com/company/evolverai
+    twitter: https://twitter.com/evolverai
+    instagram: https://instagram.com/evolverai
+    facebook: https://facebook.com/evolverai
 meta:
   title: EvolverAI - Integrated AI Solutions
   description: >-

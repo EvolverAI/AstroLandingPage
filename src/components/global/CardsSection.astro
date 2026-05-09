@@ -151,7 +151,12 @@ const contentAlignment =
         <div class={`flex flex-col ${contentAlignment} mb-12 reveal`}>
             {
                 localizedTitle && (
-                    <h2 class="h1-noto-sans mb-3" transition:name={`section-title-${sectionId}`}>{localizedTitle}</h2>
+                    <h2
+                        class="h1-noto-sans mb-3"
+                        transition:name={`section-title-${sectionId}`}
+                    >
+                        {localizedTitle}
+                    </h2>
                 )
             }
             {
@@ -191,7 +196,35 @@ const contentAlignment =
             }
         </div>
 
-        <!-- Cards grid: horizontal scroll on mobile, grid on tablet+ -->
+        <!-- Cards grid: horizontal scroll on mobile (multi-card), full-width on mobile (single card), grid on tablet+ -->
+        {localizedCards.length === 1 ? (
+            <div class="md:hidden">
+                <Card
+                    title={localizedCards[0].title}
+                    description={localizedCards[0].description}
+                    badges={localizedCards[0].badges}
+                    icon={localizedCards[0].icon}
+                    features={localizedCards[0].features}
+                    subtitle={localizedCards[0].subtitle}
+                    subsections={localizedCards[0].subsections}
+                    subsectionColumns={localizedCards[0].subsectionColumns}
+                    subsectionStyle={localizedCards[0].subsectionStyle}
+                    callout={localizedCards[0].callout}
+                    note={localizedCards[0].note}
+                    linkText={localizedCards[0].linkText}
+                    linkUrl={localizedCards[0].linkUrl}
+                    buttonText={localizedCards[0].buttonText}
+                    buttonUrl={localizedCards[0].buttonUrl}
+                    buttonColor={localizedCards[0].buttonColor}
+                    theme={finalCardTheme}
+                    iconColor={iconColor}
+                    centerContent={centerCards}
+                    defaults={defaults?.cards}
+                    language={language}
+                    variant={cardVariant}
+                />
+            </div>
+        ) : (
         <div class="cards-mobile-scroll md:hidden">
             <div class="cards-scroll-inner">
                 {
@@ -203,6 +236,11 @@ const contentAlignment =
                                 badges={card.badges}
                                 icon={card.icon}
                                 features={card.features}
+                                subtitle={card.subtitle}
+                                subsections={card.subsections}
+                                subsectionColumns={card.subsectionColumns}
+                                subsectionStyle={card.subsectionStyle}
+                                callout={card.callout}
                                 note={card.note}
                                 linkText={card.linkText}
                                 linkUrl={card.linkUrl}
@@ -221,6 +259,7 @@ const contentAlignment =
                 }
             </div>
         </div>
+        )}
         <!-- Normal grid on tablet+ -->
         <div class={`hidden md:grid ${gridClasses} stagger`}>
             {
@@ -231,6 +270,11 @@ const contentAlignment =
                         badges={card.badges}
                         icon={card.icon}
                         features={card.features}
+                        subtitle={card.subtitle}
+                        subsections={card.subsections}
+                        subsectionColumns={card.subsectionColumns}
+                        subsectionStyle={card.subsectionStyle}
+                        callout={card.callout}
                         note={card.note}
                         linkText={card.linkText}
                         linkUrl={card.linkUrl}

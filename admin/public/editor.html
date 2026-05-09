@@ -430,7 +430,7 @@
                                       </template>
                                     </button>
                                     <!-- Card image indicator -->
-                                    <template x-if="getCardLayoutProp(sectionKey, ci, 'image')">
+                                    <template x-if="getCardIconImage(sectionKey, ci)">
                                       <span
                                         class="text-xs text-emerald-400 border border-emerald-800 rounded px-1.5 py-0.5">🖼
                                         img</span>
@@ -503,21 +503,36 @@
                                   <!-- Card Image -->
                                   <div>
                                     <p class="text-xs text-slate-500 font-semibold mb-1.5">🖼 Card Image <span
-                                        class="text-slate-600 font-normal">(replaces icon with an image)</span></p>
-                                    <div class="flex gap-1">
+                                        class="text-slate-600 font-normal">(replaces icon — stored as icon.image)</span>
+                                    </p>
+                                    <div class="flex gap-1 mb-2">
                                       <input type="text"
                                         class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
-                                        :value="getCardLayoutProp(sectionKey, ci, 'image') || ''"
-                                        @input="setCardLayoutProp(sectionKey, ci, 'image', $event.target.value)"
+                                        :value="getCardIconImage(sectionKey, ci)"
+                                        @input="setCardIconImage(sectionKey, ci, $event.target.value)"
                                         placeholder="/img/your-image.jpg (optional)" />
                                       <button @click="openImageBrowserForCard(sectionKey, ci)"
                                         class="bg-slate-600 hover:bg-slate-500 border border-slate-500 text-white px-2 py-1.5 rounded text-xs transition"
                                         title="Browse images">🖼</button>
-                                      <template x-if="getCardLayoutProp(sectionKey, ci, 'image')">
-                                        <button @click="setCardLayoutProp(sectionKey, ci, 'image', '')"
+                                      <template x-if="getCardIconImage(sectionKey, ci)">
+                                        <button @click="setCardIconImage(sectionKey, ci, '')"
                                           class="bg-red-900/30 hover:bg-red-900/60 text-red-400 px-2 py-1.5 rounded text-xs transition"
                                           title="Remove image">✕</button>
                                       </template>
+                                    </div>
+                                    <!-- Alignment (applies to both icon and image) -->
+                                    <div>
+                                      <label class="text-xs text-slate-600 block mb-1">Image / Icon Alignment</label>
+                                      <select :value="getCardIconAlignment(sectionKey, ci)"
+                                        @change="setCardIconAlignment(sectionKey, ci, $event.target.value)"
+                                        class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                                        <option value="top">Top (small icon)</option>
+                                        <option value="top-big">Top — Big (full-width image)</option>
+                                        <option value="left">Left (small icon inline)</option>
+                                        <option value="left-big">Left — Big (large icon left)</option>
+                                        <option value="top-headline">Top Headline (blue header bar)</option>
+                                        <option value="left-headline">Left Headline (blue header bar)</option>
+                                      </select>
                                     </div>
                                   </div>
 
@@ -630,6 +645,130 @@
                                           <option value="bg-teal-600 hover:bg-teal-700">Teal</option>
                                         </select>
                                       </div>
+                                    </div>
+                                  </div>
+
+                                  <!-- Callout Box -->
+                                  <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                      <p class="text-xs text-slate-500 font-semibold">💬 Callout Box</p>
+                                      <template x-if="!editableContent[sectionKey]?.cards?.[ci]?.callout">
+                                        <button @click="addCardCallout(sectionKey, ci)"
+                                          class="text-xs text-green-400 hover:text-green-300 transition">+ Add
+                                          callout</button>
+                                      </template>
+                                      <template x-if="editableContent[sectionKey]?.cards?.[ci]?.callout">
+                                        <button @click="removeCardCallout(sectionKey, ci)"
+                                          class="text-xs text-red-400 hover:text-red-300 transition">✕ Remove</button>
+                                      </template>
+                                    </div>
+                                    <template x-if="editableContent[sectionKey]?.cards?.[ci]?.callout">
+                                      <div class="space-y-1.5 p-2 bg-blue-900/20 rounded-lg border border-blue-800/30">
+                                        <div class="grid grid-cols-2 gap-1.5">
+                                          <div>
+                                            <label class="text-xs text-slate-600 block mb-0.5">Icon (material)</label>
+                                            <input type="text"
+                                              class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                                              :value="editableContent[sectionKey].cards[ci].callout.icon || ''"
+                                              @input="setCardCalloutField(sectionKey, ci, 'icon', $event.target.value)"
+                                              placeholder="e.g. lightbulb" />
+                                          </div>
+                                          <div>
+                                            <label class="text-xs text-slate-600 block mb-0.5">Title (optional)</label>
+                                            <input type="text"
+                                              class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                                              :value="editableContent[sectionKey].cards[ci].callout.title || ''"
+                                              @input="setCardCalloutField(sectionKey, ci, 'title', $event.target.value)"
+                                              placeholder="Optional heading" />
+                                          </div>
+                                        </div>
+                                        <div>
+                                          <label class="text-xs text-slate-600 block mb-0.5">Text</label>
+                                          <textarea rows="2"
+                                            class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 resize-none"
+                                            :value="editableContent[sectionKey].cards[ci].callout.text || ''"
+                                            @input="setCardCalloutField(sectionKey, ci, 'text', $event.target.value)"
+                                            placeholder="Callout body text…"></textarea>
+                                        </div>
+                                      </div>
+                                    </template>
+                                  </div>
+
+                                  <!-- Subsections -->
+                                  <div>
+                                    <div class="flex items-center justify-between mb-1.5">
+                                      <p class="text-xs text-slate-500 font-semibold">📋 Subsections</p>
+                                      <button @click="addCardSubsection(sectionKey, ci)"
+                                        class="text-xs text-green-400 hover:text-green-300 transition">+ Add
+                                        subsection</button>
+                                    </div>
+                                    <!-- Layout controls (only shown when subsections exist) -->
+                                    <template x-if="editableContent[sectionKey]?.cards?.[ci]?.subsections?.length">
+                                      <div class="grid grid-cols-2 gap-1.5 mb-2">
+                                        <div>
+                                          <label class="text-xs text-slate-600 block mb-0.5">Columns</label>
+                                          <select :value="editableContent[sectionKey].cards[ci].subsectionColumns || 1"
+                                            @change="setCardSubsectionColumns(sectionKey, ci, Number($event.target.value))"
+                                            class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500">
+                                            <option value="1">1 column</option>
+                                            <option value="2">2 columns</option>
+                                            <option value="3">3 columns</option>
+                                          </select>
+                                        </div>
+                                        <div>
+                                          <label class="text-xs text-slate-600 block mb-0.5">Style</label>
+                                          <select
+                                            :value="editableContent[sectionKey].cards[ci].subsectionStyle || 'plain'"
+                                            @change="setCardSubsectionStyle(sectionKey, ci, $event.target.value)"
+                                            class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500">
+                                            <option value="plain">Plain</option>
+                                            <option value="card">Card (box)</option>
+                                          </select>
+                                        </div>
+                                      </div>
+                                    </template>
+                                    <div x-show="!editableContent[sectionKey]?.cards?.[ci]?.subsections?.length"
+                                      class="text-xs text-slate-600 italic">No subsections</div>
+                                    <div class="space-y-2">
+                                      <template
+                                        x-for="(sub, si) in (editableContent[sectionKey]?.cards?.[ci]?.subsections || [])"
+                                        :key="si">
+                                        <div
+                                          class="p-2 bg-slate-700/40 rounded-lg border border-slate-600/40 space-y-1.5">
+                                          <div class="flex items-center justify-between">
+                                            <span class="text-xs text-slate-500 font-mono"
+                                              x-text="'Subsection ' + (si + 1)"></span>
+                                            <button @click="removeCardSubsection(sectionKey, ci, si)"
+                                              class="text-red-400 hover:text-red-300 text-xs">✕</button>
+                                          </div>
+                                          <div class="grid grid-cols-2 gap-1.5">
+                                            <div>
+                                              <label class="text-xs text-slate-600 block mb-0.5">Title</label>
+                                              <input type="text"
+                                                class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                                                :value="sub.title || ''"
+                                                @input="setCardSubsectionField(sectionKey, ci, si, 'title', $event.target.value)"
+                                                placeholder="Group heading" />
+                                            </div>
+                                            <div>
+                                              <label class="text-xs text-slate-600 block mb-0.5">Icon (material)</label>
+                                              <input type="text"
+                                                class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                                                :value="sub.icon || ''"
+                                                @input="setCardSubsectionField(sectionKey, ci, si, 'icon', $event.target.value)"
+                                                placeholder="e.g. insights" />
+                                            </div>
+                                          </div>
+                                          <div>
+                                            <label class="text-xs text-slate-600 block mb-0.5">Description</label>
+                                            <textarea rows="2"
+                                              class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500 resize-none"
+                                              :value="sub.description || ''"
+                                              @input="setCardSubsectionField(sectionKey, ci, si, 'description', $event.target.value)"
+                                              placeholder="Optional body text for this group…"></textarea>
+                                          </div>
+                                        </div>
+                                      </template>
                                     </div>
                                   </div>
 
@@ -2494,6 +2633,20 @@
           return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.[prop] || '';
         },
 
+        // Read/write card icon.image and icon.alignment (nested under the icon object)
+        getCardIconImage(sectionKey, cardIndex) {
+          return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.image || '';
+        },
+        async setCardIconImage(sectionKey, cardIndex, value) {
+          await this._updateLayoutCardIcon(sectionKey, cardIndex, { image: value || undefined });
+        },
+        getCardIconAlignment(sectionKey, cardIndex) {
+          return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.alignment || 'top';
+        },
+        async setCardIconAlignment(sectionKey, cardIndex, value) {
+          await this._updateLayoutCardIcon(sectionKey, cardIndex, { alignment: value });
+        },
+
         async setCardLayoutProp(sectionKey, cardIndex, prop, value) {
           // Update local layoutConfig immediately
           if (!this.layoutConfig.section_config) this.layoutConfig.section_config = {};
@@ -2729,6 +2882,62 @@
           } else {
             this.editableContent[sectionKey].cards[cardIndex].note = value;
           }
+        },
+
+        // ── Card callout ──────────────────────────────────────────────────────
+
+        addCardCallout(sectionKey, cardIndex) {
+          if (!this.editableContent[sectionKey].cards[cardIndex]) return;
+          this.editableContent[sectionKey].cards[cardIndex].callout = { text: '' };
+        },
+
+        removeCardCallout(sectionKey, cardIndex) {
+          delete this.editableContent[sectionKey].cards[cardIndex].callout;
+        },
+
+        setCardCalloutField(sectionKey, cardIndex, field, value) {
+          const callout = this.editableContent[sectionKey].cards[cardIndex].callout;
+          if (!callout) return;
+          if (value) {
+            callout[field] = value;
+          } else {
+            delete callout[field];
+          }
+        },
+
+        // ── Card subsections ──────────────────────────────────────────────────
+
+        addCardSubsection(sectionKey, cardIndex) {
+          const card = this.editableContent[sectionKey].cards[cardIndex];
+          if (!card) return;
+          if (!Array.isArray(card.subsections)) card.subsections = [];
+          card.subsections.push({ title: '', features: [] });
+        },
+
+        removeCardSubsection(sectionKey, cardIndex, subIndex) {
+          this.editableContent[sectionKey].cards[cardIndex].subsections.splice(subIndex, 1);
+        },
+
+        setCardSubsectionField(sectionKey, cardIndex, subIndex, field, value) {
+          const sub = this.editableContent[sectionKey].cards[cardIndex]?.subsections?.[subIndex];
+          if (!sub) return;
+          if (value) {
+            sub[field] = value;
+          } else {
+            delete sub[field];
+          }
+        },
+
+        setCardSubsectionColumns(sectionKey, cardIndex, value) {
+          const card = this.editableContent[sectionKey].cards[cardIndex];
+          if (!card) return;
+          card.subsectionColumns = value;
+        },
+
+        setCardSubsectionStyle(sectionKey, cardIndex, value) {
+          const card = this.editableContent[sectionKey].cards[cardIndex];
+          if (!card) return;
+          card.subsectionStyle = value;
         },
 
         // ── Card image browser ────────────────────────────────────────────────

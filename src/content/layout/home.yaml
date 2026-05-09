@@ -8,7 +8,7 @@ page_sections:
     section_id: about
     order: 2
     background_image: /img/evolverai-web-company-bg.jpg
-    overlay_opacity: "0.40"
+    overlay_opacity: '0.1'
   - type: cards
     section_id: services
     order: 3
@@ -19,7 +19,7 @@ page_sections:
     section_id: brainstorming
     order: 5
     background_image: /img/evolverai-web-brainstorming-bg.jpg
-    overlay_opacity: "0.40"
+    overlay_opacity: '0.1'
   - type: cards
     section_id: features
     order: 6
@@ -42,7 +42,7 @@ page_sections:
     section_id: contact
     order: 99
     background_image: /img/evolverai-web-contact-bg.jpg
-    overlay_opacity: "0.40"
+    overlay_opacity: '0.1'
   - type: blog
     section_id: blog
     order: 100
