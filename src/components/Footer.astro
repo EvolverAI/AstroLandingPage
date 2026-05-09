@@ -10,6 +10,15 @@ export interface Props {
       email_label?: string;
       phone_label?: string;
       address_label?: string;
+      email?: string;
+      phone?: string;
+      address?: string;
+    };
+    social?: {
+      linkedin?: string;
+      twitter?: string;
+      instagram?: string;
+      facebook?: string;
     };
   };
 }
@@ -25,6 +34,17 @@ const copyright = footerContent.copyright || "All rights reserved";
 const emailLabel = footerContent.contact?.email_label || "Email";
 const phoneLabel = footerContent.contact?.phone_label || "Phone";
 const addressLabel = footerContent.contact?.address_label || "Address";
+const email = footerContent.contact?.email || "info@evolverai.ch";
+const phone = footerContent.contact?.phone || "+41 79 215 6801";
+const address =
+  footerContent.contact?.address ||
+  "EvolverAI GmbH\nZwydenweg 3\nCH-6052 Hergiswil\nSwitzerland";
+const addressLines = address.split("\n");
+const social = footerContent.social || {};
+const linkedinUrl = social.linkedin || "https://linkedin.com";
+const twitterUrl = social.twitter || "https://twitter.com";
+const instagramUrl = social.instagram || "https://instagram.com";
+const facebookUrl = social.facebook || "https://facebook.com";
 ---
 
 <footer class="footer-root">
@@ -61,28 +81,32 @@ const addressLabel = footerContent.contact?.address_label || "Address";
           <li>
             <p class="text-xs text-orange-300 mb-0.5">{emailLabel}</p>
             <a
-              href="mailto:info@evolverai.ch"
+              href={`mailto:${email}`}
               class="text-slate-300 hover:text-white transition-colors"
             >
-              info@evolverai.ch
+              {email}
             </a>
           </li>
           <li>
             <p class="text-xs text-orange-300 mb-0.5">{phoneLabel}</p>
             <a
-              href="tel:+41792156801"
+              href={`tel:${phone.replace(/\s/g, "")}`}
               class="text-slate-300 hover:text-white transition-colors"
             >
-              +41 79 215 6801
+              {phone}
             </a>
           </li>
           <li>
             <p class="text-xs text-orange-300 mb-0.5">{addressLabel}</p>
             <address class="not-italic text-slate-300 text-sm leading-relaxed">
-              EvolverAI GmbH<br />
-              Zwydenweg 3<br />
-              CH-6052 Hergiswil<br />
-              Switzerland
+              {
+                addressLines.map((line, i) => (
+                  <>
+                    {line}
+                    {i < addressLines.length - 1 && <br />}
+                  </>
+                ))
+              }
             </address>
           </li>
         </ul>
@@ -90,8 +114,14 @@ const addressLabel = footerContent.contact?.address_label || "Address";
 
       <!-- Newsletter -->
       <div>
-        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Newsletter</h3>
-        <p class="text-slate-400 text-sm mb-4 leading-relaxed">Stay updated with the latest AI insights from EvolverAI.</p>
+        <h3
+          class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4"
+        >
+          Newsletter
+        </h3>
+        <p class="text-slate-400 text-sm mb-4 leading-relaxed">
+          Stay updated with the latest AI insights from EvolverAI.
+        </p>
         <form id="newsletter-form" class="flex flex-col gap-2">
           <input
             type="email"
@@ -106,8 +136,12 @@ const addressLabel = footerContent.contact?.address_label || "Address";
           >
             Subscribe
           </button>
-          <p id="newsletter-msg" class="text-xs text-green-400 hidden">Thanks for subscribing!</p>
-          <p id="newsletter-err" class="text-xs text-red-400 hidden">Something went wrong. Try again.</p>
+          <p id="newsletter-msg" class="text-xs text-green-400 hidden">
+            Thanks for subscribing!
+          </p>
+          <p id="newsletter-err" class="text-xs text-red-400 hidden">
+            Something went wrong. Try again.
+          </p>
         </form>
       </div>
     </div>
@@ -126,7 +160,7 @@ const addressLabel = footerContent.contact?.address_label || "Address";
       <!-- Social links -->
       <div class="flex items-center gap-4">
         <a
-          href="https://linkedin.com"
+          href={linkedinUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="social-link"
@@ -135,7 +169,7 @@ const addressLabel = footerContent.contact?.address_label || "Address";
           <i class="fa-brands fa-linkedin text-lg"></i>
         </a>
         <a
-          href="https://twitter.com"
+          href={twitterUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="social-link"
@@ -144,7 +178,7 @@ const addressLabel = footerContent.contact?.address_label || "Address";
           <i class="fa-brands fa-x-twitter text-lg"></i>
         </a>
         <a
-          href="https://instagram.com"
+          href={instagramUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="social-link"
@@ -153,7 +187,7 @@ const addressLabel = footerContent.contact?.address_label || "Address";
           <i class="fa-brands fa-instagram text-lg"></i>
         </a>
         <a
-          href="https://facebook.com"
+          href={facebookUrl}
           target="_blank"
           rel="noopener noreferrer"
           class="social-link"
@@ -167,28 +201,36 @@ const addressLabel = footerContent.contact?.address_label || "Address";
 </footer>
 
 <script>
-  document.getElementById('newsletter-form')?.addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const email = (document.getElementById('newsletter-email') as HTMLInputElement)?.value?.trim();
-    const msg = document.getElementById('newsletter-msg');
-    const err = document.getElementById('newsletter-err');
-    if (!email) return;
-    try {
-      const res = await fetch('http://localhost:4322/api/subscribe', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-      if (res.ok) {
-        msg?.classList.remove('hidden');
-        err?.classList.add('hidden');
-        (document.getElementById('newsletter-email') as HTMLInputElement).value = '';
-      } else { throw new Error(); }
-    } catch {
-      err?.classList.remove('hidden');
-      msg?.classList.add('hidden');
-    }
-  });
+  document
+    .getElementById("newsletter-form")
+    ?.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = (
+        document.getElementById("newsletter-email") as HTMLInputElement
+      )?.value?.trim();
+      const msg = document.getElementById("newsletter-msg");
+      const err = document.getElementById("newsletter-err");
+      if (!email) return;
+      try {
+        const res = await fetch("http://localhost:4322/api/subscribe", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ email }),
+        });
+        if (res.ok) {
+          msg?.classList.remove("hidden");
+          err?.classList.add("hidden");
+          (
+            document.getElementById("newsletter-email") as HTMLInputElement
+          ).value = "";
+        } else {
+          throw new Error();
+        }
+      } catch {
+        err?.classList.remove("hidden");
+        msg?.classList.add("hidden");
+      }
+    });
 </script>
 
 <style>

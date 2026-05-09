@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -8,230 +9,345 @@
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <style>
-    [x-cloak]{display:none!important}
-    body{background:#0f172a}
-    input[type=color]{-webkit-appearance:none;border:none;padding:0;cursor:pointer;border-radius:6px;overflow:hidden}
-    input[type=color]::-webkit-color-swatch-wrapper{padding:0}
-    input[type=color]::-webkit-color-swatch{border:none}
-    input[type=range]{accent-color:#3b82f6}
+    [x-cloak] {
+      display: none !important
+    }
+
+    body {
+      background: #0f172a
+    }
+
+    input[type=color] {
+      -webkit-appearance: none;
+      border: none;
+      padding: 0;
+      cursor: pointer;
+      border-radius: 6px;
+      overflow: hidden
+    }
+
+    input[type=color]::-webkit-color-swatch-wrapper {
+      padding: 0
+    }
+
+    input[type=color]::-webkit-color-swatch {
+      border: none
+    }
+
+    input[type=range] {
+      accent-color: #3b82f6
+    }
   </style>
 </head>
+
 <body class="text-gray-200 min-h-screen font-sans">
-<div x-data="design()" x-init="init()" x-cloak>
+  <div x-data="design()" x-init="init()" x-cloak>
 
-  <header class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
-    <div class="flex items-center gap-3">
-      <a href="/" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
-      <span class="text-slate-600">/</span>
-      <span class="font-semibold">Design Settings</span>
-    </div>
-    <div class="flex items-center gap-3">
-      <span x-show="saved" class="text-xs text-green-400">✓ Saved</span>
-      <button @click="resetDefaults()" class="text-xs border border-slate-600 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition">Reset Defaults</button>
-      <button @click="save()" :disabled="saving"
-        class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-1.5 rounded-lg transition disabled:opacity-50">
-        <span x-show="!saving">Save & Apply</span>
-        <span x-show="saving">Saving...</span>
-      </button>
-    </div>
-  </header>
+    <header
+      class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+        <span class="text-slate-600">/</span>
+        <span class="font-semibold">Design Settings</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span x-show="saved" class="text-xs text-green-400">✓ Saved</span>
+        <button @click="resetDefaults()"
+          class="text-xs border border-slate-600 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition">Reset
+          Defaults</button>
+        <button @click="save()" :disabled="saving"
+          class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-1.5 rounded-lg transition disabled:opacity-50">
+          <span x-show="!saving">Save & Apply</span>
+          <span x-show="saving">Saving...</span>
+        </button>
+      </div>
+    </header>
 
-  <div class="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+    <div class="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
 
-    <!-- Left: Controls -->
-    <div class="space-y-6">
+      <!-- Left: Controls -->
+      <div class="space-y-6">
 
-      <!-- Brand Colors -->
-      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
-        <h2 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="material-icons text-base text-blue-400">palette</span>
-          Brand Colors
-        </h2>
-        <div class="space-y-4">
-          <template x-for="(token, key) in colorTokens" :key="key">
+        <!-- Brand Colors -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <span class="material-icons text-base text-blue-400">palette</span>
+            Brand Colors
+          </h2>
+          <div class="space-y-4">
+            <template x-for="(token, key) in colorTokens" :key="key">
+              <div class="flex items-center justify-between">
+                <div>
+                  <label class="text-sm text-slate-300 block" x-text="token.label"></label>
+                  <span class="text-xs text-slate-500 font-mono" x-text="key"></span>
+                </div>
+                <div class="flex items-center gap-3">
+                  <input type="color" :value="settings[key]"
+                    @input="settings[key] = $event.target.value; previewChanges()" class="w-10 h-10 rounded-lg" />
+                  <input type="text" :value="settings[key]"
+                    @input="settings[key] = $event.target.value; previewChanges()"
+                    class="w-28 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500" />
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+        <!-- Typography -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <span class="material-icons text-base text-purple-400">text_fields</span>
+            Typography
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Primary Font Family</label>
+              <select x-model="settings['--font-sans']" @change="previewChanges()"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                <option value="'Noto Sans', 'Roboto', system-ui, sans-serif">Noto Sans (default)</option>
+                <option value="'Inter', system-ui, sans-serif">Inter</option>
+                <option value="'Roboto', system-ui, sans-serif">Roboto</option>
+                <option value="'Open Sans', system-ui, sans-serif">Open Sans</option>
+                <option value="'Lato', system-ui, sans-serif">Lato</option>
+                <option value="'Poppins', system-ui, sans-serif">Poppins</option>
+                <option value="'DM Sans', system-ui, sans-serif">DM Sans</option>
+                <option value="system-ui, sans-serif">System UI</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-2">Base Font Size <span class="text-slate-500"
+                  x-text="settings['--text-base-size'] || '1rem'"></span></label>
+              <input type="range" min="14" max="20" step="1" :value="parseInt(settings['--text-base-size']) || 16"
+                @input="settings['--text-base-size'] = $event.target.value + 'px'; previewChanges()" class="w-full" />
+              <div class="flex justify-between text-xs text-slate-600 mt-1">
+                <span>14px</span><span>16px</span><span>20px</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Card Colors -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <span class="material-icons text-base text-yellow-400">style</span>
+            Card Style
+          </h2>
+          <div class="space-y-4">
             <div class="flex items-center justify-between">
               <div>
-                <label class="text-sm text-slate-300 block" x-text="token.label"></label>
-                <span class="text-xs text-slate-500 font-mono" x-text="key"></span>
+                <label class="text-sm text-slate-300 block">Card Background</label>
+                <span class="text-xs text-slate-500 font-mono">--color-bg-card</span>
               </div>
               <div class="flex items-center gap-3">
-                <input type="color" :value="settings[key]" @input="settings[key] = $event.target.value; previewChanges()"
+                <input type="color" :value="settings['--color-bg-card'] || '#1e293b'"
+                  @input="settings['--color-bg-card'] = $event.target.value; previewChanges()"
                   class="w-10 h-10 rounded-lg" />
-                <input type="text" :value="settings[key]" @input="settings[key] = $event.target.value; previewChanges()"
+                <input type="text" :value="settings['--color-bg-card'] || '#1e293b'"
+                  @input="settings['--color-bg-card'] = $event.target.value; previewChanges()"
                   class="w-28 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500" />
               </div>
             </div>
-          </template>
-        </div>
-      </div>
-
-      <!-- Typography -->
-      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
-        <h2 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="material-icons text-base text-purple-400">text_fields</span>
-          Typography
-        </h2>
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs text-slate-400 block mb-1">Primary Font Family</label>
-            <select x-model="settings['--font-sans']" @change="previewChanges()"
-              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
-              <option value="'Noto Sans', 'Roboto', system-ui, sans-serif">Noto Sans (default)</option>
-              <option value="'Inter', system-ui, sans-serif">Inter</option>
-              <option value="'Roboto', system-ui, sans-serif">Roboto</option>
-              <option value="'Open Sans', system-ui, sans-serif">Open Sans</option>
-              <option value="'Lato', system-ui, sans-serif">Lato</option>
-              <option value="'Poppins', system-ui, sans-serif">Poppins</option>
-              <option value="'DM Sans', system-ui, sans-serif">DM Sans</option>
-              <option value="system-ui, sans-serif">System UI</option>
-            </select>
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 block mb-2">Base Font Size <span class="text-slate-500" x-text="settings['--text-base-size'] || '1rem'"></span></label>
-            <input type="range" min="14" max="20" step="1" :value="parseInt(settings['--text-base-size']) || 16"
-              @input="settings['--text-base-size'] = $event.target.value + 'px'; previewChanges()"
-              class="w-full" />
-            <div class="flex justify-between text-xs text-slate-600 mt-1"><span>14px</span><span>16px</span><span>20px</span></div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Spacing & Radius -->
-      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
-        <h2 class="font-semibold mb-4 flex items-center gap-2">
-          <span class="material-icons text-base text-green-400">space_bar</span>
-          Spacing & Radius
-        </h2>
-        <div class="space-y-4">
-          <div>
-            <label class="text-xs text-slate-400 block mb-2">Card Border Radius <span class="text-slate-500" x-text="settings['--radius-lg'] || '1rem'"></span></label>
-            <input type="range" min="0" max="24" step="2" :value="parseInt(settings['--radius-lg']) || 16"
-              @input="settings['--radius-lg'] = $event.target.value + 'px'; previewChanges()"
-              class="w-full" />
-            <div class="flex justify-between text-xs text-slate-600 mt-1"><span>0 (sharp)</span><span>8px</span><span>24px (pill)</span></div>
-          </div>
-          <div>
-            <label class="text-xs text-slate-400 block mb-2">Section Padding <span class="text-slate-500" x-text="settings['--space-section-custom'] || 'default'"></span></label>
-            <input type="range" min="2" max="10" step="1" :value="parseInt(settings['--space-section-custom']) || 6"
-              @input="settings['--space-section-custom'] = $event.target.value + 'rem'; previewChanges()"
-              class="w-full" />
-            <div class="flex justify-between text-xs text-slate-600 mt-1"><span>2rem</span><span>6rem</span><span>10rem</span></div>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Right: Live Preview -->
-    <div class="lg:sticky lg:top-24 lg:self-start">
-      <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
-        <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
-          <span class="text-sm font-medium">Live Preview</span>
-          <a href="http://localhost:4321" target="_blank" class="text-xs text-slate-400 hover:text-white">Open site ↗</a>
-        </div>
-        <div class="p-4 bg-slate-900 rounded-b-xl">
-          <!-- Color swatches preview -->
-          <div class="mb-4">
-            <p class="text-xs text-slate-500 mb-2">Brand Colors</p>
-            <div class="flex gap-2 flex-wrap">
-              <template x-for="(token, key) in colorTokens" :key="key">
-                <div class="flex flex-col items-center gap-1">
-                  <div class="w-10 h-10 rounded-lg border border-slate-600" :style="'background:' + settings[key]"></div>
-                  <span class="text-xs text-slate-500" x-text="token.short"></span>
-                </div>
-              </template>
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="text-sm text-slate-300 block">Card Text</label>
+                <span class="text-xs text-slate-500 font-mono">--color-text-card</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="color" :value="settings['--color-text-card'] || '#f1f5f9'"
+                  @input="settings['--color-text-card'] = $event.target.value; previewChanges()"
+                  class="w-10 h-10 rounded-lg" />
+                <input type="text" :value="settings['--color-text-card'] || '#f1f5f9'"
+                  @input="settings['--color-text-card'] = $event.target.value; previewChanges()"
+                  class="w-28 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500" />
+              </div>
+            </div>
+            <div class="flex items-center justify-between">
+              <div>
+                <label class="text-sm text-slate-300 block">Card Border</label>
+                <span class="text-xs text-slate-500 font-mono">--color-border-card</span>
+              </div>
+              <div class="flex items-center gap-3">
+                <input type="color" :value="settings['--color-border-card-solid'] || '#334155'"
+                  @input="settings['--color-border-card-solid'] = $event.target.value; settings['--color-border-card'] = $event.target.value; previewChanges()"
+                  class="w-10 h-10 rounded-lg" />
+                <input type="text" :value="settings['--color-border-card'] || 'rgba(148,163,184,0.12)'"
+                  @input="settings['--color-border-card'] = $event.target.value; previewChanges()"
+                  class="w-28 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs font-mono focus:outline-none focus:border-blue-500" />
+              </div>
+            </div>
+            <div>
+              <p class="text-xs text-slate-400 mb-2">Quick preset</p>
+              <div class="flex gap-2 flex-wrap">
+                <button @click="applyCardPreset('dark')"
+                  class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 border border-slate-600 transition">Dark
+                  (default)</button>
+                <button @click="applyCardPreset('darker')"
+                  class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 border border-slate-600 transition">Darker</button>
+                <button @click="applyCardPreset('light')"
+                  class="px-3 py-1.5 text-xs rounded-lg bg-slate-700 hover:bg-slate-600 border border-slate-600 transition">Light</button>
+                <button @click="applyCardPreset('glass')"
+                  class="px-3 py-1.5 text-xs rounded-lg bg-blue-800 hover:bg-blue-700 border border-blue-600 transition">Glass</button>
+              </div>
             </div>
           </div>
-          <!-- Typography preview -->
-          <div class="mb-4 p-4 rounded-lg border border-slate-700" :style="'font-family:' + settings['--font-sans']">
-            <p class="text-xs text-slate-500 mb-2">Typography Preview</p>
-            <h3 class="text-xl font-bold text-white mb-1">EvolverAI Heading</h3>
-            <p class="text-sm text-slate-300">Body text in your selected font family. Clear and readable.</p>
+        </div>
+
+        <!-- Spacing & Radius -->
+        <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+          <h2 class="font-semibold mb-4 flex items-center gap-2">
+            <span class="material-icons text-base text-green-400">space_bar</span>
+            Spacing & Radius
+          </h2>
+          <div class="space-y-4">
+            <div>
+              <label class="text-xs text-slate-400 block mb-2">Card Border Radius <span class="text-slate-500"
+                  x-text="settings['--radius-lg'] || '1rem'"></span></label>
+              <input type="range" min="0" max="24" step="2" :value="parseInt(settings['--radius-lg']) || 16"
+                @input="settings['--radius-lg'] = $event.target.value + 'px'; previewChanges()" class="w-full" />
+              <div class="flex justify-between text-xs text-slate-600 mt-1"><span>0
+                  (sharp)</span><span>8px</span><span>24px (pill)</span></div>
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-2">Section Padding <span class="text-slate-500"
+                  x-text="settings['--space-section-custom'] || 'default'"></span></label>
+              <input type="range" min="2" max="10" step="1" :value="parseInt(settings['--space-section-custom']) || 6"
+                @input="settings['--space-section-custom'] = $event.target.value + 'rem'; previewChanges()"
+                class="w-full" />
+              <div class="flex justify-between text-xs text-slate-600 mt-1">
+                <span>2rem</span><span>6rem</span><span>10rem</span></div>
+            </div>
           </div>
-          <!-- Card preview -->
-          <div class="p-4 bg-white border border-slate-200" :style="'border-radius:' + (settings['--radius-lg'] || '1rem')">
-            <p class="text-xs text-slate-400 mb-1">Card Preview</p>
-            <h4 class="font-semibold text-slate-800 text-sm">Sample Card Title</h4>
-            <p class="text-xs text-slate-500 mt-1">Card description text showing your radius setting.</p>
+        </div>
+
+      </div>
+
+      <!-- Right: Live Preview -->
+      <div class="lg:sticky lg:top-24 lg:self-start">
+        <div class="bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+          <div class="px-4 py-3 border-b border-slate-700 flex items-center justify-between">
+            <span class="text-sm font-medium">Live Preview</span>
+            <a href="http://localhost:4321" target="_blank" class="text-xs text-slate-400 hover:text-white">Open site
+              ↗</a>
           </div>
+          <div class="p-4 bg-slate-900 rounded-b-xl">
+            <!-- Color swatches preview -->
+            <div class="mb-4">
+              <p class="text-xs text-slate-500 mb-2">Brand Colors</p>
+              <div class="flex gap-2 flex-wrap">
+                <template x-for="(token, key) in colorTokens" :key="key">
+                  <div class="flex flex-col items-center gap-1">
+                    <div class="w-10 h-10 rounded-lg border border-slate-600" :style="'background:' + settings[key]">
+                    </div>
+                    <span class="text-xs text-slate-500" x-text="token.short"></span>
+                  </div>
+                </template>
+              </div>
+            </div>
+            <!-- Typography preview -->
+            <div class="mb-4 p-4 rounded-lg border border-slate-700" :style="'font-family:' + settings['--font-sans']">
+              <p class="text-xs text-slate-500 mb-2">Typography Preview</p>
+              <h3 class="text-xl font-bold text-white mb-1">EvolverAI Heading</h3>
+              <p class="text-sm text-slate-300">Body text in your selected font family. Clear and readable.</p>
+            </div>
+            <!-- Card preview -->
+            <div class="p-4 bg-white border border-slate-200"
+              :style="'border-radius:' + (settings['--radius-lg'] || '1rem')">
+              <p class="text-xs text-slate-400 mb-1">Card Preview</p>
+              <h4 class="font-semibold text-slate-800 text-sm">Sample Card Title</h4>
+              <p class="text-xs text-slate-500 mt-1">Card description text showing your radius setting.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- CSS Variables output -->
+        <div class="mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4">
+          <p class="text-xs text-slate-500 mb-2 font-mono">Generated CSS Variables</p>
+          <pre class="text-xs text-green-400 font-mono overflow-x-auto max-h-40" x-text="generatedCss"></pre>
         </div>
       </div>
 
-      <!-- CSS Variables output -->
-      <div class="mt-4 bg-slate-800 border border-slate-700 rounded-xl p-4">
-        <p class="text-xs text-slate-500 mb-2 font-mono">Generated CSS Variables</p>
-        <pre class="text-xs text-green-400 font-mono overflow-x-auto max-h-40" x-text="generatedCss"></pre>
-      </div>
     </div>
-
   </div>
-</div>
 
-<script>
-function design() {
-  const DEFAULTS = {
-    '--color-brand-blue': '#1d4ed8',
-    '--color-brand-blue-light': '#3b82f6',
-    '--color-accent-orange': '#f97316',
-    '--color-bg-base': '#0a0f1e',
-    '--color-bg-surface': '#0f172a',
-    '--font-sans': "'Noto Sans', 'Roboto', system-ui, sans-serif",
-    '--radius-lg': '1rem',
-    '--space-section-custom': '6rem',
-    '--text-base-size': '16px',
-  };
+  <script>
+    function design() {
+      const DEFAULTS = {
+        '--color-brand-blue': '#1d4ed8',
+        '--color-brand-blue-light': '#3b82f6',
+        '--color-accent-orange': '#f97316',
+        '--color-bg-base': '#0a0f1e',
+        '--color-bg-surface': '#0f172a',
+        '--color-bg-card': '#1e293b',
+        '--color-text-card': '#f1f5f9',
+        '--color-border-card': 'rgba(148, 163, 184, 0.12)',
+        '--font-sans': "'Noto Sans', 'Roboto', system-ui, sans-serif",
+        '--radius-lg': '1rem',
+        '--space-section-custom': '6rem',
+        '--text-base-size': '16px',
+      };
 
-  return {
-    settings: { ...DEFAULTS },
-    saving: false,
-    saved: false,
+      return {
+        settings: { ...DEFAULTS },
+        saving: false,
+        saved: false,
 
-    colorTokens: {
-      '--color-brand-blue':       { label: 'Brand Blue (primary)',    short: 'Blue' },
-      '--color-brand-blue-light': { label: 'Brand Blue Light (hover)', short: 'Blue Lt' },
-      '--color-accent-orange':    { label: 'Accent Orange',            short: 'Orange' },
-      '--color-bg-base':          { label: 'Background Base',          short: 'BG Base' },
-      '--color-bg-surface':       { label: 'Background Surface',       short: 'BG Surf' },
-    },
+        colorTokens: {
+          '--color-brand-blue': { label: 'Brand Blue (primary)', short: 'Blue' },
+          '--color-brand-blue-light': { label: 'Brand Blue Light (hover)', short: 'Blue Lt' },
+          '--color-accent-orange': { label: 'Accent Orange', short: 'Orange' },
+          '--color-bg-base': { label: 'Background Base', short: 'BG Base' },
+          '--color-bg-surface': { label: 'Background Surface', short: 'BG Surf' },
+        },
 
-    get generatedCss() {
-      return ':root {\n' + Object.entries(this.settings)
-        .map(([k, v]) => `  ${k}: ${v};`)
-        .join('\n') + '\n}';
-    },
+        get generatedCss() {
+          return ':root {\n' + Object.entries(this.settings)
+            .map(([k, v]) => `  ${k}: ${v};`)
+            .join('\n') + '\n}';
+        },
 
-    async init() {
-      const res = await fetch('/api/design').then(r => r.json());
-      if (res.settings && Object.keys(res.settings).length > 0) {
-        this.settings = { ...DEFAULTS, ...res.settings };
-      }
-    },
+        async init() {
+          const res = await fetch('/api/design').then(r => r.json());
+          if (res.settings && Object.keys(res.settings).length > 0) {
+            this.settings = { ...DEFAULTS, ...res.settings };
+          }
+        },
 
-    previewChanges() {
-      // Inject CSS variables into the current page for instant preview
-      let style = document.getElementById('design-preview-style');
-      if (!style) { style = document.createElement('style'); style.id = 'design-preview-style'; document.head.appendChild(style); }
-      style.textContent = this.generatedCss;
-    },
+        previewChanges() {
+          // Inject CSS variables into the current page for instant preview
+          let style = document.getElementById('design-preview-style');
+          if (!style) { style = document.createElement('style'); style.id = 'design-preview-style'; document.head.appendChild(style); }
+          style.textContent = this.generatedCss;
+        },
 
-    async save() {
-      this.saving = true;
-      await fetch('/api/design', {
-        method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ settings: this.settings }),
-      });
-      this.saving = false;
-      this.saved = true;
-      setTimeout(() => this.saved = false, 3000);
-    },
+        async save() {
+          this.saving = true;
+          await fetch('/api/design', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ settings: this.settings }),
+          });
+          this.saving = false;
+          this.saved = true;
+          setTimeout(() => this.saved = false, 3000);
+        },
 
-    resetDefaults() {
-      this.settings = { ...DEFAULTS };
-      this.previewChanges();
-    },
-  };
-}
-</script>
+        resetDefaults() {
+          this.settings = { ...DEFAULTS };
+          this.previewChanges();
+        },
+
+        applyCardPreset(preset) {
+          const presets = {
+            dark: { '--color-bg-card': '#1e293b', '--color-text-card': '#f1f5f9', '--color-border-card': 'rgba(148,163,184,0.12)' },
+            darker: { '--color-bg-card': '#0f172a', '--color-text-card': '#e2e8f0', '--color-border-card': 'rgba(148,163,184,0.08)' },
+            light: { '--color-bg-card': '#ffffff', '--color-text-card': '#0f172a', '--color-border-card': 'rgba(15,23,42,0.1)' },
+            glass: { '--color-bg-card': 'rgba(255,255,255,0.06)', '--color-text-card': '#f1f5f9', '--color-border-card': 'rgba(255,255,255,0.12)' },
+          };
+          Object.assign(this.settings, presets[preset] || {});
+          this.previewChanges();
+        },
+      };
+    }
+  </script>
 </body>
+
 </html>

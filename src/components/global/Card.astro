@@ -70,10 +70,10 @@ const normalizedDescription = description
     : [];
 
 // Theme-based styling with defaults fallback
-const defaultCardBackground = cardDefaults?.colors?.background || (theme === "dark" ? "bg-white" : "bg-white");
-const defaultCardText = cardDefaults?.colors?.text || (theme === "dark" ? "text-gray-800" : "text-gray-800");
+const defaultCardBackground = cardDefaults?.colors?.background || ""; // card-base CSS handles bg via vars
+const defaultCardText = cardDefaults?.colors?.text || ""; // card-base CSS handles text via vars
 const defaultCardBorder = cardDefaults?.colors?.border || "";
-const cardPadding = cardDefaults?.padding || "p-6";
+const cardPadding = cardDefaults?.padding || "";
 const cardMargin = cardDefaults?.margin || "";
 
 // Apply border classes consistently regardless of theme
@@ -82,20 +82,23 @@ const shadowClasses = "";
 
 const cardClasses = `${defaultCardBackground} ${defaultCardText} ${borderClasses} ${shadowClasses}`.trim();
 
-const titleColor = cardDefaults?.title?.color || (theme === "dark" ? "text-gray-900" : "text-gray-800");
+// Use CSS-variable-driven classes so colors respond to dark/light theme switches at runtime.
+// Do NOT use theme-conditional Tailwind color classes here — those are baked in at SSG build time
+// and won't change when the user toggles the theme via JavaScript.
+const titleColor = cardDefaults?.title?.color || "card-title";
 const titleSize = cardDefaults?.title?.size || "text-xl";
 const titleWeight = cardDefaults?.title?.weight || "font-semibold";
 const titleClasses = `${titleColor} ${titleSize} ${titleWeight}`;
 
-const contentColor = cardDefaults?.content?.color || (theme === "dark" ? "text-gray-600" : "text-gray-600");
+const contentColor = cardDefaults?.content?.color || "card-content";
 const contentSize = cardDefaults?.content?.size || "text-base";
 const contentWeight = cardDefaults?.content?.weight || "font-normal";
 const descriptionClasses = `${contentColor} ${contentSize} ${contentWeight} text-justify`;
 
-const defaultIconColor = cardDefaults?.icon?.color || (theme === "dark" ? "text-blue-600" : "text-blue-600");
+const defaultIconColor = cardDefaults?.icon?.color || "text-blue-400";
 
 // Feature styling defaults
-const featureColor = cardDefaults?.feature?.color || (theme === "dark" ? "text-gray-600" : "text-gray-600");
+const featureColor = cardDefaults?.feature?.color || "card-content";
 const featureSize = cardDefaults?.feature?.text || "text-sm";
 const featureWeight = cardDefaults?.feature?.weight || "font-normal";
 const featureClasses = `${featureColor} ${featureSize} ${featureWeight}`;
@@ -204,7 +207,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
             <!-- Top-headline aligned icon with title in header -->
             <div class="flex flex-col">
                   {isIconTopHeadline && (
-    <div class="bg-blue-600 text-white rounded-t-lg">
+    <div class="card-headline-header">
       <div class="flex items-center space-x-3 p-4">
         {iconName && (
           <span class="material-icons text-2xl">
@@ -308,7 +311,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
                         buttonText && buttonUrl && (
                             <a
                                 href={buttonUrl}
-                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                                class={`inline-block card-btn ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
                             >
                                 {buttonText}
                             </a>
@@ -340,7 +343,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
         ) : isIconLeftHeadline ? (
             <!-- Left-headline aligned icon with title in horizontal header -->
             <div class="flex flex-col">
-                <div class="bg-blue-600 text-white rounded-t-lg">
+                <div class="card-headline-header">
                     <div class="flex items-center space-x-3 p-4">
                         {iconName && (
                             <span class="material-icons text-2xl">
@@ -447,7 +450,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
                         buttonText && buttonUrl && (
                             <a
                                 href={buttonUrl}
-                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                                class={`inline-block card-btn ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
                             >
                                 {buttonText}
                             </a>
@@ -606,7 +609,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
                         buttonText && buttonUrl && (
                             <a
                                 href={buttonUrl}
-                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                                class={`inline-block card-btn ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
                             >
                                 {buttonText}
                             </a>
@@ -755,7 +758,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
                         buttonText && buttonUrl && (
                             <a
                                 href={buttonUrl}
-                                class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                                class={`inline-block card-btn ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
                             >
                                 {buttonText}
                             </a>
@@ -929,7 +932,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
                     buttonText && buttonUrl && (
                         <a
                             href={buttonUrl}
-                            class={`inline-block ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
+                            class={`inline-block card-btn ${buttonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
                         >
                             {buttonText}
                         </a>

@@ -7,6 +7,7 @@ export interface Props {
   minHeight?: string;
   logo?: string;
   language?: string;
+  overlayOpacity?: string; // e.g. "0.35", "0.55" — controls how dark the image overlay is
   sectionContent?: {
     title?: string;
     description?: string;
@@ -23,8 +24,11 @@ const {
   minHeight = "560px",
   logo = "",
   language = "en",
+  overlayOpacity,
   sectionContent = {},
 } = Astro.props;
+
+const overlayStyle = `background: rgba(0, 0, 0, ${overlayOpacity ?? "0.55"})`;
 
 const heading = sectionContent.title || "";
 const description = sectionContent.description || "";
@@ -49,8 +53,8 @@ const processed = normalised.replace(
   style={`background-image: url('${backgroundImage}'); min-height: ${minHeight};`}
   data-section={sectionType}
 >
-  <!-- Dark overlay — lighter in light mode -->
-  <div class="absolute inset-0 content-header-overlay"></div>
+  <!-- Dark overlay — configurable opacity -->
+  <div class="absolute inset-0" style={overlayStyle}></div>
 
   <!-- Content panel — right-aligned glass card, full-width on mobile -->
   <div
@@ -98,13 +102,6 @@ const processed = normalised.replace(
 </section>
 
 <style>
-  .content-header-overlay {
-    background: rgba(0, 0, 0, 0.55);
-  }
-  :global([data-theme="light"]) .content-header-overlay {
-    background: rgba(0, 0, 0, 0.25);
-  }
-
   .content-panel {
     background: rgba(10, 15, 30, 0.82);
     backdrop-filter: blur(16px);

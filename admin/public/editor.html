@@ -769,6 +769,18 @@
                           </template>
                         </div>
                       </div>
+                      <div>
+                        <label class="text-xs text-slate-400 block mb-1">Overlay Opacity <span
+                            class="text-slate-600 font-normal">(0 = transparent → 1 = solid black)</span></label>
+                        <div class="flex items-center gap-2">
+                          <input type="range" min="0" max="1" step="0.05"
+                            :value="getSectionPageProp(sectionKey, 'overlay_opacity') || '0.55'"
+                            @input="setSectionPageProp(sectionKey, 'overlay_opacity', $event.target.value)"
+                            class="flex-1 accent-blue-500" />
+                          <span class="text-xs text-slate-300 w-8 text-right"
+                            x-text="getSectionPageProp(sectionKey, 'overlay_opacity') || '0.55'"></span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </template>
@@ -777,6 +789,19 @@
                 <template x-if="getSectionType(sectionKey) === 'cards'">
                   <div class="border-t border-slate-700 p-5 bg-slate-800/50">
                     <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Layout Settings</p>
+                    <!-- Card Style -->
+                    <div class="mb-3">
+                      <label class="text-xs text-slate-400 block mb-1">Card Style</label>
+                      <select :value="layoutConfig?.section_config?.[sectionKey]?.cardVariant || 'default'"
+                        @change="setSectionLayoutProp(sectionKey, 'cardVariant', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                        <option value="default">Default (dark card)</option>
+                        <option value="glass">Glass (frosted overlay)</option>
+                        <option value="bordered">Bordered (outline only)</option>
+                        <option value="flat">Flat (no shadow)</option>
+                        <option value="feature">Feature (light box)</option>
+                      </select>
+                    </div>
                     <!-- Responsive columns -->
                     <div class="mb-3">
                       <label class="text-xs text-slate-400 block mb-2">Columns per row</label>
@@ -992,6 +1017,73 @@
                     </div>
                     <p class="text-xs text-slate-600 mt-3">Articles are written in Markdown. Use the Blog Editor (link
                       above) to create and manage posts.</p>
+                  </div>
+                </template>
+
+                <!-- ── Footer section settings ── -->
+                <template x-if="getSectionType(sectionKey) === 'footer'">
+                  <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Footer Contact &
+                      Social</p>
+                    <div class="space-y-3">
+                      <div class="grid grid-cols-2 gap-3">
+                        <div>
+                          <label class="text-xs text-slate-400 block mb-1">Email</label>
+                          <input type="text" :value="editableContent[sectionKey]?.contact?.email || ''"
+                            @input="if(!editableContent[sectionKey].contact) editableContent[sectionKey].contact={}; editableContent[sectionKey].contact.email = $event.target.value; markDirty(sectionKey)"
+                            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                            placeholder="info@yourcompany.com" />
+                        </div>
+                        <div>
+                          <label class="text-xs text-slate-400 block mb-1">Phone</label>
+                          <input type="text" :value="editableContent[sectionKey]?.contact?.phone || ''"
+                            @input="if(!editableContent[sectionKey].contact) editableContent[sectionKey].contact={}; editableContent[sectionKey].contact.phone = $event.target.value; markDirty(sectionKey)"
+                            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                            placeholder="+41 79 000 0000" />
+                        </div>
+                      </div>
+                      <div>
+                        <label class="text-xs text-slate-400 block mb-1">Address (company name, street, city,
+                          country)</label>
+                        <textarea rows="3" :value="editableContent[sectionKey]?.contact?.address || ''"
+                          @input="if(!editableContent[sectionKey].contact) editableContent[sectionKey].contact={}; editableContent[sectionKey].contact.address = $event.target.value; markDirty(sectionKey)"
+                          class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="EvolverAI GmbH&#10;Zwydenweg 3&#10;CH-6052 Hergiswil, Switzerland"></textarea>
+                      </div>
+                      <div>
+                        <p class="text-xs text-slate-400 font-semibold mb-2">Social Links</p>
+                        <div class="space-y-2">
+                          <div class="grid grid-cols-2 gap-2 items-center">
+                            <span class="text-xs text-slate-500">LinkedIn</span>
+                            <input type="text" :value="editableContent[sectionKey]?.social?.linkedin || ''"
+                              @input="if(!editableContent[sectionKey].social) editableContent[sectionKey].social={}; editableContent[sectionKey].social.linkedin = $event.target.value; markDirty(sectionKey)"
+                              class="bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="https://linkedin.com/company/…" />
+                          </div>
+                          <div class="grid grid-cols-2 gap-2 items-center">
+                            <span class="text-xs text-slate-500">X / Twitter</span>
+                            <input type="text" :value="editableContent[sectionKey]?.social?.twitter || ''"
+                              @input="if(!editableContent[sectionKey].social) editableContent[sectionKey].social={}; editableContent[sectionKey].social.twitter = $event.target.value; markDirty(sectionKey)"
+                              class="bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="https://x.com/…" />
+                          </div>
+                          <div class="grid grid-cols-2 gap-2 items-center">
+                            <span class="text-xs text-slate-500">Instagram</span>
+                            <input type="text" :value="editableContent[sectionKey]?.social?.instagram || ''"
+                              @input="if(!editableContent[sectionKey].social) editableContent[sectionKey].social={}; editableContent[sectionKey].social.instagram = $event.target.value; markDirty(sectionKey)"
+                              class="bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="https://instagram.com/…" />
+                          </div>
+                          <div class="grid grid-cols-2 gap-2 items-center">
+                            <span class="text-xs text-slate-500">Facebook</span>
+                            <input type="text" :value="editableContent[sectionKey]?.social?.facebook || ''"
+                              @input="if(!editableContent[sectionKey].social) editableContent[sectionKey].social={}; editableContent[sectionKey].social.facebook = $event.target.value; markDirty(sectionKey)"
+                              class="bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="https://facebook.com/…" />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </template>
 

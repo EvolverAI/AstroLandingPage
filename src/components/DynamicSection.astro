@@ -68,18 +68,65 @@ const { type, section_id, background_image, min_height } = sectionConfig;
 if (sectionConfig.visible === false) return;
 
 // Merge layout config into content for components that need it
-// Layout provides: icon, buttonUrl, buttonColor, responsiveColumns
-// Content provides: title, description, cards text, buttonText
+// Layout provides: icon, buttonUrl, buttonColor, responsiveColumns, features_config, badges
+// Content provides: title, description, cards text, buttonText, badge (singular), features
 const mergedCards = (sectionContent?.cards || []).map(
     (card: any, i: number) => {
         const layoutCard = sectionLayout?.cards?.[i] || {};
+
+        // Merge features_config from layout into each feature item
+        const rawFeatures: any[] = card.features || [];
+        const mergedFeatures = rawFeatures.map((feature: any, j: number) => {
+            const fConfig = layoutCard.features_config?.[j] || {};
+            if (Object.keys(fConfig).length === 0) return feature;
+
+            const isSimple = typeof feature === "string";
+            const featureObj: any = isSimple
+                ? { text: feature }
+                : { ...feature };
+
+            // Build badges: master supplies text (badge field), layout supplies color
+            let badges: any[] = featureObj.badges || [];
+            if (featureObj.badge && fConfig.badges?.length > 0) {
+                badges = fConfig.badges.map((b: any) => ({
+                    text: featureObj.badge,
+                    color: b.color,
+                    tooltip: featureObj.badgeTooltip || featureObj.badge,
+                }));
+            } else if (fConfig.badges?.length > 0 && badges.length === 0) {
+                badges = fConfig.badges;
+            }
+
+            return {
+                ...featureObj,
+                bullet: fConfig.bullet ?? featureObj.bullet,
+                bulletType: fConfig.bulletType ?? featureObj.bulletType,
+                bulletColor: fConfig.bulletColor ?? featureObj.bulletColor,
+                badges,
+            };
+        });
+
+        // Merge card-level badges: master has badge (string), layout has badge colors
+        let mergedBadges: any[] = card.badges || [];
+        if (card.badge && layoutCard.badges?.length > 0) {
+            mergedBadges = layoutCard.badges.map((b: any) => ({
+                text: card.badge,
+                color: b.color,
+                tooltip: card.badgeTooltip || card.badge,
+            }));
+        } else if (layoutCard.badges?.length > 0 && mergedBadges.length === 0) {
+            mergedBadges = layoutCard.badges;
+        }
+
         return {
             ...card,
             icon: layoutCard.icon || card.icon,
             linkUrl: layoutCard.linkUrl ?? card.linkUrl,
             buttonUrl: layoutCard.buttonUrl ?? card.buttonUrl,
             buttonColor: layoutCard.buttonColor ?? card.buttonColor,
-            features_config: layoutCard.features_config,
+            features:
+                mergedFeatures.length > 0 ? mergedFeatures : card.features,
+            badges: mergedBadges,
         };
     },
 );
@@ -117,6 +164,7 @@ const mergedSection = {
             logo={sectionConfig.logo || ""}
             content=""
             sectionContent={sectionContent}
+            overlayOpacity={sectionConfig.overlay_opacity}
             language={language}
         />
     )
@@ -142,6 +190,7 @@ const mergedSection = {
                 responsiveColumns={mergedSection?.responsiveColumns}
                 alignment={mergedSection?.alignment}
                 backgroundColor={mergedSection?.background}
+                cardVariant={sectionLayout?.cardVariant}
                 defaults={defaults}
                 language={language}
             />

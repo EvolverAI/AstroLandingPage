@@ -67,7 +67,7 @@ const imageOrder = isImageLeft ? "order-1 md:order-1" : "order-1 md:order-2";
   data-section={sectionType}
 >
   <div class="container mx-auto px-4">
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
       <!-- Text -->
       <div class={`${textOrder} reveal-left`}>
         <h2 class="h1-noto-sans mb-4">{subtitle}</h2>
@@ -134,17 +134,11 @@ const imageOrder = isImageLeft ? "order-1 md:order-1" : "order-1 md:order-2";
 
 <style>
   .section-product {
-    background: linear-gradient(135deg,
-      #0a0f1e 0%,
-      #0f172a 50%,
-      #0a0f1e 100%);
+    background: linear-gradient(135deg, #0a0f1e 0%, #0f172a 50%, #0a0f1e 100%);
   }
 
   :global([data-theme="light"]) .section-product {
-    background: linear-gradient(135deg,
-      #f0f4ff 0%,
-      #ffffff 50%,
-      #f0f4ff 100%);
+    background: linear-gradient(135deg, #f0f4ff 0%, #ffffff 50%, #f0f4ff 100%);
   }
 
   /* Light mode: text colours */

@@ -196,80 +196,80 @@
 
 ---
 
-## Phase 4 — New Section Types (Component Library Expansion)
+## Phase 4 — New Section Types (Component Library Expansion) ✅ COMPLETE
 > **Focus:** Squarespace has 40+ block types. We have 7. Close the gap on the most-used ones.  
 > **Estimated effort:** 6–10 days
 
 ### 4.1 FAQ / Accordion Section
-- [ ] Create `src/components/global/FaqSection.astro`
+- [x] Create `src/components/global/FaqSection.astro`
   - Props: `title`, `description`, `items: [{ question, answer }]`, `layout: 'accordion' | 'grid'`
   - Accordion: smooth CSS `max-height` transition, no JavaScript required (uses `<details>/<summary>`)
   - `+` / `×` icon toggle
   - Optional schema.org `FAQPage` JSON-LD
-- [ ] Add `faq` to `DynamicSection.astro` type union and routing
-- [ ] Add `faq` section stub to `admin/server.js`
-- [ ] Add FAQ editor panel to `editor.html` (CRUD for question/answer pairs, same pattern as testimonials)
+- [x] Add `faq` to `DynamicSection.astro` type union and routing
+- [x] Add `faq` section stub to `admin/server.js`
+- [x] Add FAQ editor panel to `editor.html` (CRUD for question/answer pairs, same pattern as testimonials)
 
 ### 4.2 Stats / Counters Section
-- [ ] Create `src/components/global/StatsSection.astro`
+- [x] Create `src/components/global/StatsSection.astro`
   - Props: `title`, `items: [{ value, label, prefix?, suffix?, icon? }]`
   - Animated count-up on scroll-reveal (IntersectionObserver triggers JS counter)
   - Layout: 2–5 stats in a row, large number + small label
-- [ ] Add `stats` type to `DynamicSection.astro`
-- [ ] Add stats editor panel (value/label/prefix/suffix per item)
+- [x] Add `stats` type to `DynamicSection.astro`
+- [x] Add stats editor panel (value/label/prefix/suffix per item)
 
 ### 4.3 Pricing Table Section
-- [ ] Create `src/components/global/PricingSection.astro`
+- [x] Create `src/components/global/PricingSection.astro`
   - Props: `title`, `description`, `billingToggle: boolean`, `plans: [{ name, price, priceMonthly?, priceYearly?, description, features: string[], cta, ctaUrl, highlighted, badge? }]`
   - Toggle between monthly/yearly pricing with animated transition
   - Highlighted plan: larger card, brand color border, badge ("Most Popular")
   - Feature list with checkmarks
-- [ ] Add `pricing` type support end-to-end
+- [x] Add `pricing` type support end-to-end
 
 ### 4.4 Team / People Grid Section
-- [ ] Create `src/components/global/TeamSection.astro`
+- [x] Create `src/components/global/TeamSection.astro`
   - Props: `title`, `description`, `members: [{ name, role, bio?, avatar, linkedIn?, twitter? }]`
   - Avatar with fallback initials (same pattern as testimonials)
   - Social links as icon buttons
   - Hover state shows bio overlay
-- [ ] Add `team` type support end-to-end
+- [x] Add `team` type support end-to-end
 
 ### 4.5 Standalone CTA Banner Section
-- [ ] Create `src/components/global/CtaBannerSection.astro`
+- [x] Create `src/components/global/CtaBannerSection.astro`
   - Props: `title`, `description`, `primaryCta`, `primaryCtaUrl`, `secondaryCta?`, `secondaryCtaUrl?`, `backgroundStyle: 'gradient' | 'solid' | 'image'`
   - Full-width, high-contrast, visually punchy
   - Gradient option: animated subtle CSS gradient
-- [ ] Add `cta_banner` type support end-to-end
+- [x] Add `cta_banner` type support end-to-end
 
 ### 4.6 Video Embed Section
-- [ ] Create `src/components/global/VideoSection.astro`
+- [x] Create `src/components/global/VideoSection.astro`
   - Props: `title`, `description`, `videoUrl` (YouTube/Vimeo), `thumbnail?`, `autoplay: boolean`, `loop: boolean`
   - Lazy-loads embed iframe only on click (avoids GDPR/performance issues)
   - Custom thumbnail with play button overlay until clicked
   - Supports native `<video>` for self-hosted files
-- [ ] Add `video` type support end-to-end
+- [x] Add `video` type support end-to-end
 
 ### 4.7 Image Gallery / Lightbox Section
-- [ ] Create `src/components/global/GallerySection.astro`
+- [x] Create `src/components/global/GallerySection.astro`
   - Props: `title`, `images: [{ src, alt, caption? }]`, `layout: 'grid' | 'masonry' | 'carousel'`
   - Lightbox: vanilla JS modal with keyboard navigation (←/→/Esc), no external dependency
   - Masonry: CSS `columns` property (no JS needed)
   - Carousel: CSS scroll-snap + previous/next buttons
-- [ ] Add `gallery` type support end-to-end
+- [x] Add `gallery` type support end-to-end
 
 ### 4.8 Timeline Section
-- [ ] Create `src/components/global/TimelineSection.astro`
+- [x] Create `src/components/global/TimelineSection.astro`
   - Props: `title`, `items: [{ year, title, description, icon? }]`, `layout: 'vertical' | 'horizontal'`
   - Vertical: alternating left/right with connecting line
   - Each item reveals on scroll
-- [ ] Add `timeline` type support end-to-end
+- [x] Add `timeline` type support end-to-end
 
 ### 4.9 Logo / Partner Strip Section
-- [ ] Create `src/components/global/LogoStripSection.astro`
+- [x] Create `src/components/global/LogoStripSection.astro`
   - Props: `title?`, `logos: [{ src, alt, url? }]`, `scrolling: boolean`
   - Scrolling (Marquee): infinite CSS animation loop, `animation-play-state: paused` on hover
   - Static: responsive flex grid
-- [ ] Add `logo_strip` type support end-to-end
+- [x] Add `logo_strip` type support end-to-end
 
 ---
 

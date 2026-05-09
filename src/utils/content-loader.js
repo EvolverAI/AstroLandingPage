@@ -94,9 +94,16 @@ export function getPageSections(layout) {
 
 /**
  * Get section layout config (icons, responsive columns, etc.)
+ * Also merges card configs from the legacy section_config.cards[sectionId] table.
  */
 export function getSectionConfig(layout, sectionId) {
-  return layout?.section_config?.[sectionId] || {};
+  const directConfig = layout?.section_config?.[sectionId] || {};
+  // Also check the shared cards lookup table (section_config.cards.<sectionId>)
+  const cardsFromTable = layout?.section_config?.cards?.[sectionId];
+  if (Array.isArray(cardsFromTable) && !directConfig.cards) {
+    return { ...directConfig, cards: cardsFromTable };
+  }
+  return directConfig;
 }
 
 /**

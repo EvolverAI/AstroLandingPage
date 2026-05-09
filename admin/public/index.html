@@ -10,12 +10,12 @@
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <script>
     // Auth guard + token injection
-    (function() {
+    (function () {
       const token = sessionStorage.getItem('adminToken');
       if (!token) return; // no token = server has no auth, or will redirect on first API call
       // Patch fetch to always include Authorization header for /api/* calls
       const _fetch = window.fetch;
-      window.fetch = function(url, opts = {}) {
+      window.fetch = function (url, opts = {}) {
         if (typeof url === 'string' && url.startsWith('/api')) {
           opts.headers = { ...(opts.headers || {}), 'Authorization': 'Bearer ' + token };
         }
@@ -122,7 +122,8 @@
               <span class="material-icons text-base">inbox</span>
               Submissions
             </span>
-            <span x-show="unreadSubmissions > 0" class="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full" x-text="unreadSubmissions"></span>
+            <span x-show="unreadSubmissions > 0" class="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full"
+              x-text="unreadSubmissions"></span>
           </a>
           <button @click="activeView = 'seo'; seoPage = pages[0]; checkSeo()"
             class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left"
@@ -269,7 +270,8 @@
             <input x-model="mediaSearch" type="text" placeholder="Search…"
               class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-white placeholder-slate-500 w-36" />
             <button @click="loadMedia()"
-              class="text-xs text-slate-400 hover:text-white border border-slate-700 px-2 py-1 rounded transition">↻ Refresh</button>
+              class="text-xs text-slate-400 hover:text-white border border-slate-700 px-2 py-1 rounded transition">↻
+              Refresh</button>
           </div>
         </div>
 
@@ -285,20 +287,24 @@
           </template>
         </div>
 
-        <div x-show="filteredMediaImages.length === 0" class="text-slate-500 text-sm text-center py-12">No images found.</div>
+        <div x-show="filteredMediaImages.length === 0" class="text-slate-500 text-sm text-center py-12">No images found.
+        </div>
         <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
           <template x-for="img in filteredMediaImages" :key="img.path">
             <div class="group relative rounded-lg overflow-hidden bg-slate-700 aspect-video">
               <!-- Focal point dot -->
-              <div class="absolute w-3 h-3 rounded-full border-2 border-white bg-blue-500 shadow pointer-events-none z-10 -translate-x-1/2 -translate-y-1/2"
+              <div
+                class="absolute w-3 h-3 rounded-full border-2 border-white bg-blue-500 shadow pointer-events-none z-10 -translate-x-1/2 -translate-y-1/2"
                 :style="`left:${img.focalX}%;top:${img.focalY}%`"></div>
               <img :src="img.path" :alt="img.name" class="w-full h-full object-cover" loading="lazy" />
               <!-- Hover overlay -->
-              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/75 transition-all flex flex-col items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 p-1">
+              <div
+                class="absolute inset-0 bg-black/0 group-hover:bg-black/75 transition-all flex flex-col items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 p-1">
                 <button @click="copyImagePath(img.path)"
                   class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded w-full">Copy Path</button>
                 <button @click="openFocalModal(img)"
-                  class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Focal Point</button>
+                  class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Focal
+                  Point</button>
                 <button @click="startRename(img)"
                   class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Rename</button>
                 <button @click="openMoveModal(img)"
@@ -311,12 +317,16 @@
                 <span class="text-white truncate block text-center" style="font-size:9px" x-text="img.name"></span>
               </div>
               <!-- Inline rename input -->
-              <div class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-2 gap-2" x-show="img._renaming">
-                <input :x-ref="'rename-' + img.path" x-model="img._newName" @keydown.enter="confirmRename(img)" @keydown.escape="img._renaming = false"
+              <div class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-2 gap-2"
+                x-show="img._renaming">
+                <input :x-ref="'rename-' + img.path" x-model="img._newName" @keydown.enter="confirmRename(img)"
+                  @keydown.escape="img._renaming = false"
                   class="w-full bg-slate-700 border border-blue-500 rounded px-2 py-1 text-xs text-white" />
                 <div class="flex gap-1">
-                  <button @click="confirmRename(img)" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded">✓</button>
-                  <button @click="img._renaming = false" class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded">✕</button>
+                  <button @click="confirmRename(img)"
+                    class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded">✓</button>
+                  <button @click="img._renaming = false"
+                    class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded">✕</button>
                 </div>
               </div>
             </div>
@@ -325,18 +335,21 @@
       </div>
 
       <!-- Focal Point Modal -->
-      <div x-show="focalModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" @click.self="focalModal.open = false">
+      <div x-show="focalModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+        @click.self="focalModal.open = false">
         <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 max-w-lg w-full">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold">Set Focal Point</h3>
             <button @click="focalModal.open = false" class="text-slate-400 hover:text-white">✕</button>
           </div>
-          <p class="text-slate-400 text-sm mb-4">Click on the image to set the focal point. This controls how the image is cropped on smaller screens.</p>
+          <p class="text-slate-400 text-sm mb-4">Click on the image to set the focal point. This controls how the image
+            is cropped on smaller screens.</p>
           <div class="relative cursor-crosshair rounded overflow-hidden select-none" style="max-height:360px"
             @click="setFocalPoint($event)" x-ref="focalContainer">
             <img :src="focalModal.img?.path" class="w-full h-full object-contain block" x-ref="focalImg" />
             <!-- Focal dot -->
-            <div class="absolute w-5 h-5 rounded-full border-2 border-white bg-blue-500 shadow-lg pointer-events-none -translate-x-1/2 -translate-y-1/2"
+            <div
+              class="absolute w-5 h-5 rounded-full border-2 border-white bg-blue-500 shadow-lg pointer-events-none -translate-x-1/2 -translate-y-1/2"
               :style="`left:${focalModal.x}%;top:${focalModal.y}%`"></div>
             <!-- Crosshair lines -->
             <div class="absolute inset-0 pointer-events-none">
@@ -345,17 +358,21 @@
             </div>
           </div>
           <div class="flex items-center justify-between mt-4">
-            <span class="text-slate-400 text-xs">X: <span x-text="focalModal.x"></span>% &nbsp; Y: <span x-text="focalModal.y"></span>%</span>
+            <span class="text-slate-400 text-xs">X: <span x-text="focalModal.x"></span>% &nbsp; Y: <span
+                x-text="focalModal.y"></span>%</span>
             <div class="flex gap-2">
-              <button @click="resetFocalPoint()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Reset (50/50)</button>
-              <button @click="saveFocalPoint()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Save</button>
+              <button @click="resetFocalPoint()"
+                class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Reset (50/50)</button>
+              <button @click="saveFocalPoint()"
+                class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Save</button>
             </div>
           </div>
         </div>
       </div>
 
       <!-- Move Modal -->
-      <div x-show="moveModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" @click.self="moveModal.open = false">
+      <div x-show="moveModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4"
+        @click.self="moveModal.open = false">
         <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 max-w-sm w-full">
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold">Move Image</h3>
@@ -368,15 +385,19 @@
           </div>
           <!-- Quick-pick existing folders -->
           <div x-show="mediaFolders.length > 0" class="flex flex-wrap gap-1 mb-4">
-            <button @click="moveModal.folder = ''" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded">root</button>
+            <button @click="moveModal.folder = ''"
+              class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded">root</button>
             <template x-for="f in mediaFolders" :key="f">
-              <button @click="moveModal.folder = f" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded" x-text="f"></button>
+              <button @click="moveModal.folder = f"
+                class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded" x-text="f"></button>
             </template>
           </div>
           <div x-show="moveModal.error" class="text-red-400 text-sm mb-3" x-text="moveModal.error"></div>
           <div class="flex justify-end gap-2">
-            <button @click="moveModal.open = false" class="text-sm bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Cancel</button>
-            <button @click="confirmMove()" class="text-sm bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Move</button>
+            <button @click="moveModal.open = false"
+              class="text-sm bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Cancel</button>
+            <button @click="confirmMove()"
+              class="text-sm bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Move</button>
           </div>
         </div>
       </div>
@@ -557,7 +578,9 @@
       <input x-model="commitMsg" type="text"
         class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500" />
 
-      <div x-show="deployError" class="mb-3 text-red-400 text-xs" x-text="deployError"></div>
+      <div x-show="deployError"
+        class="mb-3 text-red-400 text-xs bg-red-900/20 border border-red-800 rounded-lg px-3 py-2" x-text="deployError">
+      </div>
       <div x-show="deploySuccess" class="mb-3 text-green-400 text-xs">✓ Pushed successfully! Netlify is deploying...
       </div>
 
@@ -642,7 +665,7 @@
           // Load unread submission count
           fetch('/api/submissions').then(r => r.json()).then(d => {
             this.unreadSubmissions = (d.submissions || []).filter(s => !s.read).length;
-          }).catch(() => {});
+          }).catch(() => { });
         },
 
         async refresh() {
@@ -716,21 +739,26 @@
           this.deploying = true;
           this.deployError = '';
           this.deploySuccess = false;
-          const commitRes = await fetch('/api/git/commit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ message: this.commitMsg }),
-          }).then(r => r.json());
-          if (commitRes.error) {
-            this.deployError = commitRes.error;
-            this.deploying = false; return;
+          try {
+            const commitRes = await fetch('/api/git/commit', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ message: this.commitMsg }),
+            }).then(r => r.json());
+            if (commitRes.error) {
+              this.deployError = commitRes.error;
+              this.deploying = false; return;
+            }
+            const pushRes = await fetch('/api/git/push', { method: 'POST' }).then(r => r.json());
+            this.deploying = false;
+            if (pushRes.error) { this.deployError = pushRes.error; return; }
+            this.deploySuccess = true;
+            await this.loadGit();
+            setTimeout(() => { this.showDeploy = false; this.deploySuccess = false; }, 3000);
+          } catch (err) {
+            this.deploying = false;
+            this.deployError = 'Network error: ' + (err.message || 'Could not reach admin server.');
           }
-          const pushRes = await fetch('/api/git/push', { method: 'POST' }).then(r => r.json());
-          this.deploying = false;
-          if (pushRes.error) { this.deployError = pushRes.error; return; }
-          this.deploySuccess = true;
-          await this.loadGit();
-          setTimeout(() => { this.showDeploy = false; this.deploySuccess = false; }, 3000);
         },
 
         // ── Media Library ──────────────────────────────────────────────────────
