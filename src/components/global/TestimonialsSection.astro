@@ -1,0 +1,218 @@
+---
+/**
+ * TestimonialsSection.astro
+ * Displays a grid of client testimonials / case-study quotes.
+ * Content comes from the standard YAML CMS (sectionContent.testimonials[]).
+ *
+ * Each testimonial:
+ *   quote:       string (required)
+ *   name:        string  — reviewer name
+ *   role:        string  — job title / role
+ *   company:     string  — company name
+ *   avatar:      string  — optional image path
+ *   rating:      number  — 1-5 (optional, renders ★)
+ *   caseStudyUrl: string — optional link to full case study
+ */
+
+export interface Testimonial {
+    quote: string;
+    name?: string;
+    role?: string;
+    company?: string;
+    avatar?: string;
+    rating?: number;
+    caseStudyUrl?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    testimonials?: Testimonial[];
+    language?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+    layout?: "grid" | "masonry" | "carousel";
+}
+
+const {
+    sectionId = "testimonials",
+    title = "What Our Clients Say",
+    description = "",
+    testimonials = [],
+    language = "en",
+    buttonText = "",
+    buttonUrl = "",
+    layout = "grid",
+} = Astro.props;
+
+// Star rating helper
+function stars(n: number = 5) {
+    return Array.from({ length: 5 }, (_, i) => (i < n ? "★" : "☆")).join("");
+}
+
+// Build Review + AggregateRating JSON-LD string (computed at build time)
+let reviewJsonLd: string | null = null;
+if (testimonials.length > 0) {
+    const rated = testimonials.filter(
+        (t: Testimonial) => t.rating && t.rating >= 1 && t.rating <= 5,
+    );
+    const avgRating =
+        rated.length > 0
+            ? (
+                  rated.reduce(
+                      (s: number, t: Testimonial) => s + (t.rating as number),
+                      0,
+                  ) / rated.length
+              ).toFixed(1)
+            : null;
+
+    const jsonLd: Record<string, unknown> = {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        name: "EvolverAI GmbH",
+        url: "https://evolverai.ch",
+        ...(avgRating
+            ? {
+                  aggregateRating: {
+                      "@type": "AggregateRating",
+                      ratingValue: avgRating,
+                      bestRating: "5",
+                      worstRating: "1",
+                      reviewCount: String(rated.length),
+                  },
+              }
+            : {}),
+        review: testimonials.map((t: Testimonial) => ({
+            "@type": "Review",
+            reviewBody: t.quote,
+            ...(t.name ? { author: { "@type": "Person", name: t.name } } : {}),
+            ...(t.rating
+                ? {
+                      reviewRating: {
+                          "@type": "Rating",
+                          ratingValue: String(t.rating),
+                          bestRating: "5",
+                          worstRating: "1",
+                      },
+                  }
+                : {}),
+        })),
+    };
+    reviewJsonLd = JSON.stringify(jsonLd);
+}
+---
+
+<section id={sectionId} class="section-base">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="text-center mb-12">
+            <h2 class="h1-noto-sans inline-block mb-4">{title}</h2>
+            {
+                description && (
+                    <p class="text-slate-400 max-w-2xl mx-auto text-base leading-relaxed">
+                        {description}
+                    </p>
+                )
+            }
+        </div>
+
+        {
+            testimonials.length === 0 ? (
+                <p class="text-center text-slate-500 py-12 italic">
+                    No testimonials yet.
+                </p>
+            ) : (
+                <div
+                    class={`grid gap-6 ${testimonials.length === 1 ? "max-w-xl mx-auto" : testimonials.length === 2 ? "sm:grid-cols-2 max-w-2xl mx-auto" : "sm:grid-cols-2 lg:grid-cols-3"}`}
+                >
+                    {testimonials.map((t) => (
+                        <article class="card-base flex flex-col gap-4 relative">
+                            {/* Rating */}
+                            {t.rating && (
+                                <div
+                                    class="text-yellow-400 text-lg tracking-tight leading-none"
+                                    aria-label={`${t.rating} out of 5 stars`}
+                                >
+                                    {stars(t.rating)}
+                                </div>
+                            )}
+
+                            {/* Quote */}
+                            <blockquote class="flex-1">
+                                <p class="text-gray-700 leading-relaxed text-base relative">
+                                    <span
+                                        class="text-4xl text-blue-200 font-serif leading-none absolute -top-2 -left-1 select-none"
+                                        aria-hidden="true"
+                                    >
+                                        &ldquo;
+                                    </span>
+                                    <span class="pl-5 block">{t.quote}</span>
+                                </p>
+                            </blockquote>
+
+                            {/* Author */}
+                            <footer class="flex items-center gap-3 pt-3 border-t border-slate-100 mt-auto">
+                                {t.avatar ? (
+                                    <img
+                                        src={t.avatar}
+                                        alt={t.name ?? ""}
+                                        class="w-10 h-10 rounded-full object-cover shrink-0"
+                                        loading="lazy"
+                                    />
+                                ) : (
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-blue-100 flex items-center justify-center shrink-0"
+                                        aria-hidden="true"
+                                    >
+                                        <span class="text-blue-600 font-bold text-sm">
+                                            {(t.name ?? "?")[0].toUpperCase()}
+                                        </span>
+                                    </div>
+                                )}
+                                <div class="min-w-0">
+                                    {t.name && (
+                                        <p class="font-semibold text-gray-800 text-sm leading-tight">
+                                            {t.name}
+                                        </p>
+                                    )}
+                                    {(t.role || t.company) && (
+                                        <p class="text-xs text-slate-500 leading-tight mt-0.5">
+                                            {[t.role, t.company]
+                                                .filter(Boolean)
+                                                .join(" · ")}
+                                        </p>
+                                    )}
+                                </div>
+                                {t.caseStudyUrl && (
+                                    <a
+                                        href={t.caseStudyUrl}
+                                        class="ml-auto text-xs text-blue-500 hover:text-blue-400 transition-colors whitespace-nowrap"
+                                        title="Read case study"
+                                    >
+                                        Case study →
+                                    </a>
+                                )}
+                            </footer>
+                        </article>
+                    ))}
+                </div>
+            )
+        }
+
+        {/* Optional CTA */}
+        {
+            buttonText && buttonUrl && (
+                <div class="text-center mt-10">
+                    <a href={buttonUrl} class="btn btn-primary">
+                        <i class="material-icons text-base">star</i>
+                        {buttonText}
+                    </a>
+                </div>
+            )
+        }
+    </div>
+</section>
+
+{/* Review + AggregateRating structured data */}
+{reviewJsonLd && <script type="application/ld+json" set:html={reviewJsonLd} />}

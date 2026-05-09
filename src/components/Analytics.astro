@@ -1,0 +1,29 @@
+---
+// Privacy-respecting analytics via Plausible.
+// Only loads after cookie consent is accepted.
+// Plausible is cookieless by default — but we still respect user choice.
+// Set PLAUSIBLE_DOMAIN in your environment or hardcode below.
+
+const domain = import.meta.env.PUBLIC_PLAUSIBLE_DOMAIN || 'evolverai.ch';
+---
+
+<script define:vars={{ domain }}>
+  // Load Plausible only after consent
+  window.addEventListener('cookie-consent', (e) => {
+    if (!e.detail?.accepted) return;
+    if (document.querySelector('script[data-domain]')) return; // already loaded
+
+    const script = document.createElement('script');
+    script.defer = true;
+    script.setAttribute('data-domain', domain);
+    script.src = 'https://plausible.io/js/script.js';
+    document.head.appendChild(script);
+  });
+
+  // Also expose a helper for manual event tracking
+  window.trackEvent = function(name, props) {
+    if (typeof window.plausible === 'function') {
+      window.plausible(name, { props });
+    }
+  };
+</script>

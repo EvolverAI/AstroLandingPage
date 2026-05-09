@@ -1,0 +1,101 @@
+---
+// GDPR cookie consent banner.
+// Shows once, stores preference in localStorage.
+// Dispatches 'cookie-consent' event so analytics can be conditionally loaded.
+---
+
+<div
+  id="cookie-banner"
+  class="cookie-banner hidden"
+  role="dialog"
+  aria-label="Cookie consent"
+  aria-live="polite"
+>
+  <div class="cookie-inner">
+    <div class="cookie-text">
+      <i class="material-icons text-blue-400 shrink-0">cookie</i>
+      <p>
+        We use cookies to improve your experience and analyse site traffic.
+        <a href="/privacy" class="text-blue-400 hover:text-blue-300 underline">Privacy Policy</a>
+      </p>
+    </div>
+    <div class="cookie-actions">
+      <button id="cookie-reject" class="btn btn-ghost text-sm">Reject</button>
+      <button id="cookie-accept" class="btn btn-primary text-sm">Accept</button>
+    </div>
+  </div>
+</div>
+
+<style>
+  .cookie-banner {
+    position: fixed;
+    bottom: 1.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 9999;
+    width: calc(100% - 2rem);
+    max-width: 640px;
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-hover);
+    padding: 1rem 1.25rem;
+    animation: slide-up 0.3s ease forwards;
+  }
+  @keyframes slide-up {
+    from { opacity: 0; transform: translateX(-50%) translateY(1rem); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .cookie-inner {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1rem;
+    justify-content: space-between;
+  }
+  .cookie-text {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 200px;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+  .cookie-actions {
+    display: flex;
+    gap: 0.5rem;
+    shrink: 0;
+  }
+</style>
+
+<script>
+  const CONSENT_KEY = 'cookie-consent';
+
+  function initBanner() {
+    const existing = localStorage.getItem(CONSENT_KEY);
+    if (existing) {
+      // Already decided — fire event so analytics can init
+      window.dispatchEvent(new CustomEvent('cookie-consent', { detail: { accepted: existing === 'accepted' } }));
+      return;
+    }
+
+    const banner = document.getElementById('cookie-banner');
+    banner?.classList.remove('hidden');
+
+    document.getElementById('cookie-accept')?.addEventListener('click', () => {
+      localStorage.setItem(CONSENT_KEY, 'accepted');
+      banner?.classList.add('hidden');
+      window.dispatchEvent(new CustomEvent('cookie-consent', { detail: { accepted: true } }));
+    });
+
+    document.getElementById('cookie-reject')?.addEventListener('click', () => {
+      localStorage.setItem(CONSENT_KEY, 'rejected');
+      banner?.classList.add('hidden');
+      window.dispatchEvent(new CustomEvent('cookie-consent', { detail: { accepted: false } }));
+    });
+  }
+
+  document.addEventListener('DOMContentLoaded', initBanner);
+</script>

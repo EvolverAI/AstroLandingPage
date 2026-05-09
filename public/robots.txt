@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+
+# Block admin and internal paths
+Disallow: /admin/
+Disallow: /_astro/
+
+Sitemap: https://evolverai.ch/sitemap.xml

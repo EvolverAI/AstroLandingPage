@@ -1,97 +1,17 @@
 ---
 // Language Switcher Component
-import { getCollection } from "astro:content";
-import { getAvailableLanguages } from "../utils/content.js";
+import { getAvailableLanguages } from "../utils/content-loader.js";
 
 export interface Props {
     currentLanguage?: string;
     className?: string;
-    currentPath?: string; // Add current path to determine URL structure
 }
 
-const {
-    currentLanguage = "en",
-    className = "",
-    currentPath = "",
-} = Astro.props;
+const { currentLanguage = "en", className = "" } = Astro.props;
 
-// Get available languages from content collections
-let languages: any[] = [];
-try {
-    const languagesCollection = await getCollection("languages");
-    const allLanguages = getAvailableLanguages(languagesCollection);
-
-    // Deduplicate languages by code (keep only the first occurrence of each language code)
-    const uniqueLanguages = allLanguages.filter(
-        (lang, index, array) =>
-            array.findIndex((l) => l.code === lang.code) === index,
-    );
-
-    languages = uniqueLanguages;
-} catch (error) {
-    console.warn("Could not load languages:", error);
-    languages = [{ code: "en", name: "English", flag: "🇺🇸" }];
-}
-
-// Determine display name for current language
+const languages = getAvailableLanguages();
 const currentLangData = languages.find((lang) => lang.code === currentLanguage);
 const displayName = currentLangData?.name || "Language";
-
-// Function to generate language-aware URLs
-function generateLanguageUrl(
-    targetLangCode: string,
-    currentPath: string,
-): string {
-    // Remove leading slash for processing
-    const path = currentPath.startsWith("/")
-        ? currentPath.substring(1)
-        : currentPath;
-
-    // Split path into segments
-    const segments = path.split("/").filter((segment) => segment.length > 0);
-
-    if (segments.length === 0) {
-        // Root path, just return language code
-        return `/${targetLangCode}`;
-    }
-
-    const supportedLanguages = ["en", "de", "it"];
-
-    // Check different URL patterns
-    if (segments.length === 1) {
-        // Pattern: /en or /de or /page
-        if (supportedLanguages.includes(segments[0])) {
-            // It's a language code, replace it
-            return `/${targetLangCode}`;
-        } else {
-            // It's a page, append language
-            return `/${segments[0]}/${targetLangCode}`;
-        }
-    } else if (segments.length >= 2) {
-        // Pattern: /page/en or /en/page or more complex
-
-        // Check if first segment is a language code
-        if (supportedLanguages.includes(segments[0])) {
-            // Pattern: /en/page/... - replace first segment
-            segments[0] = targetLangCode;
-        } else if (supportedLanguages.includes(segments[1])) {
-            // Pattern: /page/en/... - replace second segment
-            segments[1] = targetLangCode;
-        } else {
-            // No language code found, check if it's a known page pattern
-            const knownPages = ["elysia", "wfm", "b2b", "courses"];
-            if (knownPages.includes(segments[0])) {
-                // Pattern: /page/... - append language as second segment
-                segments.splice(1, 0, targetLangCode);
-            } else {
-                // Default: prepend language code
-                segments.unshift(targetLangCode);
-            }
-        }
-    }
-
-    return "/" + segments.join("/");
-}
 ---
 
 <div class={`language-switcher ${className}`}>
@@ -124,7 +44,8 @@ function generateLanguageUrl(
         </div>
 
         <div
-            class="language-dropdown origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-slate-800 ring-1 ring-slate-600 focus:outline-none hidden"
+            class="language-dropdown origin-top-right absolute right-0 mt-2 w-48 rounded-xl shadow-2xl focus:outline-none hidden"
+            style="background: var(--color-bg-raised); border: 1px solid var(--color-border); z-index: 100;"
             role="menu"
             aria-orientation="vertical"
             aria-labelledby="language-menu-button"
@@ -136,11 +57,12 @@ function generateLanguageUrl(
                         return (
                             <button
                                 onclick={`setUserLanguage('${language.code}')`}
-                                class={`w-full text-left flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors ${
+                                class={`w-full text-left flex items-center px-4 py-3 text-sm transition-colors ${
                                     currentLanguage === language.code
-                                        ? "bg-slate-700 text-blue-400"
-                                        : "text-gray-200 hover:text-white"
+                                        ? "text-blue-400"
+                                        : "text-gray-200 hover:text-white hover:bg-white/5"
                                 }`}
+                                style="min-height: 44px;"
                                 role="menuitem"
                                 tabindex="-1"
                             >
@@ -171,7 +93,8 @@ function generateLanguageUrl(
 
                 <!-- System Configuration Option -->
                 <button
-                    class="w-full text-left flex items-center px-4 py-2 text-sm hover:bg-slate-700 transition-colors text-gray-200 hover:text-white"
+                    class="w-full text-left flex items-center px-4 py-3 text-sm hover:bg-white/5 transition-colors text-gray-200 hover:text-white"
+                    style="min-height: 44px;"
                     role="menuitem"
                     tabindex="-1"
                     onclick="setSystemLanguage()"

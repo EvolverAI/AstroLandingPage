@@ -1,0 +1,287 @@
+---
+export interface Props {
+  language?: string;
+  labels?: {
+    name?: string;
+    email?: string;
+    message?: string;
+    submit?: string;
+    success?: string;
+    error?: string;
+  };
+}
+
+const { language = "en", labels = {} } = Astro.props;
+
+const l = {
+  name: labels.name || "Your Name",
+  email: labels.email || "Email Address",
+  message: labels.message || "Your Message",
+  submit: labels.submit || "Send Message",
+  success: labels.success || "Thanks! We'll be in touch soon.",
+  error: labels.error || "Something went wrong. Please try again.",
+};
+---
+
+<div class="contact-form-wrap" id="contact-form">
+  <!-- Success state -->
+  <div id="form-success" class="hidden text-center py-12">
+    <div
+      class="w-16 h-16 bg-green-500/20 rounded-full flex items-center justify-center mx-auto mb-4"
+    >
+      <i class="material-icons text-green-400 text-3xl">check_circle</i>
+    </div>
+    <p class="text-green-400 text-lg font-semibold">{l.success}</p>
+  </div>
+
+  <!-- Form -->
+  <form id="contact-form-el" novalidate>
+    <!-- Honeypot (hidden from humans, catches bots) -->
+    <input
+      type="text"
+      name="website"
+      class="hidden"
+      tabindex="-1"
+      autocomplete="off"
+    />
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+      <div>
+        <label class="form-label" for="cf-name">{l.name}</label>
+        <input
+          id="cf-name"
+          name="name"
+          type="text"
+          required
+          autocomplete="name"
+          class="form-input"
+          placeholder="John Smith"
+        />
+      </div>
+      <div>
+        <label class="form-label" for="cf-email">{l.email}</label>
+        <input
+          id="cf-email"
+          name="email"
+          type="email"
+          required
+          autocomplete="email"
+          class="form-input"
+          placeholder="john@company.com"
+        />
+      </div>
+    </div>
+
+    <div class="mb-6">
+      <label class="form-label" for="cf-message">{l.message}</label>
+      <textarea
+        id="cf-message"
+        name="message"
+        required
+        rows="5"
+        class="form-input resize-none"
+        placeholder="Tell us about your project..."></textarea>
+    </div>
+
+    <!-- Field-level errors injected here by JS -->
+
+    <!-- Network/server error -->
+    <p
+      id="form-error"
+      class="hidden text-red-400 text-sm mb-4 flex items-center gap-1.5"
+    >
+      <i class="material-icons text-sm">error_outline</i>
+      <span id="form-error-text"></span>
+    </p>
+
+    <button
+      type="submit"
+      id="form-submit"
+      class="btn btn-primary w-full sm:w-auto"
+    >
+      <span id="submit-text">{l.submit}</span>
+      <span id="submit-loading" class="hidden items-center gap-2">
+        <span
+          class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"
+        ></span>
+        Sending...
+      </span>
+    </button>
+  </form>
+</div>
+
+<style>
+  .form-label {
+    display: block;
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    margin-bottom: 0.375rem;
+    font-weight: 500;
+  }
+  .form-input {
+    width: 100%;
+    background: var(--color-bg-raised);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.625rem 0.875rem;
+    color: var(--color-text-primary);
+    font-size: var(--text-base);
+    transition:
+      border-color var(--transition-fast),
+      box-shadow var(--transition-fast);
+    outline: none;
+  }
+  .form-input:focus {
+    border-color: var(--color-border-focus);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+  }
+  .form-input::placeholder {
+    color: var(--color-text-muted);
+  }
+  .form-input.error {
+    border-color: #ef4444;
+  }
+</style>
+
+<script>
+  const form = document.getElementById("contact-form-el") as HTMLFormElement;
+  const success = document.getElementById("form-success");
+  const errorEl = document.getElementById("form-error");
+  const errorText = document.getElementById("form-error-text");
+  const submit = document.getElementById("form-submit") as HTMLButtonElement;
+  const submitText = document.getElementById("submit-text");
+  const submitLoading = document.getElementById("submit-loading");
+
+  // ── Validation rules ─────────────────────────────────────────────────────
+  type Rule = { test: (v: string) => boolean; msg: string };
+  const rules: Record<string, Rule> = {
+    name: {
+      test: (v) => v.trim().length >= 2,
+      msg: "Please enter your name (at least 2 characters).",
+    },
+    email: {
+      test: (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim()),
+      msg: "Please enter a valid email address.",
+    },
+    message: {
+      test: (v) => v.trim().length >= 20,
+      msg: "Please write a message (at least 20 characters).",
+    },
+  };
+
+  function getInput(
+    name: string,
+  ): HTMLInputElement | HTMLTextAreaElement | null {
+    return form?.querySelector(`[name="${name}"]`) as
+      | HTMLInputElement
+      | HTMLTextAreaElement
+      | null;
+  }
+
+  function showFieldError(name: string, msg: string) {
+    const el = getInput(name);
+    if (!el) return;
+    el.classList.add("error");
+    let hint = el.parentElement?.querySelector(
+      ".field-hint",
+    ) as HTMLElement | null;
+    if (!hint) {
+      hint = document.createElement("p");
+      hint.className =
+        "field-hint text-red-400 text-xs mt-1 flex items-center gap-1";
+      hint.innerHTML = `<i class="material-icons text-xs">error_outline</i> <span></span>`;
+      el.parentElement?.appendChild(hint);
+    }
+    (hint.querySelector("span") as HTMLElement).textContent = msg;
+    hint.style.display = "flex";
+  }
+
+  function clearFieldError(name: string) {
+    const el = getInput(name);
+    if (!el) return;
+    el.classList.remove("error");
+    const hint = el.parentElement?.querySelector(
+      ".field-hint",
+    ) as HTMLElement | null;
+    if (hint) hint.style.display = "none";
+  }
+
+  function validateField(name: string): boolean {
+    const el = getInput(name);
+    if (!el) return true;
+    const rule = rules[name];
+    if (!rule) return true;
+    if (rule.test(el.value)) {
+      clearFieldError(name);
+      return true;
+    }
+    showFieldError(name, rule.msg);
+    return false;
+  }
+
+  // Real-time validation on blur / input
+  Object.keys(rules).forEach((name) => {
+    const el = getInput(name);
+    // Validate on blur always
+    el?.addEventListener("blur", () => validateField(name));
+    // Clear error while typing once it was shown
+    el?.addEventListener("input", () => {
+      if (el.classList.contains("error")) validateField(name);
+    });
+  });
+
+  // ── Submit ────────────────────────────────────────────────────────────────
+  form?.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    // Validate all fields
+    const valid = Object.keys(rules).map(validateField).every(Boolean);
+    if (!valid) return;
+
+    // Show loading
+    submitText?.classList.add("hidden");
+    submitLoading?.classList.remove("hidden");
+    submitLoading?.classList.add("flex");
+    submit.disabled = true;
+    errorEl?.classList.add("hidden");
+
+    const nameEl = getInput("name") as HTMLInputElement;
+    const emailEl = getInput("email") as HTMLInputElement;
+    const messageEl = getInput("message") as HTMLTextAreaElement;
+    const websiteEl = form.querySelector("[name=website]") as HTMLInputElement;
+
+    try {
+      const res = await fetch("/.netlify/functions/contact-form", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: nameEl?.value,
+          email: emailEl?.value,
+          message: messageEl?.value,
+          website: websiteEl?.value,
+        }),
+      });
+
+      if (res.ok) {
+        form.classList.add("hidden");
+        success?.classList.remove("hidden");
+      } else {
+        const err = await res.json().catch(() => ({}));
+        if (errorText)
+          errorText.textContent =
+            err.error || "Something went wrong. Please try again.";
+        errorEl?.classList.remove("hidden");
+      }
+    } catch {
+      if (errorText)
+        errorText.textContent =
+          "Network error. Please check your connection and try again.";
+      errorEl?.classList.remove("hidden");
+    } finally {
+      submitText?.classList.remove("hidden");
+      submitLoading?.classList.add("hidden");
+      submitLoading?.classList.remove("flex");
+      submit.disabled = false;
+    }
+  });
+</script>

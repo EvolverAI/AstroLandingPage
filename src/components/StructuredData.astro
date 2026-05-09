@@ -1,0 +1,116 @@
+---
+// Outputs JSON-LD structured data for SEO
+// Renders Organization + WebSite on every page, plus page-specific schemas
+
+export interface Props {
+  page: string;
+  language: string;
+  title: string;
+  description: string;
+  url: string;
+}
+
+const { page, language, title, description, url } = Astro.props;
+
+const BASE_URL = 'https://evolverai.ch';
+
+const organization = {
+  '@context': 'https://schema.org',
+  '@type': 'Organization',
+  name: 'EvolverAI GmbH',
+  url: BASE_URL,
+  logo: `${BASE_URL}/img/icons/apple-touch-icon.png`,
+  description: 'Integrated AI solutions for modern businesses — custom software, workforce management, and AI-powered automation.',
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: 'Zwydenweg 3',
+    addressLocality: 'Hergiswil',
+    postalCode: 'CH-6052',
+    addressCountry: 'CH',
+  },
+  contactPoint: {
+    '@type': 'ContactPoint',
+    telephone: '+41792156801',
+    contactType: 'customer service',
+    email: 'info@evolverai.ch',
+    availableLanguage: ['English', 'Italian', 'German'],
+  },
+  sameAs: [
+    'https://linkedin.com/company/evolverai',
+  ],
+};
+
+const website = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  name: 'EvolverAI',
+  url: BASE_URL,
+  inLanguage: language,
+  potentialAction: {
+    '@type': 'SearchAction',
+    target: `${BASE_URL}/search?q={search_term_string}`,
+    'query-input': 'required name=search_term_string',
+  },
+};
+
+// Page-specific schemas
+const pageSchemas: Record<string, object> = {
+  home: {
+    '@context': 'https://schema.org',
+    '@type': 'WebPage',
+    name: title,
+    description,
+    url,
+    inLanguage: language,
+    isPartOf: { '@id': BASE_URL },
+    about: { '@id': `${BASE_URL}/#organization` },
+  },
+  b2b: {
+    '@context': 'https://schema.org',
+    '@type': 'Service',
+    name: 'B2B Outsourcing Solutions',
+    description,
+    url,
+    provider: { '@type': 'Organization', name: 'EvolverAI GmbH', url: BASE_URL },
+    serviceType: 'Business Process Outsourcing',
+    areaServed: 'Worldwide',
+  },
+  wfm: {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Workforce Manager',
+    description,
+    url,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    offers: { '@type': 'Offer', availability: 'https://schema.org/InStock' },
+    author: { '@type': 'Organization', name: 'EvolverAI GmbH', url: BASE_URL },
+  },
+  elysia: {
+    '@context': 'https://schema.org',
+    '@type': 'SoftwareApplication',
+    name: 'Elysia AI Assistant',
+    description,
+    url,
+    applicationCategory: 'BusinessApplication',
+    operatingSystem: 'Web',
+    offers: { '@type': 'Offer', availability: 'https://schema.org/InStock' },
+    author: { '@type': 'Organization', name: 'EvolverAI GmbH', url: BASE_URL },
+  },
+  academy: {
+    '@context': 'https://schema.org',
+    '@type': 'EducationalOrganization',
+    name: 'EvolverAI Academy',
+    description,
+    url,
+    parentOrganization: { '@type': 'Organization', name: 'EvolverAI GmbH', url: BASE_URL },
+    teaches: ['Artificial Intelligence', 'Machine Learning', 'Data Science', 'AI Ethics'],
+  },
+};
+
+const pageSchema = pageSchemas[page] || pageSchemas.home;
+---
+
+<script type="application/ld+json" set:html={JSON.stringify(organization)} />
+<script type="application/ld+json" set:html={JSON.stringify(website)} />
+<script type="application/ld+json" set:html={JSON.stringify(pageSchema)} />

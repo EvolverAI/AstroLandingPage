@@ -1,96 +1,269 @@
 ---
-// Enhanced Hero Section component with Content Collections
-import { getEntry } from "astro:content";
-
 export interface Props {
   language?: string;
-  environment?: string;
+  heroContent?: {
+    title?: string;
+    subtitle?: string;
+    description?: string;
+    companyName?: string;
+    companyNameHighlight?: string;
+    eyebrow?: string;
+    ctaText?: string;
+    ctaUrl?: string;
+    secondaryCtaText?: string;
+    secondaryCtaUrl?: string;
+    heroImage?: string;
+    videoSrc?: string;
+    variant?: "default" | "gradient" | "video" | "split" | "particles";
+  };
 }
 
-const { language = "en", environment = "production" } = Astro.props;
+const { language = "en", heroContent: _heroContent } = Astro.props;
+const heroContent = _heroContent ?? {};
 
-// EMERGENCY DEBUG - Test if language is being passed
-console.log("🚨 HERO LANGUAGE:", language);
+const companyName = heroContent.companyName || "Evolver";
+const companyHighlight = heroContent.companyNameHighlight || "AI";
+const subtitle = heroContent.subtitle || "";
+const description = heroContent.description || "";
+const title = heroContent.title || "";
+const eyebrow = heroContent.eyebrow || "";
+const ctaText = heroContent.ctaText || "";
+const ctaUrl = heroContent.ctaUrl || "#contact";
+const secondaryCtaText = heroContent.secondaryCtaText || "";
+const secondaryCtaUrl = heroContent.secondaryCtaUrl || "#about";
+const heroImage = heroContent.heroImage || "";
+const videoSrc = heroContent.videoSrc || "";
+const variant = heroContent.variant || "default";
 
-// Get content directly from Astro Content Collections
-let localizedSections = {};
-
-try {
-  const langData = await getEntry("languages", language);
-  localizedSections = langData?.data?.sections || {};
-} catch (error) {
-  console.warn("Content Collections not available:", error);
-}
-
-// Merge section data with localized content, with fallback to defaults
-const content = {
-  companyName: language === "de" ? "Evolver" : "Evolver",
-  companyNameHighlight: language === "de" ? "AI" : "AI",
-  title:
-    language === "de"
-      ? "Geschäfte durch KI transformieren"
-      : "Transforming Business Through AI",
-  subtitle:
-    language === "de"
-      ? "Wir glauben an eine Welt, in der Künstliche Intelligenz Komplexität vereinfacht und nachhaltigen Erfolg für Unternehmen vorantreibt."
-      : "We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses.",
-  description:
-    language === "de"
-      ? "Unsere Mission ist es, modernste KI für Unternehmen jeder Größe zugänglich und wirkungsvoll zu machen."
-      : "Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes.",
-  // @ts-ignore
-  ...(localizedSections.hero || {}),
-};
-
-// @ts-ignore
-const styling = { customClasses: "", theme: "gradient" };
-// @ts-ignore
-const backgroundImage = undefined;
-// @ts-ignore
-const minHeight = "600px";
+const isSplit = variant === "split";
+const isVideo = variant === "video";
+const isParticles = variant === "particles";
 ---
 
 <section
   id="hero"
-  class={`relative bg-custom-slate py-12 bg-center bg-cover ${styling.customClasses || ""}`}
-  style={`min-height: ${minHeight}; ${backgroundImage ? `background-image: url('${backgroundImage}');` : ""}`}
-  data-section="hero"
-  data-theme={styling.theme || "gradient"}
+  class={`relative min-h-screen flex flex-col justify-center overflow-hidden ${isSplit ? "md:flex-row md:items-center" : ""}`}
 >
-  <div
-    class="container mx-auto px-4 flex justify-end items-center h-full relative z-10"
-  >
-    <div class="p-8 rounded-lg text-justify max-w-lg">
-      <p class="p-noto-sans top-bottom-margins md:text-lg">
-        <i class="material-icons text-yellow-300 mr-2">lightbulb</i>
-        {
-          content?.subtitle ||
-            content?.description ||
-            "We believe in a world where Artificial Intelligence simplifies complexity and drives sustainable success for businesses. Our mission is to make cutting-edge AI accessible and impactful for companies of all sizes."
-        }
-      </p>
-    </div>
-  </div>
-  <div class="w-full text-center py-8">
-    <h1
-      class="font-bold text-white text-[20vw] leading-none w-full text-center"
+  <!-- Background: video variant -->
+  {isVideo && videoSrc && (
+    <video
+      autoplay muted loop playsinline
+      class="absolute inset-0 w-full h-full object-cover"
+      aria-hidden="true"
     >
-      <span class="inline-block">{content?.companyName || "Evolver"}</span><span
-        class="text-blue-800 inline-block"
-        >{content?.companyNameHighlight || "AI"}</span
-      >
-    </h1>
-  </div>
+      <source src={videoSrc} />
+    </video>
+  )}
 
-  <!-- Development helper (remove in production) -->
-  {
-    import.meta.env.DEV && (
-      <details class="absolute top-4 right-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs">
-        <summary class="cursor-pointer">Content Debug</summary>
-        <pre class="mt-2 max-w-xs overflow-auto">
-          {JSON.stringify({ content, styling }, null, 2)}
-        </pre>
-      </details>
-    )
-  }
+  <!-- Animated gradient background (default / gradient / split / particles) -->
+  {!isVideo && (
+    <div class={`absolute inset-0 hero-bg ${variant === "gradient" ? "hero-bg-animated" : ""}`} aria-hidden="true"></div>
+  )}
+
+  <!-- Dark overlay for video -->
+  {isVideo && (
+    <div class="absolute inset-0 bg-black/60" aria-hidden="true"></div>
+  )}
+
+  <!-- Grid pattern overlay -->
+  <div class="absolute inset-0 hero-grid opacity-20" aria-hidden="true"></div>
+
+  <!-- Glow orbs -->
+  <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-10 bg-blue-600 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-10 bg-purple-600 pointer-events-none" aria-hidden="true"></div>
+
+  <!-- Particles canvas (particles variant) -->
+  {isParticles && <canvas id="hero-particles" class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"></canvas>}
+
+  <!-- Content -->
+  <div class={`relative z-10 container mx-auto px-4 py-20 ${isSplit ? "md:grid md:grid-cols-2 md:gap-16 md:items-center" : ""}`}>
+
+    <!-- Text column -->
+    <div class={isSplit ? "flex flex-col justify-center" : ""}>
+
+      <!-- Eyebrow badge -->
+      {eyebrow && (
+        <div class="reveal flex justify-center mb-6">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-900/40 text-blue-300 border border-blue-700/50 backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            {eyebrow}
+          </span>
+        </div>
+      )}
+
+      <!-- Tagline + description (right-aligned, only when not split) -->
+      {!isSplit && (subtitle || description) && (
+        <div class="reveal flex justify-end mb-8">
+          <div class="max-w-lg text-right">
+            {subtitle && (
+              <p class="text-slate-300 text-lg leading-relaxed">
+                <i class="material-icons text-yellow-400 align-middle mr-2 text-xl">lightbulb</i>
+                {subtitle}
+              </p>
+            )}
+            {description && (
+              <p class="text-slate-400 text-base leading-relaxed mt-2">{description}</p>
+            )}
+          </div>
+        </div>
+      )}
+
+      <!-- Giant brand name -->
+      <div class="reveal text-center" transition:name="hero-title">
+        <h1 class="hero-wordmark font-bold leading-none select-none">
+          <span class="text-white">{companyName}</span><span class="text-blue-500">{companyHighlight}</span>
+        </h1>
+      </div>
+
+      <!-- Subtitle below wordmark -->
+      {title && (
+        <div class="reveal text-center mt-6">
+          <p class="text-slate-400 text-xl max-w-2xl mx-auto">{title}</p>
+        </div>
+      )}
+
+      <!-- Split variant: description below title -->
+      {isSplit && description && (
+        <div class="reveal mt-4">
+          <p class="text-slate-300 text-lg leading-relaxed">{description}</p>
+        </div>
+      )}
+
+      <!-- CTA buttons -->
+      {(ctaText || secondaryCtaText) && (
+        <div class="reveal flex flex-wrap gap-4 justify-center mt-10">
+          {ctaText && (
+            <a href={ctaUrl} class="btn btn-primary px-8 py-3 text-base shadow-lg shadow-blue-900/30 hover:scale-105 transition-transform">
+              {ctaText}
+              <i class="material-icons text-base ml-1">arrow_forward</i>
+            </a>
+          )}
+          {secondaryCtaText && (
+            <a href={secondaryCtaUrl} class="btn btn-ghost px-8 py-3 text-base hover:scale-105 transition-transform">
+              {secondaryCtaText}
+            </a>
+          )}
+        </div>
+      )}
+    </div>
+
+    <!-- Image column (split variant) -->
+    {isSplit && heroImage && (
+      <div class="reveal-right hidden md:flex items-center justify-center mt-12 md:mt-0">
+        <img
+          src={heroImage}
+          alt={title || companyName + companyHighlight}
+          class="w-full max-w-lg rounded-2xl shadow-2xl object-cover"
+          loading="eager"
+          fetchpriority="high"
+        />
+      </div>
+    )}
+
+    <!-- Scroll indicator (non-split) -->
+    {!isSplit && (
+      <div class="reveal flex justify-center mt-16">
+        <a
+          href="#about"
+          class="scroll-indicator flex flex-col items-center gap-2 text-slate-500 hover:text-slate-300 transition-colors"
+          aria-label="Scroll to content"
+        >
+          <span class="text-xs uppercase tracking-widest">Scroll</span>
+          <i class="material-icons animate-bounce">keyboard_arrow_down</i>
+        </a>
+      </div>
+    )}
+  </div>
 </section>
+
+<style>
+  .hero-bg {
+    background:
+      radial-gradient(ellipse at 20% 50%, rgba(29, 78, 216, 0.15) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+      var(--color-bg-base);
+  }
+
+  .hero-bg-animated {
+    background-size: 400% 400%;
+    animation: gradient-shift 12s ease infinite;
+    background-image:
+      radial-gradient(ellipse at 20% 50%, rgba(29, 78, 216, 0.25) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
+      linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+  }
+
+  @keyframes gradient-shift {
+    0%, 100% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+  }
+
+  .hero-grid {
+    background-image:
+      linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+  }
+
+  .hero-wordmark {
+    font-size: var(--text-hero);
+    font-family: var(--font-sans);
+    line-height: 0.9;
+    overflow-wrap: break-word;
+    word-break: break-all;
+  }
+
+  @media (max-width: 360px) {
+    .hero-wordmark { font-size: clamp(2.5rem, 22vw, 9rem); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hero-bg-animated { animation: none; }
+  }
+</style>
+
+{isParticles && (
+  <script>
+    (function () {
+      const canvas = document.getElementById('hero-particles') as HTMLCanvasElement;
+      if (!canvas) return;
+      const ctx = canvas.getContext('2d');
+      if (!ctx) return;
+
+      let W = canvas.width = canvas.offsetWidth;
+      let H = canvas.height = canvas.offsetHeight;
+
+      const particles = Array.from({ length: 80 }, () => ({
+        x: Math.random() * W,
+        y: Math.random() * H,
+        r: Math.random() * 1.5 + 0.5,
+        dx: (Math.random() - 0.5) * 0.4,
+        dy: (Math.random() - 0.5) * 0.4,
+        o: Math.random() * 0.5 + 0.1,
+      }));
+
+      function draw() {
+        ctx!.clearRect(0, 0, W, H);
+        for (const p of particles) {
+          ctx!.beginPath();
+          ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx!.fillStyle = `rgba(96,165,250,${p.o})`;
+          ctx!.fill();
+          p.x += p.dx;
+          p.y += p.dy;
+          if (p.x < 0 || p.x > W) p.dx *= -1;
+          if (p.y < 0 || p.y > H) p.dy *= -1;
+        }
+        requestAnimationFrame(draw);
+      }
+
+      if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) draw();
+
+      window.addEventListener('resize', () => {
+        W = canvas.width = canvas.offsetWidth;
+        H = canvas.height = canvas.offsetHeight;
+      });
+    })();
+  </script>
+)}

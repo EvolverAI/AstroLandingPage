@@ -1,20 +1,46 @@
 ---
-// Dynamic Section component that renders different section types based on configuration
+import ContentFallback from "./ContentFallback.astro";
 import ContentHeaderSection from "./global/ContentHeaderSection.astro";
 import CardsSection from "./global/CardsSection.astro";
 import ProductSection from "./global/ProductSection.astro";
 import HeroSection from "./home/HeroSection.astro";
 import DividerSection from "./global/DividerSection.astro";
+import BlogSection from "./global/BlogSection.astro";
+import TestimonialsSection from "./global/TestimonialsSection.astro";
+import FaqSection from "./global/FaqSection.astro";
+import StatsSection from "./global/StatsSection.astro";
+import PricingSection from "./global/PricingSection.astro";
+import TeamSection from "./global/TeamSection.astro";
+import CtaBannerSection from "./global/CtaBannerSection.astro";
+import VideoSection from "./global/VideoSection.astro";
+import GallerySection from "./global/GallerySection.astro";
+import TimelineSection from "./global/TimelineSection.astro";
+import LogoStripSection from "./global/LogoStripSection.astro";
 
 export interface Props {
     sectionConfig: {
-        type: "content_header" | "cards" | "product" | "hero" | "divider";
+        type:
+            | "content_header"
+            | "cards"
+            | "product"
+            | "hero"
+            | "divider"
+            | "blog"
+            | "testimonials"
+            | "faq"
+            | "stats"
+            | "pricing"
+            | "team"
+            | "cta_banner"
+            | "video"
+            | "gallery"
+            | "timeline"
+            | "logo_strip";
         section_id: string;
         order: number;
+        visible?: boolean;
         background_image?: string;
         min_height?: string;
-        image?: string;
-        // Divider-specific props
         height?: string;
         backgroundColor?: string;
         showLine?: boolean;
@@ -22,109 +48,302 @@ export interface Props {
         lineWidth?: string;
         [key: string]: any;
     };
+    sectionContent?: any; // Pre-loaded content from master/translation
+    sectionLayout?: any; // Pre-loaded layout config (icons, columns, etc.)
+    defaults?: any; // Page-level defaults
     language?: string;
-    languageFile?: string; // For Elysia-specific language files
-    environment?: string;
 }
 
 const {
     sectionConfig,
+    sectionContent = {},
+    sectionLayout = {},
+    defaults = {},
     language = "en",
-    languageFile,
-    environment = "production",
 } = Astro.props;
 
-const {
-    type,
-    section_id,
-    background_image,
-    min_height,
-    image,
-    height,
-    backgroundColor,
-    showLine,
-    lineColor,
-    lineWidth,
-    ...otherProps
-} = sectionConfig;
+const { type, section_id, background_image, min_height } = sectionConfig;
 
-// Common props for all section types
-const commonProps = {
-    sectionId: section_id,
-    sectionType: section_id,
-    language,
-    languageFile,
-    environment,
+// Skip hidden sections (visible defaults to true if not set)
+if (sectionConfig.visible === false) return;
+
+// Merge layout config into content for components that need it
+// Layout provides: icon, buttonUrl, buttonColor, responsiveColumns
+// Content provides: title, description, cards text, buttonText
+const mergedCards = (sectionContent?.cards || []).map(
+    (card: any, i: number) => {
+        const layoutCard = sectionLayout?.cards?.[i] || {};
+        return {
+            ...card,
+            icon: layoutCard.icon || card.icon,
+            linkUrl: layoutCard.linkUrl ?? card.linkUrl,
+            buttonUrl: layoutCard.buttonUrl ?? card.buttonUrl,
+            buttonColor: layoutCard.buttonColor ?? card.buttonColor,
+            features_config: layoutCard.features_config,
+        };
+    },
+);
+
+const mergedSection = {
+    ...sectionContent,
+    cards: mergedCards.length > 0 ? mergedCards : sectionContent?.cards,
+    responsiveColumns:
+        sectionLayout?.responsiveColumns || sectionContent?.responsiveColumns,
+    alignment: sectionLayout?.alignment || sectionContent?.alignment,
+    background: sectionLayout?.background || sectionContent?.background,
+    // Layout-only fields that override content
+    buttonUrl:
+        sectionLayout?.cards?.[0]?.buttonUrl ?? sectionContent?.buttonUrl,
+    buttonColor:
+        sectionLayout?.cards?.[0]?.buttonColor ?? sectionContent?.buttonColor,
 };
 ---
 
 {
     type === "hero" && (
-        <HeroSection language={language} environment={environment} />
+        <HeroSection language={language} heroContent={sectionContent} />
     )
 }
 
 {
     type === "content_header" && (
         <ContentHeaderSection
-            {...commonProps}
+            sectionId={section_id}
+            sectionType={section_id}
             backgroundImage={
                 background_image || "/img/evolverai-web-brainstorming-bg.jpg"
             }
             minHeight={min_height || "600px"}
+            logo={sectionConfig.logo || ""}
             content=""
-            {...otherProps}
+            sectionContent={sectionContent}
+            language={language}
         />
     )
 }
 
 {
-    type === "cards" && (
-        <CardsSection {...commonProps} title="" cards={[]} {...otherProps} />
-    )
+    type === "cards" &&
+        (mergedSection?.cards?.length > 0 ||
+        mergedSection?.title ||
+        mergedSection?.description ? (
+            <CardsSection
+                sectionId={section_id}
+                sectionType={section_id}
+                title={mergedSection?.title || ""}
+                subtitle={mergedSection?.subtitle}
+                description={mergedSection?.description}
+                cards={mergedSection?.cards || []}
+                buttonText={mergedSection?.buttonText}
+                buttonUrl={sectionLayout?.buttonUrl ?? mergedSection?.buttonUrl}
+                buttonColor={
+                    sectionLayout?.buttonColor ?? mergedSection?.buttonColor
+                }
+                responsiveColumns={mergedSection?.responsiveColumns}
+                alignment={mergedSection?.alignment}
+                backgroundColor={mergedSection?.background}
+                defaults={defaults}
+                language={language}
+            />
+        ) : (
+            <ContentFallback
+                sectionId={section_id}
+                reason={`No content found for section "${section_id}"`}
+            />
+        ))
 }
 
 {
-    type === "product" && (
-        <ProductSection
-            {...commonProps}
-            title=""
-            subtitle=""
-            description=""
-            image={image}
-            {...otherProps}
-        />
-    )
+    type === "product" &&
+        (sectionContent?.subtitle || sectionContent?.description ? (
+            <ProductSection
+                sectionId={section_id}
+                sectionType={section_id}
+                title=""
+                subtitle={sectionContent?.subtitle || ""}
+                description={sectionContent?.description || ""}
+                buttonText={sectionContent?.buttonText}
+                buttonUrl={
+                    sectionLayout?.buttonUrl ?? sectionContent?.buttonUrl
+                }
+                buttonColor={
+                    sectionLayout?.buttonColor ?? sectionContent?.buttonColor
+                }
+                image={sectionLayout?.image ?? sectionContent?.image}
+                imagePosition={
+                    sectionLayout?.imagePosition ??
+                    sectionContent?.imagePosition ??
+                    "right"
+                }
+                language={language}
+            />
+        ) : (
+            <ContentFallback
+                sectionId={section_id}
+                reason={`No content found for product section "${section_id}"`}
+            />
+        ))
 }
 
 {
     type === "divider" && (
         <DividerSection
             sectionId={section_id}
-            height={height}
-            backgroundColor={backgroundColor}
-            showLine={showLine}
-            lineColor={lineColor}
-            lineWidth={lineWidth}
-            {...otherProps}
+            height={sectionConfig.height}
+            backgroundColor={sectionConfig.backgroundColor}
+            showLine={sectionConfig.showLine}
+            lineColor={sectionConfig.lineColor}
+            lineWidth={sectionConfig.lineWidth}
         />
     )
 }
 
-<!-- Development helper -->
 {
-    import.meta.env.DEV && (
-        <details class="bg-black bg-opacity-75 text-white p-2 rounded text-xs m-4">
-            <summary class="cursor-pointer">
-                Dynamic Section Debug: {section_id}
-            </summary>
-            <pre class="mt-2 overflow-auto">
-                {JSON.stringify(
-                    { type, section_id, language, ...otherProps },
-                    null,
-                    2,
-                )}
-            </pre>
-        </details>
+    type === "blog" && (
+        <BlogSection
+            sectionId={section_id}
+            title={sectionContent?.title || "Latest News & Insights"}
+            description={sectionContent?.description || ""}
+            maxPosts={sectionContent?.maxPosts ?? 6}
+            language={language}
+            buttonText={sectionContent?.buttonText}
+            buttonUrl={
+                sectionLayout?.buttonUrl ?? sectionContent?.buttonUrl ?? "/blog"
+            }
+        />
+    )
+}
+
+{
+    type === "testimonials" && (
+        <TestimonialsSection
+            sectionId={section_id}
+            title={sectionContent?.title || "What Our Clients Say"}
+            description={sectionContent?.description || ""}
+            testimonials={sectionContent?.testimonials || []}
+            language={language}
+            buttonText={sectionContent?.buttonText}
+            buttonUrl={sectionLayout?.buttonUrl ?? sectionContent?.buttonUrl}
+        />
+    )
+}
+
+{
+    type === "faq" && (
+        <FaqSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            items={sectionContent?.items || []}
+            layout={sectionLayout?.layout ?? sectionContent?.layout ?? "accordion"}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "stats" && (
+        <StatsSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            items={sectionContent?.items || []}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "pricing" && (
+        <PricingSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            billingToggle={sectionLayout?.billingToggle ?? sectionContent?.billingToggle ?? false}
+            plans={sectionContent?.plans || []}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "team" && (
+        <TeamSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            members={sectionContent?.members || []}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "cta_banner" && (
+        <CtaBannerSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            primaryCta={sectionContent?.primaryCta}
+            primaryCtaUrl={sectionLayout?.primaryCtaUrl ?? sectionContent?.primaryCtaUrl}
+            secondaryCta={sectionContent?.secondaryCta}
+            secondaryCtaUrl={sectionLayout?.secondaryCtaUrl ?? sectionContent?.secondaryCtaUrl}
+            backgroundStyle={sectionLayout?.backgroundStyle ?? sectionContent?.backgroundStyle ?? "gradient"}
+            backgroundImage={sectionLayout?.backgroundImage ?? sectionContent?.backgroundImage ?? background_image}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "video" && (
+        <VideoSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            videoUrl={sectionLayout?.videoUrl ?? sectionContent?.videoUrl}
+            thumbnail={sectionLayout?.thumbnail ?? sectionContent?.thumbnail}
+            autoplay={sectionLayout?.autoplay ?? sectionContent?.autoplay ?? false}
+            loop={sectionLayout?.loop ?? sectionContent?.loop ?? false}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "gallery" && (
+        <GallerySection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            images={sectionContent?.images || []}
+            layout={sectionLayout?.layout ?? sectionContent?.layout ?? "grid"}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "timeline" && (
+        <TimelineSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            description={sectionContent?.description}
+            items={sectionContent?.items || []}
+            layout={sectionLayout?.layout ?? sectionContent?.layout ?? "vertical"}
+            language={language}
+        />
+    )
+}
+
+{
+    type === "logo_strip" && (
+        <LogoStripSection
+            sectionId={section_id}
+            title={sectionContent?.title}
+            logos={sectionContent?.logos || []}
+            scrolling={sectionLayout?.scrolling ?? sectionContent?.scrolling ?? true}
+            language={language}
+        />
     )
 }

@@ -1,0 +1,253 @@
+page_sections:
+  - type: hero
+    section_id: hero
+    order: 1
+    min_height: 100vh
+    visible: true
+  - type: content_header
+    section_id: about
+    order: 2
+    background_image: /img/evolverai-web-company-bg.jpg
+  - type: cards
+    section_id: services
+    order: 3
+  - type: cards
+    section_id: divisions
+    order: 4
+  - type: content_header
+    section_id: brainstorming
+    order: 5
+    background_image: /img/evolverai-web-brainstorming-bg.jpg
+  - type: cards
+    section_id: features
+    order: 6
+  - type: cards
+    section_id: b2b
+    order: 7
+  - type: cards
+    section_id: products
+    order: 8
+  - type: product
+    section_id: product_wfm
+    order: 9
+  - type: product
+    section_id: product_elysia
+    order: 10
+  - type: cards
+    section_id: courses
+    order: 11
+  - type: content_header
+    section_id: contact
+    order: 99
+    background_image: /img/evolverai-web-contact-bg.jpg
+  - type: blog
+    section_id: blog
+    order: 100
+  - type: testimonials
+    section_id: '111'
+    order: 101
+  - type: pricing
+    section_id: ppp
+    order: 102
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    icon:
+      alignment: top
+section_config:
+  services:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 4
+    cards:
+      - icon:
+          type: star
+          alignment: top
+      - icon:
+          type: star
+          alignment: top
+      - icon:
+          type: psychology
+          alignment: top
+          color: text-blue-400
+      - icon:
+          type: handshake
+          alignment: top
+          color: text-blue-400
+  divisions:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+  features:
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+  b2b:
+    responsiveColumns:
+      mobile: 1
+      tablet: 4
+      desktop: 4
+    buttonUrl: /b2b
+    buttonColor: bg-green-600 hover:bg-green-700
+  products:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+  product_wfm:
+    image: /img/evolverai-web-wfm-bg.png
+    imagePosition: right
+    buttonUrl: /wfm
+    buttonColor: bg-purple-600 hover:bg-purple-700
+  product_elysia:
+    image: /img/evolverai-web-elysia-bg.jpg
+    imagePosition: left
+    buttonUrl: /elysia
+    buttonColor: bg-pink-600 hover:bg-pink-700
+  courses:
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+  cards:
+    services:
+      - icon:
+          type: check_circle
+          alignment: top
+        linkUrl: null
+      - icon:
+          type: insights
+          alignment: top
+      - icon:
+          type: speed
+          alignment: top
+      - icon:
+          type: business
+          alignment: top
+        linkUrl: '#b2b_outsourcing'
+    divisions:
+      - icon:
+          type: computer
+          alignment: left-headline
+        linkUrl: /tech
+      - icon:
+          type: health_and_safety
+          alignment: left-headline
+        linkUrl: /medical
+      - icon:
+          type: room_service
+          alignment: left-headline
+        linkUrl: /hospitality
+      - icon:
+          type: business
+          alignment: left-headline
+        linkUrl: /b2b
+      - icon:
+          type: school
+          alignment: left-headline
+          color: '#F5F5F5'
+        linkUrl: /academy
+      - icon:
+          type: palette
+          alignment: left-headline
+        linkUrl: /pixelcraft
+    features:
+      - icon:
+          type: check_circle
+          alignment: top
+      - icon:
+          type: handshake
+          alignment: top
+      - icon:
+          type: lightbulb
+          alignment: top
+    b2b:
+      - icon:
+          type: tune
+          alignment: top
+      - icon:
+          type: expand_more
+          alignment: top
+      - icon:
+          type: business
+          alignment: top
+      - icon:
+          type: autorenew
+          alignment: top
+    products:
+      - icon:
+          type: clock
+          alignment: top
+        linkUrl: '#product_wfm'
+      - icon:
+          type: assistant
+          alignment: top
+        linkUrl: '#product_elysia'
+    courses:
+      - icon:
+          type: school
+          alignment: left
+        buttonUrl: /enroll/ai-fundamentals
+        buttonColor: bg-indigo-600 hover:bg-indigo-700
+        features_config:
+          - bullet: psychology
+            bulletType: icon
+            bulletColor: text-blue-400
+            badges:
+              - color: bg-blue-500
+          - bullet: edit
+            bulletType: icon
+            bulletColor: text-green-400
+            badges:
+              - color: bg-green-500
+          - bullet: auto_awesome
+            bulletType: icon
+            bulletColor: text-purple-400
+            badges:
+              - color: bg-purple-500
+      - icon:
+          type: school
+          alignment: left
+        buttonUrl: /enroll/ai-machine-learning
+        features_config:
+          - bullet: ▶
+            bulletType: symbol
+            bulletColor: text-orange-400
+            badges:
+              - color: bg-green-400
+          - bullet: ▶
+            bulletType: symbol
+            bulletColor: text-orange-400
+            badges:
+              - color: bg-green-400
+          - bullet: ▶
+            bulletType: symbol
+            bulletColor: text-orange-400
+            badges:
+              - color: bg-green-400
+      - icon:
+          type: school
+          alignment: left
+        buttonUrl: /enroll/ai-ethics-governance
+        badges:
+          - color: bg-red-500
+        features_config:
+          - bulletType: dot
+            bulletColor: text-red-400
+            badges:
+              - color: bg-red-500
+          - bulletType: dot
+            bulletColor: text-yellow-400
+            badges:
+              - color: bg-yellow-500
+          - bulletType: dot
+            bulletColor: text-green-400
+            badges:
+              - color: bg-green-500
+status: published

@@ -1,0 +1,240 @@
+---
+export interface GalleryImage {
+    src: string;
+    alt: string;
+    caption?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    images?: GalleryImage[];
+    layout?: "grid" | "masonry" | "carousel";
+    language?: string;
+}
+
+const {
+    sectionId = "gallery",
+    title = "",
+    description = "",
+    images = [],
+    layout = "grid",
+    language = "en",
+} = Astro.props;
+
+const galleryUid = `gallery-${sectionId}`;
+---
+
+<section
+    id={sectionId}
+    class="relative bg-custom-slate py-20 px-4"
+    data-section="gallery"
+>
+    <div class="container mx-auto">
+        {
+            (title || description) && (
+                <div class="text-center mb-10 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-lg text-slate-400 max-w-xl mx-auto">
+                            {description}
+                        </p>
+                    )}
+                </div>
+            )
+        }
+
+        {/* Grid layout */}
+        {
+            layout === "grid" && (
+                <div
+                    class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 reveal"
+                    id={galleryUid}
+                >
+                    {images.map((img, i) => (
+                        <button
+                            class="gallery-item relative aspect-square overflow-hidden rounded-xl bg-slate-800 cursor-zoom-in group"
+                            data-gallery={galleryUid}
+                            data-index={i}
+                            aria-label={img.alt}
+                        >
+                            <img
+                                src={img.src}
+                                alt={img.alt}
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                loading="lazy"
+                            />
+                            {img.caption && (
+                                <div class="absolute inset-x-0 bottom-0 bg-black/70 text-white text-xs p-2 translate-y-full group-hover:translate-y-0 transition-transform">
+                                    {img.caption}
+                                </div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            )
+        }
+
+        {/* Masonry layout */}
+        {
+            layout === "masonry" && (
+                <div
+                    class="columns-2 md:columns-3 lg:columns-4 gap-3 space-y-3"
+                    id={galleryUid}
+                >
+                    {images.map((img, i) => (
+                        <button
+                            class="gallery-item relative break-inside-avoid overflow-hidden rounded-xl bg-slate-800 cursor-zoom-in group w-full block"
+                            data-gallery={galleryUid}
+                            data-index={i}
+                            aria-label={img.alt}
+                        >
+                            <img
+                                src={img.src}
+                                alt={img.alt}
+                                class="w-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                loading="lazy"
+                            />
+                            {img.caption && (
+                                <div class="absolute inset-x-0 bottom-0 bg-black/70 text-white text-xs p-2 translate-y-full group-hover:translate-y-0 transition-transform">
+                                    {img.caption}
+                                </div>
+                            )}
+                        </button>
+                    ))}
+                </div>
+            )
+        }
+
+        {/* Carousel layout */}
+        {
+            layout === "carousel" && (
+                <div class="relative" id={galleryUid}>
+                    <div class="flex gap-4 overflow-x-auto snap-x snap-mandatory scroll-smooth pb-4 hide-scrollbar">
+                        {images.map((img, i) => (
+                            <button
+                                class="gallery-item shrink-0 w-72 md:w-96 aspect-video overflow-hidden rounded-xl bg-slate-800 cursor-zoom-in group snap-start"
+                                data-gallery={galleryUid}
+                                data-index={i}
+                                aria-label={img.alt}
+                            >
+                                <img
+                                    src={img.src}
+                                    alt={img.alt}
+                                    class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                                    loading="lazy"
+                                />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+            )
+        }
+
+        {
+            images.length === 0 && (
+                <p class="text-center text-slate-500">
+                    No images configured yet.
+                </p>
+            )
+        }
+    </div>
+</section>
+
+{/* Lightbox */}
+<div
+    id={`lightbox-${galleryUid}`}
+    class="fixed inset-0 bg-black/95 z-[9999] hidden items-center justify-center"
+    role="dialog"
+    aria-modal="true"
+    aria-label="Image lightbox"
+>
+    <button
+        class="lb-close absolute top-4 right-4 text-white/70 hover:text-white text-3xl w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10 transition"
+        aria-label="Close"
+    >
+        ×
+    </button>
+    <button
+        class="lb-prev absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-3xl w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10 transition"
+        aria-label="Previous"
+    >
+        ‹
+    </button>
+    <button
+        class="lb-next absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white text-3xl w-12 h-12 flex items-center justify-center rounded-full hover:bg-white/10 transition"
+        aria-label="Next"
+    >
+        ›
+    </button>
+    <div class="lb-content max-w-5xl mx-auto px-16 text-center">
+        <img class="lb-img max-h-[80vh] max-w-full object-contain rounded-lg" src="" alt="" />
+        <p class="lb-caption text-white/60 text-sm mt-3"></p>
+    </div>
+</div>
+
+<script define:vars={{ galleryUid, images }}>
+    const lb = document.getElementById(`lightbox-${galleryUid}`);
+    if (!lb) {
+        // nothing
+    } else {
+        let current = 0;
+
+        function show(i) {
+            current = ((i % images.length) + images.length) % images.length;
+            const img = images[current];
+            lb.querySelector(".lb-img").src = img.src;
+            lb.querySelector(".lb-img").alt = img.alt;
+            lb.querySelector(".lb-caption").textContent = img.caption || "";
+            lb.classList.remove("hidden");
+            lb.classList.add("flex");
+            lb.focus();
+        }
+
+        function close() {
+            lb.classList.add("hidden");
+            lb.classList.remove("flex");
+        }
+
+        // Open on gallery item click
+        document
+            .querySelectorAll(`.gallery-item[data-gallery="${galleryUid}"]`)
+            .forEach((btn) =>
+                btn.addEventListener("click", () =>
+                    show(parseInt(btn.dataset.index)),
+                ),
+            );
+
+        lb.querySelector(".lb-close").addEventListener("click", close);
+        lb.querySelector(".lb-prev").addEventListener("click", () =>
+            show(current - 1),
+        );
+        lb.querySelector(".lb-next").addEventListener("click", () =>
+            show(current + 1),
+        );
+        lb.addEventListener("click", (e) => {
+            if (e.target === lb) close();
+        });
+
+        document.addEventListener("keydown", (e) => {
+            if (lb.classList.contains("hidden")) return;
+            if (e.key === "Escape") close();
+            if (e.key === "ArrowLeft") show(current - 1);
+            if (e.key === "ArrowRight") show(current + 1);
+        });
+    }
+</script>
+
+<style>
+    .hide-scrollbar {
+        scrollbar-width: none;
+    }
+    .hide-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+</style>

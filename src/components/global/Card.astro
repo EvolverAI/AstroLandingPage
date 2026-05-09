@@ -25,11 +25,11 @@ export interface Props {
     iconColor?: string;
     customClasses?: string;
     centerContent?: boolean;
+    variant?: "default" | "glass" | "bordered" | "flat" | "feature";
     
-    // Defaults from language files
+    // Defaults from layout
     defaults?: any;
     language?: string;
-    languageFile?: string;
 }const {
     title,
     description,
@@ -46,24 +46,20 @@ export interface Props {
     iconColor,
     customClasses = "",
     centerContent = true,
+    variant = "default",
     defaults,
     language = "en",
-    languageFile,
 } = Astro.props;
 
+// Variant CSS class
+const variantClass = variant === "glass" ? "card-glass"
+    : variant === "bordered" ? "card-bordered"
+    : variant === "flat" ? "card-flat"
+    : variant === "feature" ? "card-feature"
+    : "";
+
 // Load defaults from language file if not provided via props
-let cardDefaults: any = defaults;
-if (!cardDefaults && (language || languageFile)) {
-    try {
-        const { getEntry } = await import("astro:content");
-        const langFileName = languageFile || language;
-        const langData = await getEntry("languages", langFileName);
-        cardDefaults = langData?.data?.defaults?.cards || {};
-    } catch (error) {
-        console.warn("Could not load defaults from language file:", error);
-        cardDefaults = {};
-    }
-}
+let cardDefaults: any = defaults || {};
 
 // Normalize description text - preserve paragraph breaks but clean up whitespace
 const normalizedDescription = description
@@ -74,32 +70,32 @@ const normalizedDescription = description
     : [];
 
 // Theme-based styling with defaults fallback
-const defaultCardBackground = cardDefaults?.colors?.background || (theme === "dark" ? "bg-slate-800" : "bg-white");
-const defaultCardText = cardDefaults?.colors?.text || (theme === "dark" ? "text-white" : "text-gray-800");
+const defaultCardBackground = cardDefaults?.colors?.background || (theme === "dark" ? "bg-white" : "bg-white");
+const defaultCardText = cardDefaults?.colors?.text || (theme === "dark" ? "text-gray-800" : "text-gray-800");
 const defaultCardBorder = cardDefaults?.colors?.border || "";
 const cardPadding = cardDefaults?.padding || "p-6";
 const cardMargin = cardDefaults?.margin || "";
 
 // Apply border classes consistently regardless of theme
 const borderClasses = defaultCardBorder ? defaultCardBorder : "";
-const shadowClasses = theme === "light" ? "shadow-lg hover:shadow-xl" : "";
+const shadowClasses = "";
 
 const cardClasses = `${defaultCardBackground} ${defaultCardText} ${borderClasses} ${shadowClasses}`.trim();
 
-const titleColor = cardDefaults?.title?.color || (theme === "dark" ? "text-white" : "text-gray-800");
+const titleColor = cardDefaults?.title?.color || (theme === "dark" ? "text-gray-900" : "text-gray-800");
 const titleSize = cardDefaults?.title?.size || "text-xl";
 const titleWeight = cardDefaults?.title?.weight || "font-semibold";
 const titleClasses = `${titleColor} ${titleSize} ${titleWeight}`;
 
-const contentColor = cardDefaults?.content?.color || (theme === "dark" ? "text-gray-300" : "text-gray-600");
+const contentColor = cardDefaults?.content?.color || (theme === "dark" ? "text-gray-600" : "text-gray-600");
 const contentSize = cardDefaults?.content?.size || "text-base";
 const contentWeight = cardDefaults?.content?.weight || "font-normal";
 const descriptionClasses = `${contentColor} ${contentSize} ${contentWeight} text-justify`;
 
-const defaultIconColor = cardDefaults?.icon?.color || (theme === "dark" ? "text-blue-400" : "text-blue-600");
+const defaultIconColor = cardDefaults?.icon?.color || (theme === "dark" ? "text-blue-600" : "text-blue-600");
 
 // Feature styling defaults
-const featureColor = cardDefaults?.feature?.color || (theme === "dark" ? "text-gray-300" : "text-gray-600");
+const featureColor = cardDefaults?.feature?.color || (theme === "dark" ? "text-gray-600" : "text-gray-600");
 const featureSize = cardDefaults?.feature?.text || "text-sm";
 const featureWeight = cardDefaults?.feature?.weight || "font-normal";
 const featureClasses = `${featureColor} ${featureSize} ${featureWeight}`;
@@ -176,7 +172,7 @@ if (isIconLeft || isIconLeftBig || isIconLeftHeadline) {
 ---
 
 <div
-    class={`${finalCardPadding} ${cardMargin} rounded-lg flex flex-col ${alignmentClasses} ${cardClasses} transition-shadow duration-300 ${customClasses}`}
+    class={`${finalCardPadding} ${cardMargin} rounded-lg flex flex-col ${alignmentClasses} ${cardClasses} transition-shadow duration-300 ${customClasses} card-base ${variantClass}`}
 >
     {
         (iconName || iconImage) && !isIconLeft && !isIconLeftBig && !isIconTopBig && !isIconTopHeadline && !isIconLeftHeadline && (

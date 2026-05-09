@@ -1,0 +1,156 @@
+---
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    videoUrl?: string;
+    thumbnail?: string;
+    autoplay?: boolean;
+    loop?: boolean;
+    language?: string;
+}
+
+const {
+    sectionId = "video",
+    title = "",
+    description = "",
+    videoUrl = "",
+    thumbnail = "",
+    autoplay = false,
+    loop = false,
+    language = "en",
+} = Astro.props;
+
+// Parse YouTube / Vimeo URLs into embed URLs
+function getEmbedUrl(url: string): { embed: string; type: "youtube" | "vimeo" | "native" | "unknown" } {
+    if (!url) return { embed: "", type: "unknown" };
+    // YouTube
+    const ytMatch = url.match(
+        /(?:youtube\.com\/(?:watch\?v=|embed\/)|youtu\.be\/)([A-Za-z0-9_-]{11})/
+    );
+    if (ytMatch) {
+        const params = new URLSearchParams({ rel: "0" });
+        if (autoplay) params.set("autoplay", "1");
+        if (loop) { params.set("loop", "1"); params.set("playlist", ytMatch[1]); }
+        return { embed: `https://www.youtube-nocookie.com/embed/${ytMatch[1]}?${params}`, type: "youtube" };
+    }
+    // Vimeo
+    const vmMatch = url.match(/vimeo\.com\/(\d+)/);
+    if (vmMatch) {
+        const params = new URLSearchParams({ dnt: "1" });
+        if (autoplay) params.set("autoplay", "1");
+        if (loop) params.set("loop", "1");
+        return { embed: `https://player.vimeo.com/video/${vmMatch[1]}?${params}`, type: "vimeo" };
+    }
+    // Native video file
+    if (/\.(mp4|webm|ogg)(\?|$)/i.test(url)) {
+        return { embed: url, type: "native" };
+    }
+    return { embed: url, type: "unknown" };
+}
+
+const { embed, type: videoType } = getEmbedUrl(videoUrl);
+const sectionUid = `video-${sectionId}`;
+---
+
+<section
+    id={sectionId}
+    class="relative bg-custom-slate py-20 px-4"
+    data-section="video"
+>
+    <div class="container mx-auto max-w-4xl">
+        {
+            (title || description) && (
+                <div class="text-center mb-10 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-lg text-slate-400">{description}</p>
+                    )}
+                </div>
+            )
+        }
+
+        <div class="reveal-fade">
+            {
+                videoType === "native" ? (
+                    <div class="rounded-2xl overflow-hidden shadow-2xl bg-black">
+                        <video
+                            class="w-full aspect-video"
+                            src={embed}
+                            controls
+                            autoplay={autoplay}
+                            loop={loop}
+                            muted={autoplay}
+                            playsinline
+                        />
+                    </div>
+                ) : embed ? (
+                    /* Click-to-load embed for privacy */
+                    <div
+                        id={sectionUid}
+                        class="relative rounded-2xl overflow-hidden shadow-2xl bg-black aspect-video cursor-pointer group"
+                        data-embed={embed}
+                        data-loaded="false"
+                    >
+                        {/* Thumbnail */}
+                        {thumbnail && (
+                            <img
+                                src={thumbnail}
+                                alt="Video thumbnail"
+                                class="absolute inset-0 w-full h-full object-cover"
+                                loading="lazy"
+                            />
+                        )}
+                        {/* Dark overlay */}
+                        <div class="absolute inset-0 bg-black/40 group-hover:bg-black/30 transition" />
+                        {/* Play button */}
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-20 h-20 rounded-full bg-white/95 flex items-center justify-center shadow-2xl group-hover:scale-110 transition-transform">
+                                <svg
+                                    width="32"
+                                    height="32"
+                                    viewBox="0 0 24 24"
+                                    fill="#1e3a8a"
+                                >
+                                    <path d="M8 5v14l11-7z" />
+                                </svg>
+                            </div>
+                        </div>
+                        {/* Privacy note */}
+                        <p class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/50 text-xs whitespace-nowrap">
+                            Click to load video
+                        </p>
+                    </div>
+                ) : (
+                    <div class="aspect-video rounded-2xl bg-slate-800 border border-slate-700 flex items-center justify-center">
+                        <p class="text-slate-500">No video URL configured</p>
+                    </div>
+                )
+            }
+        </div>
+    </div>
+</section>
+
+<script>
+    document
+        .querySelectorAll<HTMLElement>('[data-loaded="false"][data-embed]')
+        .forEach((el) => {
+            el.addEventListener("click", () => {
+                const embed = el.dataset.embed!;
+                const iframe = document.createElement("iframe");
+                iframe.src =
+                    embed.includes("?") ? embed + "&autoplay=1" : embed + "?autoplay=1";
+                iframe.allow =
+                    "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+                iframe.allowFullscreen = true;
+                iframe.className = "absolute inset-0 w-full h-full border-0";
+                el.innerHTML = "";
+                el.appendChild(iframe);
+                el.dataset.loaded = "true";
+            });
+        });
+</script>

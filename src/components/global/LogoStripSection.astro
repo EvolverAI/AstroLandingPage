@@ -1,0 +1,130 @@
+---
+export interface LogoItem {
+    src: string;
+    alt: string;
+    url?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    logos?: LogoItem[];
+    scrolling?: boolean;
+    language?: string;
+}
+
+const {
+    sectionId = "logo_strip",
+    title = "",
+    logos = [],
+    scrolling = true,
+    language = "en",
+} = Astro.props;
+
+// Duplicate logos for seamless loop
+const loopLogos = scrolling ? [...logos, ...logos] : logos;
+const stripUid = `strip-${sectionId}`;
+---
+
+<section
+    id={sectionId}
+    class="relative bg-slate-900 py-12 px-4 border-y border-slate-800 overflow-hidden"
+    data-section="logo_strip"
+>
+    <div class="container mx-auto">
+        {
+            title && (
+                <p class="text-center text-slate-500 text-sm font-medium tracking-widest uppercase mb-8">
+                    {title}
+                </p>
+            )
+        }
+
+        {
+            scrolling ? (
+                <div class="relative">
+                    {/* Fade edges */}
+                    <div class="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-slate-900 to-transparent z-10" />
+                    <div class="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-slate-900 to-transparent z-10" />
+
+                    <div
+                        id={stripUid}
+                        class="flex items-center gap-12 logo-strip-track"
+                        style={`animation: logoScroll ${Math.max(logos.length * 3, 20)}s linear infinite`}
+                    >
+                        {loopLogos.map((logo, i) => (
+                            <div class="shrink-0 flex items-center justify-center h-12 w-32 opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                                {logo.url ? (
+                                    <a href={logo.url} target="_blank" rel="noopener noreferrer" aria-label={logo.alt}>
+                                        <img
+                                            src={logo.src}
+                                            alt={logo.alt}
+                                            class="max-h-10 max-w-[120px] object-contain"
+                                            loading="lazy"
+                                        />
+                                    </a>
+                                ) : (
+                                    <img
+                                        src={logo.src}
+                                        alt={logo.alt}
+                                        class="max-h-10 max-w-[120px] object-contain"
+                                        loading="lazy"
+                                    />
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ) : (
+                <div class="flex flex-wrap items-center justify-center gap-8 md:gap-12">
+                    {logos.map((logo) => (
+                        <div class="flex items-center justify-center h-12 w-32 opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">
+                            {logo.url ? (
+                                <a href={logo.url} target="_blank" rel="noopener noreferrer" aria-label={logo.alt}>
+                                    <img
+                                        src={logo.src}
+                                        alt={logo.alt}
+                                        class="max-h-10 max-w-[120px] object-contain"
+                                        loading="lazy"
+                                    />
+                                </a>
+                            ) : (
+                                <img
+                                    src={logo.src}
+                                    alt={logo.alt}
+                                    class="max-h-10 max-w-[120px] object-contain"
+                                    loading="lazy"
+                                />
+                            )}
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+
+        {
+            logos.length === 0 && (
+                <p class="text-center text-slate-600">
+                    No logos configured yet.
+                </p>
+            )
+        }
+    </div>
+</section>
+
+<style>
+    @keyframes logoScroll {
+        from {
+            transform: translateX(0);
+        }
+        to {
+            transform: translateX(-50%);
+        }
+    }
+    .logo-strip-track {
+        animation-play-state: running;
+    }
+    .logo-strip-track:hover {
+        animation-play-state: paused;
+    }
+</style>

@@ -3,170 +3,76 @@ import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import DynamicSection from "../components/DynamicSection.astro";
-import { getEntry } from "astro:content";
+import {
+    getPageData,
+    getPageSections,
+    getSectionContent,
+    getSectionConfig,
+    getDefaults,
+} from "../utils/content-loader.js";
 
-// Generate all possible static paths
 export async function getStaticPaths() {
-    // Define available languages and pages
-    const AVAILABLE_LANGUAGES = ["en", "de", "it"];
-    const AVAILABLE_PAGES = ["index", "b2b", "wfm", "elysia", "academy"];
-
+    const LANGUAGES = ["en", "de", "it"];
+    const PAGES = ["home", "b2b", "wfm", "elysia", "academy"];
     const paths: any[] = [];
 
-    // Generate paths for all language/page combinations
-    AVAILABLE_LANGUAGES.forEach((lang) => {
-        AVAILABLE_PAGES.forEach((page) => {
-            if (page === "index") {
-                // For index pages, use just the language
-                paths.push({
-                    params: { slug: lang },
-                    props: { language: lang, page: "index" },
-                });
-            } else {
-                // For other pages, use lang/page format
-                paths.push({
-                    params: { slug: `${lang}/${page}` },
-                    props: { language: lang, page: page },
-                });
-            }
+    LANGUAGES.forEach((lang) => {
+        PAGES.forEach((page) => {
+            paths.push({
+                params: { slug: page === "home" ? lang : `${lang}/${page}` },
+                props: { language: lang, page },
+            });
         });
     });
 
     return paths;
 }
 
-const { slug } = Astro.params;
 const { language, page } = Astro.props;
 
-console.log(
-    "🌍 Generic route - Slug:",
-    slug,
-    "Language:",
-    language,
-    "Page:",
-    page,
-);
+const pageData = getPageData(page, language);
+const { layout, content } = pageData || { layout: {}, content: {} };
 
-// Determine the language file to load based on the page
-let languageFile: string;
-if (page === "index") {
-    languageFile = language;
-} else {
-    languageFile = `${page}-${language}`;
+const pageSections = getPageSections(layout);
+const defaults = getDefaults(layout);
+
+const meta = content?.meta || {};
+const title = meta.title || "EvolverAI";
+const description = meta.description || "";
+
+// Draft gate: return 404 in production for draft pages
+const pageStatus = layout?.status || 'published';
+if (pageStatus === 'draft' && import.meta.env.PROD) {
+  return Astro.redirect('/404', 404);
 }
-
-// Load page configuration from language file
-let pageSections: any[] = [];
-try {
-    const langData = await getEntry("languages", languageFile);
-    pageSections = langData?.data?.page_sections || [];
-    // Sort sections by order
-    pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-} catch (error) {
-    console.warn(`Could not load page sections for ${languageFile}:`, error);
-
-    // Fallback to English if the requested language doesn't exist
-    try {
-        const fallbackFile = page === "index" ? "en" : `${page}-en`;
-        const fallbackData = await getEntry("languages", fallbackFile);
-        pageSections = fallbackData?.data?.page_sections || [];
-        pageSections.sort((a: any, b: any) => (a.order || 0) - (b.order || 0));
-        console.log(`Fallback to ${fallbackFile} successful`);
-    } catch (fallbackError) {
-        console.error("Could not load fallback page sections:", fallbackError);
-    }
-}
-
-// Define titles and descriptions for each page type
-const pageMetadata = {
-    index: {
-        titles: {
-            en: "EvolverAI - Integrated AI Solutions",
-            de: "EvolverAI - Integrierte KI-Lösungen",
-            it: "EvolverAI - Soluzioni AI Integrate",
-        },
-        descriptions: {
-            en: "Discover EvolverAI, your trusted partner for cutting-edge IT and AI solutions. We deliver innovative software, expert consultancy, and tailored services to drive your success.",
-            de: "Entdecken Sie EvolverAI, Ihren vertrauenswürdigen Partner für modernste IT- und KI-Lösungen. Wir liefern innovative Software, Expertenberatung und maßgeschneiderte Services für Ihren Erfolg.",
-            it: "Scopri EvolverAI, il tuo partner di fiducia per soluzioni IT e AI all'avanguardia. Offriamo software innovativo, consulenza esperta e servizi su misura per il tuo successo.",
-        },
-    },
-    b2b: {
-        titles: {
-            en: "B2B Outsourcing Solutions - Premium Business Services | EvolverAI",
-            de: "B2B-Outsourcing-Lösungen - Premium-Geschäftsdienste | EvolverAI",
-            it: "Soluzioni di Outsourcing B2B - Servizi Aziendali Premium | EvolverAI",
-        },
-        descriptions: {
-            en: "Premium B2B outsourcing solutions with strategic partnerships and AI-enhanced services. Transform your operations through our comprehensive business process optimization.",
-            de: "Premium B2B-Outsourcing-Lösungen mit strategischen Partnerschaften und KI-erweiterten Diensten. Transformieren Sie Ihre Abläufe durch unsere umfassende Geschäftsprozessoptimierung.",
-            it: "Soluzioni di outsourcing B2B premium con partnership strategiche e servizi potenziati dall'IA. Trasforma le tue operazioni attraverso la nostra ottimizzazione completa dei processi aziendali.",
-        },
-    },
-    wfm: {
-        titles: {
-            en: "Workforce Management Solutions - AI-Powered WFM | EvolverAI",
-            de: "Workforce Management-Lösungen - KI-gestützte WFM | EvolverAI",
-            it: "Soluzioni di Gestione della Forza Lavoro - WFM basato su AI | EvolverAI",
-        },
-        descriptions: {
-            en: "Advanced workforce management solutions powered by AI technology. Optimize your workforce planning, scheduling, and performance management with EvolverAI.",
-            de: "Fortschrittliche Workforce Management-Lösungen, die von KI-Technologie angetrieben werden. Optimieren Sie Ihre Personalplanung, Terminplanung und Leistungsmanagement mit EvolverAI.",
-            it: "Soluzioni avanzate di gestione della forza lavoro alimentate dalla tecnologia AI. Ottimizza la pianificazione della forza lavoro, la programmazione e la gestione delle prestazioni con EvolverAI.",
-        },
-    },
-    elysia: {
-        titles: {
-            en: "Elysia Platform - Advanced AI Analytics | EvolverAI",
-            de: "Elysia-Plattform - Erweiterte KI-Analytik | EvolverAI",
-            it: "Piattaforma Elysia - Analytics AI Avanzati | EvolverAI",
-        },
-        descriptions: {
-            en: "Elysia platform delivers powerful AI-driven analytics and insights. Transform your data into actionable intelligence with our advanced analytics solutions.",
-            de: "Die Elysia-Plattform liefert leistungsstarke KI-gesteuerte Analytik und Einblicke. Verwandeln Sie Ihre Daten in umsetzbare Intelligenz mit unseren fortschrittlichen Analytiklösungen.",
-            it: "La piattaforma Elysia offre potenti analisi e insights guidati dall'AI. Trasforma i tuoi dati in intelligenza azionabile con le nostre soluzioni di analisi avanzate.",
-        },
-    },
-    courses: {
-        titles: {
-            en: "AI & Technology Courses - Professional Training | EvolverAI",
-            de: "KI & Technologie-Kurse - Professionelle Schulungen | EvolverAI",
-            it: "Corsi AI e Tecnologia - Formazione Professionale | EvolverAI",
-        },
-        descriptions: {
-            en: "Professional AI and technology courses designed to advance your skills. Learn from industry experts with hands-on training and certification programs.",
-            de: "Professionelle KI- und Technologiekurse zur Weiterentwicklung Ihrer Fähigkeiten. Lernen Sie von Branchenexperten mit praktischen Schulungen und Zertifizierungsprogrammen.",
-            it: "Corsi professionali di AI e tecnologia progettati per far progredire le tue competenze. Impara dagli esperti del settore con formazione pratica e programmi di certificazione.",
-        },
-    },
-};
-
-// Get metadata for current page
-const currentPageMetadata = pageMetadata[page] || pageMetadata.index;
-const title =
-    currentPageMetadata.titles[language] || currentPageMetadata.titles.en;
-const description =
-    currentPageMetadata.descriptions[language] ||
-    currentPageMetadata.descriptions.en;
-
-console.log("📄 Loading", pageSections.length, "sections from", languageFile);
 ---
 
-<Layout title={title} description={description}>
+<Layout title={title} description={description} language={language} page={page}>
     <Header currentLanguage={language} />
 
-    <main class={page === "index" ? "space-y-16" : "space-y-0"}>
-        <!-- Dynamically render sections from YAML configuration -->
+    <main id="main-content" class={page === "home" ? "space-y-16" : "space-y-0"}>
         {
-            pageSections.map((sectionConfig) => (
-                <DynamicSection
-                    sectionConfig={sectionConfig}
-                    language={language}
-                    languageFile={languageFile}
-                />
-            ))
+            pageSections.map((sectionConfig) => {
+                const sectionContent = getSectionContent(
+                    content,
+                    sectionConfig.section_id,
+                );
+                const sectionLayout = getSectionConfig(
+                    layout,
+                    sectionConfig.section_id,
+                );
+                return (
+                    <DynamicSection
+                        sectionConfig={sectionConfig}
+                        sectionContent={sectionContent}
+                        sectionLayout={sectionLayout}
+                        defaults={defaults}
+                        language={language}
+                    />
+                );
+            })
         }
     </main>
 
-    <Footer language={language} />
+    <Footer language={language} footerContent={content?.footer} />
 </Layout>

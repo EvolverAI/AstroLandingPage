@@ -1,0 +1,192 @@
+---
+/**
+ * /blog — Blog listing page
+ */
+import { getCollection } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+
+export async function getStaticPaths() {
+    return [
+        { params: { lang: "en" } },
+        { params: { lang: "it" } },
+        { params: { lang: "de" } },
+    ];
+}
+
+const { lang = "en" } = Astro.params;
+
+const allPosts = await getCollection("blog");
+const posts = allPosts.sort(
+    (a, b) => b.data.date.valueOf() - a.data.date.valueOf(),
+);
+
+// Collect all unique tags
+const allTags = [...new Set(posts.flatMap(p => p.data.tags || []))].sort();
+
+const labels: Record<string, Record<string, string>> = {
+    en: {
+        title: "Blog & News",
+        subtitle: "Insights, updates, and stories from the EvolverAI team",
+        readMore: "Read more",
+        allPosts: "All",
+    },
+    it: {
+        title: "Blog e Notizie",
+        subtitle: "Approfondimenti e aggiornamenti dal team EvolverAI",
+        readMore: "Leggi di più",
+        allPosts: "Tutti",
+    },
+    de: {
+        title: "Blog & News",
+        subtitle: "Einblicke und Updates vom EvolverAI-Team",
+        readMore: "Weiterlesen",
+        allPosts: "Alle",
+    },
+};
+const t = labels[lang] ?? labels.en;
+---
+
+<Layout title={`${t.title} — EvolverAI`} language={lang} page="blog">
+    <Header currentLanguage={lang} />
+
+    <main class="pt-24 pb-16">
+        <div class="container mx-auto px-4">
+            <!-- Hero -->
+            <div class="text-center mb-10">
+                <h1 class="text-5xl font-bold text-white mb-4">{t.title}</h1>
+                <p class="text-slate-400 text-lg max-w-xl mx-auto">
+                    {t.subtitle}
+                </p>
+            </div>
+
+            <!-- Tag filter -->
+            {allTags.length > 0 && (
+                <div class="flex flex-wrap gap-2 justify-center mb-10" id="tag-filters">
+                    <button
+                        data-tag="all"
+                        class="tag-btn active px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-blue-600 text-white"
+                    >
+                        {t.allPosts}
+                    </button>
+                    {allTags.map(tag => (
+                        <button
+                            data-tag={tag}
+                            class="tag-btn px-4 py-1.5 rounded-full text-sm font-medium transition-all bg-slate-800 text-slate-300 hover:bg-slate-700 border border-slate-700"
+                        >
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+            )}
+
+            <!-- Grid -->
+            <div class="grid gap-8 sm:grid-cols-2 lg:grid-cols-3" id="posts-grid">
+                {
+                    posts.map((post) => {
+                        const {
+                            title,
+                            date,
+                            author,
+                            excerpt,
+                            coverImage,
+                            tags = [],
+                            featured,
+                        } = post.data;
+                        const formattedDate = new Intl.DateTimeFormat("en-GB", {
+                            day: "2-digit",
+                            month: "short",
+                            year: "numeric",
+                        }).format(date);
+
+                        return (
+                            <article class="card-base group flex flex-col" data-tags={tags.join(',')}>
+                                {coverImage && (
+                                    <a
+                                        href={`/${lang}/blog/${post.slug}`}
+                                        class="block -mx-[var(--space-card)] -mt-[var(--space-card)] mb-5 overflow-hidden rounded-t-[var(--radius-lg)]"
+                                        tabindex="-1"
+                                    >
+                                        <img
+                                            src={coverImage}
+                                            alt={title}
+                                            class="w-full h-48 object-cover transition-transform duration-500 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                    </a>
+                                )}
+
+                                {tags.length > 0 && (
+                                    <div class="flex flex-wrap gap-1.5 mb-3">
+                                        {tags.slice(0, 3).map((tag) => (
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-400">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                        {featured && (
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-400">
+                                                Featured
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
+                                <h2 class="text-xl font-semibold text-gray-800 leading-snug mb-3 flex-1">
+                                    <a
+                                        href={`/${lang}/blog/${post.slug}`}
+                                        class="hover:text-blue-600 transition-colors"
+                                    >
+                                        {title}
+                                    </a>
+                                </h2>
+
+                                {excerpt && (
+                                    <p class="text-sm text-slate-500 leading-relaxed mb-4 line-clamp-3">
+                                        {excerpt}
+                                    </p>
+                                )}
+
+                                <div class="flex items-center justify-between text-xs text-slate-400 mt-auto pt-3 border-t border-slate-100">
+                                    <span>{author}</span>
+                                    <time datetime={date.toISOString()}>
+                                        {formattedDate}
+                                    </time>
+                                </div>
+                            </article>
+                        );
+                    })
+                }
+            </div>
+        </div>
+    </main>
+
+    <Footer currentLanguage={lang} />
+
+    <script>
+        // Client-side tag filter
+        const filterBtns = document.querySelectorAll('.tag-btn');
+        const cards = document.querySelectorAll('#posts-grid article');
+
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const tag = btn.getAttribute('data-tag');
+
+                // Update active button
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-blue-600', 'text-white');
+                    b.classList.add('bg-slate-800', 'text-slate-300', 'border', 'border-slate-700');
+                });
+                btn.classList.add('active', 'bg-blue-600', 'text-white');
+                btn.classList.remove('bg-slate-800', 'text-slate-300', 'border', 'border-slate-700');
+
+                // Filter cards
+                cards.forEach(card => {
+                    const cardTags = (card.getAttribute('data-tags') || '').split(',');
+                    const show = tag === 'all' || cardTags.includes(tag);
+                    (card as HTMLElement).style.display = show ? '' : 'none';
+                });
+            });
+        });
+    </script>
+</Layout>

@@ -1,7 +1,6 @@
 ---
 // Reusable Cards Section component
 import Card from "./Card.astro";
-import { getEntry } from "astro:content";
 
 export interface CardData {
     title: string;
@@ -48,11 +47,13 @@ export interface Props {
     iconColor?: string;
     centerCards?: boolean;
     customClasses?: string;
+    cardVariant?: "default" | "glass" | "bordered" | "flat" | "feature";
+
+    // Pre-loaded defaults from layout
+    defaults?: any;
 
     // Localization
     language?: string;
-    languageFile?: string; // Override for specific language files (e.g., "elysia-en")
-    environment?: string;
 }
 
 const {
@@ -68,78 +69,40 @@ const {
     buttonColor = "bg-blue-600 hover:bg-blue-700",
     columns = "4",
     responsiveColumns,
-    alignment = "left", // Default to left alignment
+    alignment = "left",
     theme = "dark",
     backgroundColor = "bg-custom-slate",
     cardTheme,
     iconColor,
     centerCards = true,
     customClasses = "",
+    cardVariant = "default",
+    defaults = {},
     language = "en",
-    languageFile, // New prop for specifying exact language file
-    environment = "production",
 } = Astro.props;
 
-// Try to get localized content if available
-let localizedTitle = title;
-let localizedSubtitle = subtitle;
-let localizedDescription = description;
-let localizedImage = image;
-let localizedCards = cards;
-let localizedButtonText = buttonText;
-let localizedButtonUrl = buttonUrl;
-let localizedButtonColor = buttonColor;
-let localizedResponsiveColumns = responsiveColumns; // Add this line
-let localizedBackground = backgroundColor; // Add background support
-let localizedAlignment = alignment; // Add alignment support
-let defaults: any = {}; // Add defaults storage with any type for flexibility
+// Content is passed in directly — no fetching needed
+const localizedTitle = title;
+const localizedSubtitle = subtitle;
+const localizedImage = image;
+const localizedButtonText = buttonText;
+const localizedButtonUrl = buttonUrl;
+const localizedButtonColor = buttonColor;
+const localizedBackground = backgroundColor;
+const localizedAlignment = alignment;
+const localizedResponsiveColumns =
+    responsiveColumns || defaults?.cards?.responsiveColumns;
 
-try {
-    // Use languageFile if provided, otherwise fall back to language
-    const langFileName = languageFile || language;
-    const langData = await getEntry("languages", langFileName);
-    const localizedSections = langData?.data?.sections || {};
-
-    // Extract defaults from language file
-    defaults = langData?.data?.defaults || {};
-
-    if (localizedSections[sectionType]) {
-        const sectionData = localizedSections[sectionType];
-        localizedTitle = sectionData.title || title;
-        localizedSubtitle = sectionData.subtitle || subtitle;
-        localizedDescription = sectionData.description || description;
-        localizedImage = sectionData.image || image;
-        localizedCards = sectionData.cards || cards;
-        localizedButtonText = sectionData.buttonText || buttonText;
-        localizedButtonUrl = sectionData.buttonUrl || buttonUrl;
-        localizedButtonColor = sectionData.buttonColor || buttonColor;
-        localizedBackground = sectionData.background || backgroundColor; // Add background support
-        localizedAlignment = sectionData.alignment || alignment; // Add alignment support
-        localizedResponsiveColumns =
-            sectionData.responsiveColumns ||
-            defaults?.cards?.responsiveColumns ||
-            responsiveColumns; // Use defaults as fallback
-    }
-} catch (error) {
-    console.warn("Localization not available for section:", sectionType, error);
-}
-
-// Normalize description text by removing extra whitespace and newlines
-// Handle all types of newlines and whitespace characters
-localizedDescription = localizedDescription
-    ? String(localizedDescription)
-          .replace(/\r\n|\r|\n/g, " ") // Replace all newline variations
-          .replace(/\s+/g, " ") // Replace multiple spaces with single space
+let localizedDescription = description
+    ? String(description)
+          .replace(/\r\n|\r|\n/g, " ")
+          .replace(/\s+/g, " ")
           .trim()
     : "";
 
-// Preserve card descriptions as-is for multi-paragraph support
-// Don't normalize individual line breaks as these are needed for paragraph separation
-localizedCards = localizedCards.map((card) => ({
+let localizedCards = (cards || []).map((card: any) => ({
     ...card,
-    description: card.description
-        ? String(card.description).trim() // Only trim whitespace from start/end
-        : "",
+    description: card.description ? String(card.description).trim() : "",
 }));
 
 // Generate responsive grid classes
@@ -157,17 +120,6 @@ const responsiveStrings = {
     tablet: String(responsive.tablet || "2"),
     desktop: String(responsive.desktop || "3"),
 };
-
-// Debug: Log the responsive configuration (remove in production)
-if (sectionType === "b2b") {
-    console.log("CardsSection Debug:", {
-        sectionType,
-        columns,
-        localizedResponsiveColumns,
-        responsive,
-        responsiveStrings,
-    });
-}
 
 const gridClasses = `grid grid-cols-${responsiveStrings.mobile} md:grid-cols-${responsiveStrings.tablet} xl:grid-cols-${responsiveStrings.desktop} gap-6`;
 
@@ -191,115 +143,133 @@ const contentAlignment =
 
 <section
     id={sectionId}
-    class={`relative ${backgroundColor} py-2 ${customClasses}`}
+    class={`relative bg-custom-slate py-20 ${customClasses}`}
     data-section={sectionType}
-    data-theme={theme}
 >
     <div class="container mx-auto px-4">
-        <div class={`${localizedBackground} p-4 rounded-lg`}>
-            <div
-                class={`flex flex-col justify-start ${contentAlignment} h-full relative z-10 mb-4`}
-            >
-                {
-                    localizedTitle && (
-                        <h1 class={`h1-noto-sans mb-2 ${titleClasses}`}>
-                            {localizedTitle}
-                        </h1>
-                    )
-                }
-                {
-                    localizedImage && (
-                        <div class="mb-3 flex justify-center">
-                            <img
-                                src={localizedImage}
-                                alt={localizedTitle || "Section image"}
-                                class="max-w-xs h-auto object-contain"
-                            />
-                        </div>
-                    )
-                }
-                {
-                    localizedSubtitle && (
-                        <h2
-                            class={`text-2xl font-semibold mb-2 ${titleClasses}`}
-                        >
-                            {localizedSubtitle}
-                        </h2>
-                    )
-                }
-                {
-                    localizedDescription && (
-                        <p
-                            class={`${descriptionClasses} text-lg max-w-full mb-3 leading-relaxed`}
-                        >
-                            {localizedDescription}
-                        </p>
-                    )
-                }
-                {
-                    localizedButtonText && localizedButtonUrl && (
-                        <a
-                            href={localizedButtonUrl}
-                            class={`inline-block ${localizedButtonColor} text-white py-3 px-6 rounded-lg transition duration-300`}
-                        >
-                            {localizedButtonText}
-                        </a>
-                    )
-                }
-            </div>
-            <div class={gridClasses}>
+        <!-- Section header -->
+        <div class={`flex flex-col ${contentAlignment} mb-12 reveal`}>
+            {
+                localizedTitle && (
+                    <h2 class="h1-noto-sans mb-3" transition:name={`section-title-${sectionId}`}>{localizedTitle}</h2>
+                )
+            }
+            {
+                localizedSubtitle && (
+                    <h3 class="text-2xl font-semibold text-white mb-3">
+                        {localizedSubtitle}
+                    </h3>
+                )
+            }
+            {
+                localizedImage && (
+                    <div class="mb-4 flex justify-center">
+                        <img
+                            src={localizedImage}
+                            alt={localizedTitle || ""}
+                            class="max-w-xs h-auto object-contain"
+                        />
+                    </div>
+                )
+            }
+            {
+                localizedDescription && (
+                    <p class="text-slate-300 text-lg max-w-3xl leading-relaxed mb-4">
+                        {localizedDescription}
+                    </p>
+                )
+            }
+            {
+                localizedButtonText && localizedButtonUrl && (
+                    <a
+                        href={localizedButtonUrl}
+                        class={`btn ${localizedButtonColor} text-white`}
+                    >
+                        {localizedButtonText}
+                    </a>
+                )
+            }
+        </div>
+
+        <!-- Cards grid: horizontal scroll on mobile, grid on tablet+ -->
+        <div class="cards-mobile-scroll md:hidden">
+            <div class="cards-scroll-inner">
                 {
                     localizedCards.map((card) => (
-                        <Card
-                            title={card.title}
-                            description={card.description}
-                            badges={card.badges}
-                            icon={card.icon}
-                            features={card.features}
-                            note={card.note}
-                            linkText={card.linkText}
-                            linkUrl={card.linkUrl}
-                            buttonText={card.buttonText}
-                            buttonUrl={card.buttonUrl}
-                            buttonColor={card.buttonColor}
-                            theme={finalCardTheme}
-                            iconColor={iconColor}
-                            centerContent={centerCards}
-                            defaults={defaults?.cards}
-                            language={language}
-                            languageFile={languageFile}
-                        />
+                        <div class="cards-scroll-item">
+                            <Card
+                                title={card.title}
+                                description={card.description}
+                                badges={card.badges}
+                                icon={card.icon}
+                                features={card.features}
+                                note={card.note}
+                                linkText={card.linkText}
+                                linkUrl={card.linkUrl}
+                                buttonText={card.buttonText}
+                                buttonUrl={card.buttonUrl}
+                                buttonColor={card.buttonColor}
+                                theme={finalCardTheme}
+                                iconColor={iconColor}
+                                centerContent={centerCards}
+                                defaults={defaults?.cards}
+                                language={language}
+                                variant={cardVariant}
+                            />
+                        </div>
                     ))
                 }
             </div>
         </div>
+        <!-- Normal grid on tablet+ -->
+        <div class={`hidden md:grid ${gridClasses} stagger`}>
+            {
+                localizedCards.map((card) => (
+                    <Card
+                        title={card.title}
+                        description={card.description}
+                        badges={card.badges}
+                        icon={card.icon}
+                        features={card.features}
+                        note={card.note}
+                        linkText={card.linkText}
+                        linkUrl={card.linkUrl}
+                        buttonText={card.buttonText}
+                        buttonUrl={card.buttonUrl}
+                        buttonColor={card.buttonColor}
+                        theme={finalCardTheme}
+                        iconColor={iconColor}
+                        centerContent={centerCards}
+                        defaults={defaults?.cards}
+                        language={language}
+                        variant={cardVariant}
+                    />
+                ))
+            }
+        </div>
     </div>
-
-    <!-- Development helper -->
-    {
-        import.meta.env.DEV && (
-            <details class="container mx-auto px-4 mt-8 bg-black bg-opacity-75 text-white p-4 rounded text-xs">
-                <summary class="cursor-pointer">
-                    {sectionType} Cards Debug
-                </summary>
-                <pre class="mt-2 overflow-auto">
-                    {JSON.stringify(
-                        {
-                            sectionId,
-                            sectionType,
-                            title: localizedTitle,
-                            subtitle: localizedSubtitle,
-                            alignment: localizedAlignment,
-                            cardsCount: localizedCards.length,
-                            theme,
-                            cardTheme: finalCardTheme,
-                            language,
-                        },
-                        null,
-                        2,
-                    )}
-                </pre>
-            </details>
-        )
-    }
 </section>
+
+<style>
+    .cards-mobile-scroll {
+        margin: 0 -1rem; /* bleed to screen edges */
+        padding: 0 1rem;
+    }
+    .cards-scroll-inner {
+        display: flex;
+        gap: 1rem;
+        overflow-x: auto;
+        scroll-snap-type: x mandatory;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 1rem; /* space for scroll indicator */
+    }
+    .cards-scroll-inner::-webkit-scrollbar {
+        display: none;
+    }
+    .cards-scroll-item {
+        flex: 0 0 85vw;
+        max-width: 320px;
+        scroll-snap-align: start;
+    }
+</style>

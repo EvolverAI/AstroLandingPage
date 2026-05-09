@@ -1,0 +1,117 @@
+---
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    primaryCta?: string;
+    primaryCtaUrl?: string;
+    secondaryCta?: string;
+    secondaryCtaUrl?: string;
+    backgroundStyle?: "gradient" | "solid" | "image";
+    backgroundImage?: string;
+    language?: string;
+}
+
+const {
+    sectionId = "cta_banner",
+    title = "Ready to get started?",
+    description = "",
+    primaryCta = "Get Started",
+    primaryCtaUrl = "#",
+    secondaryCta = "",
+    secondaryCtaUrl = "#",
+    backgroundStyle = "gradient",
+    backgroundImage = "",
+    language = "en",
+} = Astro.props;
+---
+
+<section
+    id={sectionId}
+    class={`relative py-20 px-4 overflow-hidden ${backgroundStyle === "solid" ? "bg-blue-700" : backgroundStyle === "image" ? "bg-slate-900" : ""}`}
+    data-section="cta_banner"
+>
+    {/* Gradient background */}
+    {
+        backgroundStyle === "gradient" && (
+            <div
+                class="absolute inset-0 -z-10"
+                style="background: linear-gradient(135deg, #1e3a8a 0%, #1e1b4b 40%, #0c1a3d 100%); background-size: 300% 300%; animation: gradientShift 12s ease infinite;"
+            />
+        )
+    }
+
+    {/* Image background */}
+    {
+        backgroundStyle === "image" && backgroundImage && (
+            <>
+                <div
+                    class="absolute inset-0 -z-10 bg-cover bg-center"
+                    style={`background-image: url('${backgroundImage}')`}
+                />
+                <div class="absolute inset-0 -z-10 bg-black/60" />
+            </>
+        )
+    }
+
+    {/* Decorative blobs for gradient */}
+    {
+        backgroundStyle === "gradient" && (
+            <>
+                <div class="absolute top-0 left-1/4 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl -z-10 pointer-events-none" />
+                <div class="absolute bottom-0 right-1/4 w-72 h-72 rounded-full bg-violet-500/20 blur-3xl -z-10 pointer-events-none" />
+            </>
+        )
+    }
+
+    <div class="container mx-auto max-w-3xl text-center reveal-fade">
+        {
+            title && (
+                <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-4 leading-tight">
+                    {title}
+                </h2>
+            )
+        }
+        {
+            description && (
+                <p class="text-lg text-white/80 mb-10 max-w-xl mx-auto">
+                    {description}
+                </p>
+            )
+        }
+        <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+            {
+                primaryCta && (
+                    <a
+                        href={primaryCtaUrl}
+                        class="inline-block bg-white text-blue-900 font-bold py-3.5 px-8 rounded-xl text-base hover:bg-blue-50 transition shadow-lg"
+                    >
+                        {primaryCta}
+                    </a>
+                )
+            }
+            {
+                secondaryCta && (
+                    <a
+                        href={secondaryCtaUrl}
+                        class="inline-block border-2 border-white/60 text-white font-semibold py-3.5 px-8 rounded-xl text-base hover:border-white hover:bg-white/10 transition"
+                    >
+                        {secondaryCta}
+                    </a>
+                )
+            }
+        </div>
+    </div>
+</section>
+
+<style>
+    @keyframes gradientShift {
+        0%,
+        100% {
+            background-position: 0% 50%;
+        }
+        50% {
+            background-position: 100% 50%;
+        }
+    }
+</style>

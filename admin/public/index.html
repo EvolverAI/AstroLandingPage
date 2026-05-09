@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EvolverAI Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    // Auth guard + token injection
+    (function() {
+      const token = sessionStorage.getItem('adminToken');
+      if (!token) return; // no token = server has no auth, or will redirect on first API call
+      // Patch fetch to always include Authorization header for /api/* calls
+      const _fetch = window.fetch;
+      window.fetch = function(url, opts = {}) {
+        if (typeof url === 'string' && url.startsWith('/api')) {
+          opts.headers = { ...(opts.headers || {}), 'Authorization': 'Bearer ' + token };
+        }
+        return _fetch(url, opts).then(res => {
+          if (res.status === 401) { sessionStorage.removeItem('adminToken'); location.href = '/login.html?next=' + encodeURIComponent(location.pathname); }
+          return res;
+        });
+      };
+    })();
+  </script>
+  <script>
+    tailwind.config = {
+      theme: { extend: { colors: { slate: { 950: '#0a0f1e' } } } }
+    }
+  </script>
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+
+    body {
+      background: #0f172a;
+    }
+  </style>
+</head>
+
+<body class="text-gray-200 min-h-screen font-sans">
+
+  <div x-data="dashboard()" x-init="init()" x-cloak>
+
+    <!-- Header -->
+    <header
+      class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <div class="flex items-center gap-3">
+        <span class="text-2xl font-bold">Evolver<span class="text-blue-500">AI</span></span>
+        <span class="text-slate-500 text-sm">/ Admin</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <!-- Git status badge -->
+        <div class="flex items-center gap-2 text-sm">
+          <span class="w-2 h-2 rounded-full" :class="git.clean ? 'bg-green-400' : 'bg-yellow-400'"></span>
+          <span class="text-slate-400" x-text="git.branch || '...'"></span>
+          <span x-show="!git.clean" class="text-yellow-400"
+            x-text="`${git.changes.length} change${git.changes.length !== 1 ? 's' : ''}`"></span>
+          <span x-show="git.clean" class="text-green-400">clean</span>
+        </div>
+        <!-- Deploy button -->
+        <button x-show="!git.clean" @click="showDeploy = true"
+          class="bg-green-600 hover:bg-green-500 text-white text-sm px-4 py-1.5 rounded-lg transition">
+          ↑ Commit & Push
+        </button>
+        <a href="http://localhost:4321" target="_blank"
+          class="text-slate-400 hover:text-white text-sm border border-slate-600 px-3 py-1.5 rounded-lg transition">
+          Preview ↗
+        </a>
+      </div>
+    </header>
+
+    <!-- Main layout -->
+    <div class="flex min-h-[calc(100vh-65px)]">
+
+      <!-- Sidebar -->
+      <aside class="w-56 bg-slate-900 border-r border-slate-700 p-4 flex flex-col gap-1 shrink-0">
+        <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 px-2">Pages</p>
+        <template x-for="page in pages" :key="page">
+          <a :href="`/editor.html?page=${page}`"
+            class="flex items-center justify-between px-3 py-2 rounded-lg text-sm hover:bg-slate-800 transition cursor-pointer"
+            :class="{ 'bg-slate-800 text-white': activePage === page, 'text-slate-300': activePage !== page }">
+            <span x-text="page" class="capitalize"></span>
+            <!-- Status dots for this page -->
+            <div class="flex gap-1">
+              <template x-for="lang in nonEnglishLangs" :key="lang.code">
+                <span class="w-2 h-2 rounded-full" :class="{
+                  'bg-green-400': status[page]?.[lang.code] === 'current',
+                  'bg-yellow-400': status[page]?.[lang.code] === 'outdated',
+                  'bg-red-400': status[page]?.[lang.code] === 'missing'
+                }" :title="`${lang.code}: ${status[page]?.[lang.code] || 'unknown'}`">
+                </span>
+              </template>
+            </div>
+          </a>
+        </template>
+        <button @click="showAddPage = true"
+          class="w-full mt-2 text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-1.5 transition">
+          + New Page
+        </button>
+
+        <div class="mt-4 pt-4 border-t border-slate-700">
+          <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 px-2">Tools</p>
+          <button @click="activeView = 'media'; loadMedia()"
+            class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left"
+            :class="activeView === 'media' ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-800'">
+            <span class="material-icons text-base">photo_library</span>
+            Media Library
+          </button>
+          <a href="/blog.html"
+            class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left text-slate-300 hover:bg-slate-800">
+            <span class="material-icons text-base">article</span>
+            Blog Articles
+          </a>
+          <a href="/submissions.html"
+            class="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm transition text-left text-slate-300 hover:bg-slate-800">
+            <span class="flex items-center gap-2">
+              <span class="material-icons text-base">inbox</span>
+              Submissions
+            </span>
+            <span x-show="unreadSubmissions > 0" class="text-xs bg-blue-600 text-white px-1.5 py-0.5 rounded-full" x-text="unreadSubmissions"></span>
+          </a>
+          <button @click="activeView = 'seo'; seoPage = pages[0]; checkSeo()"
+            class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left"
+            :class="activeView === 'seo' ? 'bg-slate-700 text-white' : 'text-slate-300 hover:bg-slate-800'">
+            <span class="material-icons text-base">search</span>
+            SEO Checker
+          </button>
+          <a href="/seo.html"
+            class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left text-slate-300 hover:bg-slate-800">
+            <span class="material-icons text-base">manage_search</span>
+            SEO Manager
+          </a>
+          <a href="/design.html"
+            class="w-full flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition text-left text-slate-300 hover:bg-slate-800">
+            <span class="material-icons text-base">palette</span>
+            Design Settings
+          </a>
+        </div>
+
+        <div class="mt-auto pt-4 border-t border-slate-700">
+          <p class="text-xs text-slate-500 uppercase tracking-wider mb-2 px-2">Languages</p>
+          <template x-for="lang in languages" :key="lang.code">
+            <div class="flex items-center justify-between px-3 py-1.5 text-sm text-slate-300">
+              <span><span x-text="lang.flag"></span> <span x-text="lang.name"></span></span>
+              <span x-show="lang.code !== 'en'" @click="removeLang(lang)"
+                class="text-slate-600 hover:text-red-400 cursor-pointer text-xs">✕</span>
+            </div>
+          </template>
+          <button @click="showAddLang = true"
+            class="w-full mt-2 text-xs text-slate-400 hover:text-white border border-slate-700 hover:border-slate-500 rounded-lg px-3 py-1.5 transition">
+            + Add Language
+          </button>
+        </div>
+      </aside>
+
+      <!-- Dashboard content -->
+      <main class="flex-1 p-8">
+
+        <!-- ── Dashboard View ──────────────────────────────────────────── -->
+        <div x-show="activeView === 'dashboard'">
+          <thead>
+            <tr class="border-b border-slate-700">
+              <th class="text-left px-5 py-3 text-slate-400 font-medium">Page</th>
+              <template x-for="lang in nonEnglishLangs" :key="lang.code">
+                <th class="text-center px-5 py-3 text-slate-400 font-medium">
+                  <span x-text="lang.flag"></span> <span x-text="lang.name"></span>
+                </th>
+              </template>
+              <th class="text-right px-5 py-3 text-slate-400 font-medium">Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <template x-for="page in pages" :key="page">
+              <tr class="border-b border-slate-700/50 hover:bg-slate-700/30 transition">
+                <td class="px-5 py-3 font-medium capitalize" x-text="page"></td>
+                <template x-for="lang in nonEnglishLangs" :key="lang.code">
+                  <td class="px-5 py-3 text-center">
+                    <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-medium" :class="{
+                        'bg-green-900/50 text-green-300': status[page]?.[lang.code] === 'current',
+                        'bg-yellow-900/50 text-yellow-300': status[page]?.[lang.code] === 'outdated',
+                        'bg-red-900/50 text-red-300': status[page]?.[lang.code] === 'missing'
+                      }">
+                      <span class="w-1.5 h-1.5 rounded-full" :class="{
+                          'bg-green-400': status[page]?.[lang.code] === 'current',
+                          'bg-yellow-400': status[page]?.[lang.code] === 'outdated',
+                          'bg-red-400': status[page]?.[lang.code] === 'missing'
+                        }"></span>
+                      <span x-text="status[page]?.[lang.code] || 'missing'"></span>
+                    </span>
+                  </td>
+                </template>
+                <td class="px-5 py-3 text-right">
+                  <a :href="`/editor.html?page=${page}`" class="text-blue-400 hover:text-blue-300 text-xs mr-3">Edit</a>
+                  <a :href="`/translate.html?page=${page}`"
+                    class="text-purple-400 hover:text-purple-300 text-xs mr-3">Translate</a>
+                  <button x-show="page !== 'home'" @click="confirmDeletePage(page)"
+                    class="text-red-400 hover:text-red-300 text-xs">Delete</button>
+                </td>
+              </tr>
+            </template>
+          </tbody>
+          </table>
+        </div>
+
+        <!-- Legend -->
+        <div class="flex gap-6 text-xs text-slate-500">
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-green-400"></span> Current</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-yellow-400"></span> Outdated
+            (master changed)</span>
+          <span class="flex items-center gap-1.5"><span class="w-2 h-2 rounded-full bg-red-400"></span> Missing</span>
+        </div>
+
+        <!-- Git changes -->
+        <div x-show="!git.clean" class="mt-8 bg-slate-800 rounded-xl border border-slate-700 p-5">
+          <h2 class="font-semibold mb-3 flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-yellow-400"></span>
+            Uncommitted changes
+          </h2>
+          <div class="font-mono text-xs space-y-1">
+            <template x-for="change in git.changes" :key="change.file">
+              <div class="flex gap-3">
+                <span class="text-yellow-400 w-4" x-text="change.status"></span>
+                <span class="text-slate-300" x-text="change.file"></span>
+              </div>
+            </template>
+          </div>
+          <button @click="showDeploy = true"
+            class="mt-4 bg-green-600 hover:bg-green-500 text-white text-sm px-5 py-2 rounded-lg transition">
+            Commit & Push to GitHub →
+          </button>
+        </div>
+    </div><!-- end dashboard view -->
+
+    <!-- ── Media Library View ────────────────────────────────────────────── -->
+    <div x-show="activeView === 'media'" x-cloak>
+      <div class="flex items-center justify-between mb-1">
+        <h1 class="text-2xl font-bold">Media Library</h1>
+        <button @click="activeView = 'dashboard'" class="text-slate-400 hover:text-white text-sm">← Dashboard</button>
+      </div>
+      <p class="text-slate-400 text-sm mb-6">Manage images in public/img/</p>
+
+      <!-- Upload zone -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 mb-6">
+        <h2 class="font-semibold mb-4">Upload New Image</h2>
+        <div
+          class="border-2 border-dashed border-slate-600 hover:border-blue-500 rounded-xl p-8 text-center transition cursor-pointer"
+          @dragover.prevent @drop.prevent="handleMediaDrop($event)" @click="$refs.mediaFileInput.click()">
+          <span class="material-icons text-slate-500 text-4xl block mb-2">cloud_upload</span>
+          <p class="text-slate-400">Drop image here or click to upload</p>
+          <p class="text-slate-600 text-xs mt-1">JPG, PNG, GIF, WebP, AVIF, SVG — max 15 MB</p>
+          <input type="file" x-ref="mediaFileInput" class="hidden"
+            accept="image/jpeg,image/png,image/gif,image/webp,image/avif,image/svg+xml"
+            @change="handleMediaUpload($event)" multiple />
+        </div>
+        <div x-show="mediaUploadProgress" class="mt-3 text-sm text-blue-400" x-text="mediaUploadProgress"></div>
+        <div x-show="mediaUploadError" class="mt-3 text-sm text-red-400" x-text="mediaUploadError"></div>
+      </div>
+
+      <!-- Image grid -->
+      <div class="bg-slate-800 rounded-xl border border-slate-700 p-6">
+        <div class="flex items-center justify-between mb-4 gap-3 flex-wrap">
+          <h2 class="font-semibold">Images (<span x-text="filteredMediaImages.length"></span>)</h2>
+          <div class="flex items-center gap-2">
+            <input x-model="mediaSearch" type="text" placeholder="Search…"
+              class="bg-slate-700 border border-slate-600 rounded px-2 py-1 text-sm text-white placeholder-slate-500 w-36" />
+            <button @click="loadMedia()"
+              class="text-xs text-slate-400 hover:text-white border border-slate-700 px-2 py-1 rounded transition">↻ Refresh</button>
+          </div>
+        </div>
+
+        <!-- Folder tabs -->
+        <div x-show="mediaFolders.length > 0" class="flex flex-wrap gap-2 mb-4">
+          <button @click="mediaFolder = ''"
+            :class="mediaFolder === '' ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'"
+            class="text-xs px-3 py-1 rounded-full transition">All</button>
+          <template x-for="f in mediaFolders" :key="f">
+            <button @click="mediaFolder = f"
+              :class="mediaFolder === f ? 'bg-blue-600 text-white' : 'bg-slate-700 text-slate-300 hover:bg-slate-600'"
+              class="text-xs px-3 py-1 rounded-full transition" x-text="f"></button>
+          </template>
+        </div>
+
+        <div x-show="filteredMediaImages.length === 0" class="text-slate-500 text-sm text-center py-12">No images found.</div>
+        <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-4">
+          <template x-for="img in filteredMediaImages" :key="img.path">
+            <div class="group relative rounded-lg overflow-hidden bg-slate-700 aspect-video">
+              <!-- Focal point dot -->
+              <div class="absolute w-3 h-3 rounded-full border-2 border-white bg-blue-500 shadow pointer-events-none z-10 -translate-x-1/2 -translate-y-1/2"
+                :style="`left:${img.focalX}%;top:${img.focalY}%`"></div>
+              <img :src="img.path" :alt="img.name" class="w-full h-full object-cover" loading="lazy" />
+              <!-- Hover overlay -->
+              <div class="absolute inset-0 bg-black/0 group-hover:bg-black/75 transition-all flex flex-col items-center justify-center gap-1.5 opacity-0 group-hover:opacity-100 p-1">
+                <button @click="copyImagePath(img.path)"
+                  class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded w-full">Copy Path</button>
+                <button @click="openFocalModal(img)"
+                  class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Focal Point</button>
+                <button @click="startRename(img)"
+                  class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Rename</button>
+                <button @click="openMoveModal(img)"
+                  class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded w-full">Move</button>
+                <button @click="deleteMedia(img.path)"
+                  class="text-xs bg-red-700 hover:bg-red-600 text-white px-2 py-1 rounded w-full">Delete</button>
+              </div>
+              <!-- Filename bar -->
+              <div class="absolute bottom-0 left-0 right-0 bg-black/70 px-1.5 py-1" x-show="!img._renaming">
+                <span class="text-white truncate block text-center" style="font-size:9px" x-text="img.name"></span>
+              </div>
+              <!-- Inline rename input -->
+              <div class="absolute inset-0 bg-slate-900/95 flex flex-col items-center justify-center p-2 gap-2" x-show="img._renaming">
+                <input :x-ref="'rename-' + img.path" x-model="img._newName" @keydown.enter="confirmRename(img)" @keydown.escape="img._renaming = false"
+                  class="w-full bg-slate-700 border border-blue-500 rounded px-2 py-1 text-xs text-white" />
+                <div class="flex gap-1">
+                  <button @click="confirmRename(img)" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-2 py-1 rounded">✓</button>
+                  <button @click="img._renaming = false" class="text-xs bg-slate-600 hover:bg-slate-500 text-white px-2 py-1 rounded">✕</button>
+                </div>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+
+      <!-- Focal Point Modal -->
+      <div x-show="focalModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" @click.self="focalModal.open = false">
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 max-w-lg w-full">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold">Set Focal Point</h3>
+            <button @click="focalModal.open = false" class="text-slate-400 hover:text-white">✕</button>
+          </div>
+          <p class="text-slate-400 text-sm mb-4">Click on the image to set the focal point. This controls how the image is cropped on smaller screens.</p>
+          <div class="relative cursor-crosshair rounded overflow-hidden select-none" style="max-height:360px"
+            @click="setFocalPoint($event)" x-ref="focalContainer">
+            <img :src="focalModal.img?.path" class="w-full h-full object-contain block" x-ref="focalImg" />
+            <!-- Focal dot -->
+            <div class="absolute w-5 h-5 rounded-full border-2 border-white bg-blue-500 shadow-lg pointer-events-none -translate-x-1/2 -translate-y-1/2"
+              :style="`left:${focalModal.x}%;top:${focalModal.y}%`"></div>
+            <!-- Crosshair lines -->
+            <div class="absolute inset-0 pointer-events-none">
+              <div class="absolute top-0 bottom-0 border-l border-white/30" :style="`left:${focalModal.x}%`"></div>
+              <div class="absolute left-0 right-0 border-t border-white/30" :style="`top:${focalModal.y}%`"></div>
+            </div>
+          </div>
+          <div class="flex items-center justify-between mt-4">
+            <span class="text-slate-400 text-xs">X: <span x-text="focalModal.x"></span>% &nbsp; Y: <span x-text="focalModal.y"></span>%</span>
+            <div class="flex gap-2">
+              <button @click="resetFocalPoint()" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Reset (50/50)</button>
+              <button @click="saveFocalPoint()" class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Move Modal -->
+      <div x-show="moveModal.open" class="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4" @click.self="moveModal.open = false">
+        <div class="bg-slate-800 rounded-xl border border-slate-700 p-6 max-w-sm w-full">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="font-semibold">Move Image</h3>
+            <button @click="moveModal.open = false" class="text-slate-400 hover:text-white">✕</button>
+          </div>
+          <p class="text-slate-400 text-sm mb-1">Target folder (leave blank for root):</p>
+          <div class="flex gap-2 mb-3">
+            <input x-model="moveModal.folder" type="text" placeholder="e.g. blog or team/avatars"
+              class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-sm text-white placeholder-slate-500" />
+          </div>
+          <!-- Quick-pick existing folders -->
+          <div x-show="mediaFolders.length > 0" class="flex flex-wrap gap-1 mb-4">
+            <button @click="moveModal.folder = ''" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded">root</button>
+            <template x-for="f in mediaFolders" :key="f">
+              <button @click="moveModal.folder = f" class="text-xs bg-slate-700 hover:bg-slate-600 text-white px-2 py-1 rounded" x-text="f"></button>
+            </template>
+          </div>
+          <div x-show="moveModal.error" class="text-red-400 text-sm mb-3" x-text="moveModal.error"></div>
+          <div class="flex justify-end gap-2">
+            <button @click="moveModal.open = false" class="text-sm bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded">Cancel</button>
+            <button @click="confirmMove()" class="text-sm bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded">Move</button>
+          </div>
+        </div>
+      </div>
+    </div><!-- end media view -->
+
+    <!-- ── SEO Checker View ─────────────────────────────────────────────── -->
+    <div x-show="activeView === 'seo'" x-cloak>
+      <div class="flex items-center justify-between mb-1">
+        <h1 class="text-2xl font-bold">SEO Checker</h1>
+        <button @click="activeView = 'dashboard'" class="text-slate-400 hover:text-white text-sm">← Dashboard</button>
+      </div>
+      <p class="text-slate-400 text-sm mb-6">Verify meta title and description lengths. Google recommends title 30–60
+        chars, description 120–160 chars.</p>
+
+      <div class="flex items-center gap-3 mb-8">
+        <label class="text-sm text-slate-400">Page:</label>
+        <select x-model="seoPage" @change="checkSeo()"
+          class="bg-slate-700 border border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+          <template x-for="page in pages" :key="page">
+            <option :value="page" x-text="page"></option>
+          </template>
+        </select>
+        <button @click="checkSeo()"
+          class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-3 py-1.5 rounded-lg transition">Check</button>
+      </div>
+
+      <div x-show="Object.keys(seoResults).length > 0" class="space-y-4">
+        <template x-for="(data, lang) in seoResults" :key="lang">
+          <div class="bg-slate-800 rounded-xl border border-slate-700 p-5">
+            <h3 class="font-semibold mb-4"><span x-text="data.flag"></span> <span x-text="lang.toUpperCase()"></span>
+            </h3>
+            <!-- Title -->
+            <div class="mb-4">
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-slate-400 font-medium">Title</span>
+                <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                  :class="data.titleOk ? 'bg-green-900/50 text-green-300' : 'bg-red-900/50 text-red-300'"
+                  x-text="data.titleWarn + ' (' + data.titleLength + ' chars)'"></span>
+              </div>
+              <p class="text-sm text-slate-200 font-mono bg-slate-700/50 px-3 py-2 rounded mb-1"
+                x-text="data.title || '(empty)'"></p>
+              <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-1.5 rounded-full transition-all" :class="data.titleOk ? 'bg-green-400' : 'bg-red-400'"
+                  :style="'width: ' + Math.min(100, Math.round((data.titleLength/60)*100)) + '%'"></div>
+              </div>
+              <div class="flex justify-between text-xs text-slate-600 mt-0.5">
+                <span>0</span><span>30</span><span>60</span>
+              </div>
+            </div>
+            <!-- Description -->
+            <div>
+              <div class="flex items-center gap-2 mb-1">
+                <span class="text-xs text-slate-400 font-medium">Description</span>
+                <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+                  :class="data.descriptionOk ? 'bg-green-900/50 text-green-300' : 'bg-yellow-900/50 text-yellow-300'"
+                  x-text="data.descriptionWarn + ' (' + data.descriptionLength + ' chars)'"></span>
+              </div>
+              <p class="text-sm text-slate-200 font-mono bg-slate-700/50 px-3 py-2 rounded mb-1"
+                x-text="data.description || '(empty)'"></p>
+              <div class="h-1.5 bg-slate-700 rounded-full overflow-hidden">
+                <div class="h-1.5 rounded-full transition-all"
+                  :class="data.descriptionOk ? 'bg-green-400' : 'bg-yellow-400'"
+                  :style="'width: ' + Math.min(100, Math.round((data.descriptionLength/160)*100)) + '%'"></div>
+              </div>
+              <div class="flex justify-between text-xs text-slate-600 mt-0.5">
+                <span>0</span><span>120</span><span>160</span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </div><!-- end seo view -->
+    </main>
+  </div>
+
+  <!-- Add Page Modal -->
+  <div x-show="showAddPage" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+    @click.self="showAddPage = false">
+    <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-96 shadow-2xl">
+      <h2 class="text-lg font-semibold mb-4">Create New Page</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Page ID (URL slug, lowercase, no spaces)</label>
+          <input x-model="newPage.id" type="text" placeholder="e.g. hospitality"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+      </div>
+      <div x-show="addPageError" class="mt-3 text-red-400 text-xs" x-text="addPageError"></div>
+      <div class="flex gap-3 mt-5">
+        <button @click="addPage()"
+          class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition"
+          :disabled="addingPage || !newPage.id">
+          <span x-show="!addingPage">Create Page</span>
+          <span x-show="addingPage">Creating...</span>
+        </button>
+        <button @click="showAddPage = false; addPageError = ''"
+          class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Delete Page Confirm Modal -->
+  <div x-show="deletingPage" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+    @click.self="deletingPage = null">
+    <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-96 shadow-2xl">
+      <h2 class="text-lg font-semibold mb-2">Delete Page</h2>
+      <p class="text-slate-400 text-sm mb-5">
+        Delete page <strong x-text="deletingPage" class="text-white"></strong>?
+        This removes all master, layout, and translation files. Cannot be undone.
+      </p>
+      <div class="flex gap-3">
+        <button @click="deletePage()"
+          class="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg text-sm transition">Delete</button>
+        <button @click="deletingPage = null"
+          class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Language Modal -->
+  <div x-show="showAddLang" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+    @click.self="showAddLang = false">
+    <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-96 shadow-2xl">
+      <h2 class="text-lg font-semibold mb-4">Add Language</h2>
+      <div class="space-y-3">
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Language Code (e.g. es, fr, pt)</label>
+          <input x-model="newLang.code" type="text" maxlength="5" placeholder="es"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Language Name</label>
+          <input x-model="newLang.name" type="text" placeholder="Español"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">Flag Emoji</label>
+          <input x-model="newLang.flag" type="text" placeholder="🇪🇸"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+      </div>
+      <div x-show="addLangError" class="mt-3 text-red-400 text-xs" x-text="addLangError"></div>
+      <div class="flex gap-3 mt-5">
+        <button @click="addLanguage()"
+          class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition"
+          :disabled="addingLang">
+          <span x-show="!addingLang">Add Language</span>
+          <span x-show="addingLang">Adding...</span>
+        </button>
+        <button @click="showAddLang = false; addLangError = ''"
+          class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deploy Modal -->
+  <div x-show="showDeploy" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+    @click.self="showDeploy = false">
+    <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-[480px] shadow-2xl">
+      <h2 class="text-lg font-semibold mb-1">Commit & Push</h2>
+      <p class="text-slate-400 text-sm mb-4">This will commit all changes and push to GitHub. Netlify will auto-deploy.
+      </p>
+
+      <div class="bg-slate-900 rounded-lg p-3 mb-4 font-mono text-xs space-y-1 max-h-40 overflow-y-auto">
+        <template x-for="change in git.changes" :key="change.file">
+          <div class="flex gap-3">
+            <span class="text-yellow-400 w-4" x-text="change.status"></span>
+            <span class="text-slate-300" x-text="change.file"></span>
+          </div>
+        </template>
+      </div>
+
+      <label class="text-xs text-slate-400 block mb-1">Commit message</label>
+      <input x-model="commitMsg" type="text"
+        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm mb-4 focus:outline-none focus:border-blue-500" />
+
+      <div x-show="deployError" class="mb-3 text-red-400 text-xs" x-text="deployError"></div>
+      <div x-show="deploySuccess" class="mb-3 text-green-400 text-xs">✓ Pushed successfully! Netlify is deploying...
+      </div>
+
+      <div class="flex gap-3">
+        <button @click="commitAndPush()"
+          class="flex-1 bg-green-600 hover:bg-green-500 text-white py-2 rounded-lg text-sm transition"
+          :disabled="deploying">
+          <span x-show="!deploying">Push to GitHub →</span>
+          <span x-show="deploying">Pushing...</span>
+        </button>
+        <button @click="showDeploy = false; deployError = ''; deploySuccess = false"
+          class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+          Cancel
+        </button>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <script>
+    function dashboard() {
+      return {
+        pages: [],
+        languages: [],
+        status: {},
+        git: { branch: '', changes: [], clean: true },
+        activeView: 'dashboard',
+        showAddLang: false,
+        showAddPage: false,
+        showDeploy: false,
+        newLang: { code: '', name: '', flag: '' },
+        newPage: { id: '' },
+        addLangError: '',
+        addPageError: '',
+        addingLang: false,
+        addingPage: false,
+        deletingPage: null,
+        commitMsg: 'Content update via admin editor',
+        deploying: false,
+        deployError: '',
+        deploySuccess: false,
+        // Media library
+        mediaImages: [],
+        mediaSearch: '',
+        mediaFolder: '',
+        mediaUploadProgress: '',
+        mediaUploadError: '',
+        focalModal: { open: false, img: null, x: 50, y: 50 },
+        moveModal: { open: false, img: null, folder: '', error: '' },
+
+        get mediaFolders() {
+          const folders = new Set(this.mediaImages.map(i => i.folder).filter(Boolean));
+          return [...folders].sort();
+        },
+
+        get filteredMediaImages() {
+          return this.mediaImages.filter(i => {
+            const folderMatch = this.mediaFolder === '' || i.folder === this.mediaFolder;
+            const searchMatch = !this.mediaSearch || i.name.toLowerCase().includes(this.mediaSearch.toLowerCase());
+            return folderMatch && searchMatch;
+          });
+        },
+        // SEO checker
+        seoPage: '',
+        seoResults: {},
+        // Unread submissions count
+        unreadSubmissions: 0,
+
+        get nonEnglishLangs() {
+          return this.languages.filter(l => l.code !== 'en');
+        },
+
+        get activePage() {
+          return null;
+        },
+
+        async init() {
+          await this.refresh();
+          // Poll git status every 10s
+          setInterval(() => this.loadGit(), 10000);
+          // Load unread submission count
+          fetch('/api/submissions').then(r => r.json()).then(d => {
+            this.unreadSubmissions = (d.submissions || []).filter(s => !s.read).length;
+          }).catch(() => {});
+        },
+
+        async refresh() {
+          const [statusRes, gitRes] = await Promise.all([
+            fetch('/api/status').then(r => r.json()),
+            fetch('/api/git/status').then(r => r.json()),
+          ]);
+          this.pages = statusRes.pages || [];
+          this.languages = statusRes.languages || [];
+          this.status = statusRes.status || {};
+          this.git = gitRes;
+        },
+
+        async loadGit() {
+          const res = await fetch('/api/git/status').then(r => r.json());
+          this.git = res;
+        },
+
+        async addLanguage() {
+          this.addLangError = '';
+          if (!this.newLang.code || !this.newLang.name) {
+            this.addLangError = 'Code and name are required.'; return;
+          }
+          this.addingLang = true;
+          const res = await fetch('/api/languages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(this.newLang),
+          }).then(r => r.json());
+          this.addingLang = false;
+          if (res.error) { this.addLangError = res.error; return; }
+          this.showAddLang = false;
+          this.newLang = { code: '', name: '', flag: '' };
+          await this.refresh();
+        },
+
+        async removeLang(lang) {
+          if (!confirm(`Remove ${lang.name}? This will delete all ${lang.code} translation files.`)) return;
+          await fetch(`/api/languages/${lang.code}`, { method: 'DELETE' });
+          await this.refresh();
+        },
+
+        async addPage() {
+          this.addPageError = '';
+          if (!this.newPage.id) return;
+          const id = this.newPage.id.toLowerCase().replace(/[^a-z0-9-]/g, '-');
+          this.addingPage = true;
+          const res = await fetch('/api/pages', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ pageId: id }),
+          }).then(r => r.json());
+          this.addingPage = false;
+          if (res.error) { this.addPageError = res.error; return; }
+          this.showAddPage = false;
+          this.newPage = { id: '' };
+          await this.refresh();
+          window.location.href = `/editor.html?page=${id}`;
+        },
+
+        confirmDeletePage(page) { this.deletingPage = page; },
+
+        async deletePage() {
+          const page = this.deletingPage;
+          this.deletingPage = null;
+          await fetch(`/api/pages/${page}`, { method: 'DELETE' });
+          await this.refresh();
+        },
+
+        async commitAndPush() {
+          this.deploying = true;
+          this.deployError = '';
+          this.deploySuccess = false;
+          const commitRes = await fetch('/api/git/commit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ message: this.commitMsg }),
+          }).then(r => r.json());
+          if (commitRes.error) {
+            this.deployError = commitRes.error;
+            this.deploying = false; return;
+          }
+          const pushRes = await fetch('/api/git/push', { method: 'POST' }).then(r => r.json());
+          this.deploying = false;
+          if (pushRes.error) { this.deployError = pushRes.error; return; }
+          this.deploySuccess = true;
+          await this.loadGit();
+          setTimeout(() => { this.showDeploy = false; this.deploySuccess = false; }, 3000);
+        },
+
+        // ── Media Library ──────────────────────────────────────────────────────
+
+        async loadMedia() {
+          const res = await fetch('/api/images').then(r => r.json());
+          this.mediaImages = (res.images || []).map(img => ({ ...img, _renaming: false, _newName: img.name }));
+        },
+
+        async handleMediaUpload(event) {
+          const files = [...(event.target.files || [])];
+          for (const file of files) await this.uploadMediaFile(file);
+        },
+
+        async handleMediaDrop(event) {
+          const files = [...(event.dataTransfer?.files || [])];
+          for (const file of files) await this.uploadMediaFile(file);
+        },
+
+        async uploadMediaFile(file) {
+          this.mediaUploadProgress = `Uploading ${file.name}…`;
+          this.mediaUploadError = '';
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            try {
+              const res = await fetch('/api/images/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, data: e.target.result, mimeType: file.type }),
+              }).then(r => r.json());
+              if (res.error) { this.mediaUploadError = res.error; this.mediaUploadProgress = ''; return; }
+              this.mediaUploadProgress = '✓ Uploaded: ' + res.path;
+              await this.loadMedia();
+              setTimeout(() => { this.mediaUploadProgress = ''; }, 4000);
+            } catch (err) {
+              this.mediaUploadError = 'Upload failed: ' + err.message;
+              this.mediaUploadProgress = '';
+            }
+          };
+          reader.readAsDataURL(file);
+        },
+
+        async deleteMedia(imgPath) {
+          const filename = imgPath.replace(/^\/img\//, '');
+          if (!confirm(`Delete ${filename}? This cannot be undone.`)) return;
+          const res = await fetch(`/api/images/${encodeURIComponent(filename)}`, { method: 'DELETE' }).then(r => r.json());
+          if (res.error) { alert('Error: ' + res.error); return; }
+          await this.loadMedia();
+        },
+
+        copyImagePath(imgPath) {
+          navigator.clipboard.writeText(imgPath);
+        },
+
+        startRename(img) {
+          img._newName = img.name;
+          img._renaming = true;
+        },
+
+        async confirmRename(img) {
+          const newName = img._newName.trim();
+          if (!newName || newName === img.name) { img._renaming = false; return; }
+          const res = await fetch('/api/images/rename', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ oldPath: img.path, newName }),
+          }).then(r => r.json());
+          if (res.error) { alert('Rename failed: ' + res.error); return; }
+          img._renaming = false;
+          await this.loadMedia();
+        },
+
+        openMoveModal(img) {
+          this.moveModal = { open: true, img, folder: img.folder, error: '' };
+        },
+
+        async confirmMove() {
+          const { img, folder } = this.moveModal;
+          const res = await fetch('/api/images/move', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imgPath: img.path, targetFolder: folder }),
+          }).then(r => r.json());
+          if (res.error) { this.moveModal.error = res.error; return; }
+          this.moveModal.open = false;
+          await this.loadMedia();
+        },
+
+        openFocalModal(img) {
+          this.focalModal = { open: true, img, x: img.focalX ?? 50, y: img.focalY ?? 50 };
+        },
+
+        setFocalPoint(event) {
+          const rect = event.currentTarget.getBoundingClientRect();
+          this.focalModal.x = Math.round(((event.clientX - rect.left) / rect.width) * 100);
+          this.focalModal.y = Math.round(((event.clientY - rect.top) / rect.height) * 100);
+        },
+
+        resetFocalPoint() {
+          this.focalModal.x = 50;
+          this.focalModal.y = 50;
+        },
+
+        async saveFocalPoint() {
+          const { img, x, y } = this.focalModal;
+          await fetch('/api/images/focal-point', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ imgPath: img.path, x, y }),
+          });
+          img.focalX = x;
+          img.focalY = y;
+          this.focalModal.open = false;
+        },
+
+        // ── SEO Checker ────────────────────────────────────────────────────────
+
+        async checkSeo() {
+          if (!this.seoPage) return;
+          const res = await fetch(`/api/seo/${this.seoPage}`).then(r => r.json());
+          if (res.error) { alert('SEO error: ' + res.error); return; }
+          this.seoResults = res.results || {};
+        },
+      };
+    }
+  </script>
+</body>
+
+</html>

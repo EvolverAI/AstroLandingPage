@@ -1,0 +1,120 @@
+---
+export interface FaqItem {
+    question: string;
+    answer: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    items?: FaqItem[];
+    layout?: "accordion" | "grid";
+    language?: string;
+}
+
+const {
+    sectionId = "faq",
+    title = "Frequently Asked Questions",
+    description = "",
+    items = [],
+    layout = "accordion",
+    language = "en",
+} = Astro.props;
+
+// FAQPage JSON-LD
+let faqJsonLd: string | null = null;
+if (items.length > 0) {
+    faqJsonLd = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "FAQPage",
+        mainEntity: items.map((item) => ({
+            "@type": "Question",
+            name: item.question,
+            acceptedAnswer: {
+                "@type": "Answer",
+                text: item.answer,
+            },
+        })),
+    });
+}
+---
+
+<section
+    id={sectionId}
+    class="relative bg-custom-slate py-20 px-4"
+    data-section="faq"
+>
+    <div class="container mx-auto max-w-3xl">
+        {
+            (title || description) && (
+                <div class="text-center mb-12 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-lg text-slate-400">{description}</p>
+                    )}
+                </div>
+            )
+        }
+
+        {
+            layout === "accordion" && (
+                <div class="space-y-3">
+                    {items.map((item, i) => (
+                        <details
+                            class="group bg-slate-800/60 border border-slate-700 rounded-xl overflow-hidden reveal"
+                            style={`--stagger-i:${i}`}
+                        >
+                            <summary class="flex items-center justify-between gap-4 px-6 py-5 cursor-pointer list-none select-none hover:bg-slate-700/50 transition-colors">
+                                <span class="font-semibold text-white text-base">
+                                    {item.question}
+                                </span>
+                                <span class="shrink-0 w-6 h-6 rounded-full border border-slate-600 flex items-center justify-center text-slate-400 group-open:text-white group-open:bg-blue-600 group-open:border-blue-600 transition-all text-sm font-bold">
+                                    <span class="group-open:hidden">+</span>
+                                    <span class="hidden group-open:block">×</span>
+                                </span>
+                            </summary>
+                            <div class="px-6 pb-5 text-slate-300 text-sm leading-relaxed border-t border-slate-700/60">
+                                <p class="pt-4">{item.answer}</p>
+                            </div>
+                        </details>
+                    ))}
+                </div>
+            )
+        }
+
+        {
+            layout === "grid" && (
+                <div class="grid md:grid-cols-2 gap-6">
+                    {items.map((item, i) => (
+                        <div
+                            class="bg-slate-800/60 border border-slate-700 rounded-xl p-6 reveal"
+                            style={`--stagger-i:${i}`}
+                        >
+                            <h3 class="font-semibold text-white mb-3 text-base">
+                                {item.question}
+                            </h3>
+                            <p class="text-slate-400 text-sm leading-relaxed">
+                                {item.answer}
+                            </p>
+                        </div>
+                    ))}
+                </div>
+            )
+        }
+
+        {
+            items.length === 0 && (
+                <p class="text-center text-slate-500">
+                    No FAQ items configured yet.
+                </p>
+            )
+        }
+    </div>
+
+    {faqJsonLd && <script type="application/ld+json" set:html={faqJsonLd} />}
+</section>

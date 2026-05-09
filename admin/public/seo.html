@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SEO Manager — EvolverAI Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak]{display:none!important}body{background:#0f172a}</style>
+</head>
+<body class="text-gray-200 min-h-screen font-sans">
+<div x-data="seoManager()" x-init="init()" x-cloak>
+
+  <header class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+      <span class="text-slate-600">/</span>
+      <span class="font-semibold">SEO Manager</span>
+    </div>
+    <div class="flex items-center gap-3">
+      <select x-model="currentPage" @change="loadPage()"
+        class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+        <template x-for="p in pages" :key="p">
+          <option :value="p" x-text="p"></option>
+        </template>
+      </select>
+      <select x-model="currentLang" @change="loadPage()"
+        class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+        <template x-for="l in languages" :key="l.code">
+          <option :value="l.code" x-text="l.flag + ' ' + l.name"></option>
+        </template>
+      </select>
+      <span x-show="saved" class="text-xs text-green-400">✓ Saved</span>
+      <button @click="saveMeta()" :disabled="saving"
+        class="bg-blue-600 hover:bg-blue-500 text-white text-sm px-4 py-1.5 rounded-lg transition disabled:opacity-50">
+        <span x-show="!saving">Save</span>
+        <span x-show="saving">Saving...</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="max-w-5xl mx-auto px-6 py-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+    <!-- Left: Editing fields -->
+    <div class="space-y-6">
+
+      <!-- Title -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-sm font-semibold">Page Title</label>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+            :class="titleLen >= 30 && titleLen <= 60 ? 'bg-green-900/50 text-green-300' : titleLen === 0 ? 'bg-slate-700 text-slate-400' : 'bg-red-900/50 text-red-300'"
+            x-text="titleLen + ' / 60 chars'"></span>
+        </div>
+        <input type="text" x-model="fields.title" @input="titleLen = fields.title.length"
+          class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+          placeholder="e.g. EvolverAI — AI Solutions for Swiss Business" />
+        <div class="mt-2 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all"
+            :class="titleLen >= 30 && titleLen <= 60 ? 'bg-green-400' : 'bg-red-400'"
+            :style="'width:' + Math.min(100, Math.round((titleLen/60)*100)) + '%'"></div>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Recommended: 30–60 characters</p>
+      </div>
+
+      <!-- Description -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <div class="flex items-center justify-between mb-3">
+          <label class="text-sm font-semibold">Meta Description</label>
+          <span class="text-xs px-2 py-0.5 rounded-full font-medium"
+            :class="descLen >= 120 && descLen <= 160 ? 'bg-green-900/50 text-green-300' : descLen === 0 ? 'bg-slate-700 text-slate-400' : 'bg-yellow-900/50 text-yellow-300'"
+            x-text="descLen + ' / 160 chars'"></span>
+        </div>
+        <textarea x-model="fields.description" @input="descLen = fields.description.length" rows="3"
+          class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+          placeholder="Describe this page in 120–160 characters for Google search results..."></textarea>
+        <div class="mt-2 h-1.5 bg-slate-700 rounded-full overflow-hidden">
+          <div class="h-1.5 rounded-full transition-all"
+            :class="descLen >= 120 && descLen <= 160 ? 'bg-green-400' : 'bg-yellow-400'"
+            :style="'width:' + Math.min(100, Math.round((descLen/160)*100)) + '%'"></div>
+        </div>
+        <p class="text-xs text-slate-500 mt-1">Recommended: 120–160 characters</p>
+      </div>
+
+      <!-- OG / Social -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 space-y-3">
+        <h2 class="text-sm font-semibold mb-1">Social / OG Overrides <span class="text-slate-500 font-normal text-xs">(leave blank to use title/description above)</span></h2>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">OG Title</label>
+          <input type="text" x-model="fields.ogTitle"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">OG Description</label>
+          <textarea x-model="fields.ogDescription" rows="2"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"></textarea>
+        </div>
+        <div>
+          <label class="text-xs text-slate-400 block mb-1">OG Image path</label>
+          <input type="text" x-model="fields.ogImage" placeholder="/img/og-home.jpg"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+      </div>
+
+      <!-- Robots -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <h2 class="text-sm font-semibold mb-3">Robots Directives</h2>
+        <div class="flex gap-6">
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="fields.noindex" class="rounded" />
+            <span class="text-sm text-slate-300">noindex</span>
+          </label>
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input type="checkbox" x-model="fields.nofollow" class="rounded" />
+            <span class="text-sm text-slate-300">nofollow</span>
+          </label>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">noindex = hide from Google. nofollow = don't follow links.</p>
+      </div>
+    </div>
+
+    <!-- Right: Previews -->
+    <div class="space-y-6 lg:sticky lg:top-24 lg:self-start">
+
+      <!-- Google SERP Preview -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <h2 class="text-sm font-semibold mb-4 flex items-center gap-2">
+          <span class="material-icons text-base text-blue-400">search</span>
+          Google SERP Preview
+        </h2>
+        <div class="bg-white rounded-lg p-4 font-sans">
+          <div class="text-xs text-slate-500 mb-1">https://evolverai.ch/<span x-text="currentLang"></span><span x-show="currentPage !== 'home'">/<span x-text="currentPage"></span></span></div>
+          <div class="text-blue-700 text-lg font-medium leading-tight mb-1 truncate"
+            x-text="fields.title || 'Page Title'"></div>
+          <div class="text-slate-600 text-sm leading-relaxed line-clamp-2"
+            x-text="fields.description || 'Meta description will appear here...'"></div>
+        </div>
+      </div>
+
+      <!-- Social Card Preview -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <h2 class="text-sm font-semibold mb-4 flex items-center gap-2">
+          <span class="material-icons text-base text-purple-400">share</span>
+          Social Card Preview
+        </h2>
+        <div class="border border-slate-600 rounded-xl overflow-hidden">
+          <div class="bg-slate-700 h-32 flex items-center justify-center text-slate-500 text-sm"
+            :style="fields.ogImage ? 'background-image:url(' + fields.ogImage + ');background-size:cover;background-position:center' : ''">
+            <span x-show="!fields.ogImage">No OG image set</span>
+          </div>
+          <div class="bg-white p-3">
+            <div class="text-xs text-slate-400 uppercase tracking-wider mb-1">evolverai.ch</div>
+            <div class="font-semibold text-slate-800 text-sm truncate" x-text="fields.ogTitle || fields.title || 'Page Title'"></div>
+            <div class="text-slate-500 text-xs mt-0.5 line-clamp-2" x-text="fields.ogDescription || fields.description || 'Description'"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- All languages status -->
+      <div class="bg-slate-800 border border-slate-700 rounded-xl p-5">
+        <h2 class="text-sm font-semibold mb-3">All Languages — <span x-text="currentPage" class="capitalize"></span></h2>
+        <div class="space-y-2" x-show="Object.keys(allLangResults).length > 0">
+          <template x-for="(data, lang) in allLangResults" :key="lang">
+            <div class="flex items-center justify-between text-xs">
+              <span class="text-slate-400"><span x-text="data.flag"></span> <span x-text="lang.toUpperCase()"></span></span>
+              <div class="flex gap-2">
+                <span :class="data.titleOk ? 'text-green-400' : 'text-red-400'" x-text="'Title: ' + data.titleLength + 'ch'"></span>
+                <span :class="data.descriptionOk ? 'text-green-400' : 'text-yellow-400'" x-text="'Desc: ' + data.descriptionLength + 'ch'"></span>
+              </div>
+            </div>
+          </template>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+function seoManager() {
+  return {
+    pages: [],
+    languages: [],
+    currentPage: 'home',
+    currentLang: 'en',
+    fields: { title: '', description: '', ogTitle: '', ogDescription: '', ogImage: '', noindex: false, nofollow: false },
+    titleLen: 0,
+    descLen: 0,
+    saving: false,
+    saved: false,
+    allLangResults: {},
+
+    async init() {
+      const [statusRes, langRes] = await Promise.all([
+        fetch('/api/status').then(r => r.json()),
+        fetch('/api/languages').then(r => r.json()),
+      ]);
+      this.pages = statusRes.pages || [];
+      this.languages = langRes.languages || [];
+      this.currentPage = this.pages[0] || 'home';
+      await this.loadPage();
+    },
+
+    async loadPage() {
+      // Load current lang meta
+      const res = await fetch(`/api/content/${this.currentPage}?lang=${this.currentLang}`).then(r => r.json());
+      const meta = res.content?.meta || {};
+      this.fields = {
+        title: meta.title || '',
+        description: meta.description || '',
+        ogTitle: meta.ogTitle || '',
+        ogDescription: meta.ogDescription || '',
+        ogImage: meta.ogImage || '',
+        noindex: meta.noindex || false,
+        nofollow: meta.nofollow || false,
+      };
+      this.titleLen = this.fields.title.length;
+      this.descLen = this.fields.description.length;
+      // Load all-lang status
+      const seoRes = await fetch(`/api/seo/${this.currentPage}`).then(r => r.json());
+      this.allLangResults = seoRes.results || {};
+    },
+
+    async saveMeta() {
+      this.saving = true;
+      await fetch(`/api/content/${this.currentPage}/section/meta`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ lang: this.currentLang, data: this.fields }),
+      });
+      this.saving = false;
+      this.saved = true;
+      setTimeout(() => this.saved = false, 3000);
+      // Refresh all-lang status
+      const seoRes = await fetch(`/api/seo/${this.currentPage}`).then(r => r.json());
+      this.allLangResults = seoRes.results || {};
+    },
+  };
+}
+</script>
+</body>
+</html>

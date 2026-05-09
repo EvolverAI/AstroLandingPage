@@ -1,0 +1,16 @@
+#!/bin/sh
+# EvolverAI pre-commit hook
+# Runs content validation before every commit.
+# Install: npm run prepare (sets up husky)
+
+echo "🔍 Running content validation..."
+node scripts/validate.js
+
+if [ $? -ne 0 ]; then
+  echo ""
+  echo "❌ Commit blocked: fix content errors above before committing."
+  echo "   Run 'npm run validate' for details."
+  exit 1
+fi
+
+echo "✅ Content valid — proceeding with commit."

@@ -1,0 +1,235 @@
+---
+export interface PricingPlan {
+    name: string;
+    price: string | number;
+    priceMonthly?: string | number;
+    priceYearly?: string | number;
+    period?: string;
+    description?: string;
+    features: string[];
+    cta: string;
+    ctaUrl: string;
+    highlighted?: boolean;
+    badge?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    billingToggle?: boolean;
+    plans?: PricingPlan[];
+    language?: string;
+}
+
+const {
+    sectionId = "pricing",
+    title = "Simple, Transparent Pricing",
+    description = "",
+    billingToggle = false,
+    plans = [],
+    language = "en",
+} = Astro.props;
+---
+
+<section
+    id={sectionId}
+    class="relative section-pricing py-20 px-4"
+    data-section="pricing"
+>
+    <div class="container mx-auto max-w-5xl">
+        {
+            (title || description) && (
+                <div class="text-center mb-12 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-lg text-slate-400 max-w-xl mx-auto">
+                            {description}
+                        </p>
+                    )}
+                </div>
+            )
+        }
+
+        {
+            billingToggle && (
+                <div
+                    class="flex items-center justify-center gap-3 mb-10"
+                    x-data="{ yearly: false }"
+                >
+                    <span
+                        class="text-sm"
+                        :class="yearly ? 'text-slate-400' : 'text-white font-medium'"
+                    >
+                        Monthly
+                    </span>
+                    <button
+                        @click="yearly = !yearly"
+                        class="relative w-11 h-6 rounded-full transition-colors"
+                        :class="yearly ? 'bg-blue-600' : 'bg-slate-700'"
+                    >
+                        <span
+                            class="absolute top-0.5 left-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform"
+                            :class="yearly ? 'translate-x-5' : 'translate-x-0'"
+                        />
+                    </button>
+                    <span
+                        class="text-sm"
+                        :class="yearly ? 'text-white font-medium' : 'text-slate-400'"
+                    >
+                        Yearly{" "}
+                        <span class="text-green-400 text-xs font-semibold">
+                            Save 20%
+                        </span>
+                    </span>
+                </div>
+            )
+        }
+
+        <div
+            class={`grid gap-6 ${plans.length <= 2 ? "md:grid-cols-2 max-w-2xl mx-auto" : "md:grid-cols-3"}`}
+            x-data="{ yearly: false }"
+        >
+            {
+                plans.map((plan, i) => (
+                    <div
+                        class={`relative flex flex-col rounded-2xl border p-8 reveal ${
+                            plan.highlighted
+                                ? "plan-card-highlighted bg-blue-950/60 border-blue-500 shadow-[0_0_40px_-8px_rgba(59,130,246,0.5)] scale-[1.03]"
+                                : "plan-card-default bg-slate-800/60 border-slate-700"
+                        }`}
+                        style={`--stagger-i:${i}`}
+                    >
+                        {plan.badge && (
+                            <span class="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full whitespace-nowrap">
+                                {plan.badge}
+                            </span>
+                        )}
+                        <div class="mb-6">
+                            <h3 class="text-lg font-bold text-white mb-1">
+                                {plan.name}
+                            </h3>
+                            {plan.description && (
+                                <p class="text-slate-400 text-sm">
+                                    {plan.description}
+                                </p>
+                            )}
+                        </div>
+                        <div class="mb-6">
+                            {billingToggle && (plan.priceMonthly || plan.priceYearly) ? (
+                                <>
+                                    <span
+                                        class="text-5xl font-extrabold text-white"
+                                        x-text={`yearly ? '${plan.priceYearly || plan.price}' : '${plan.priceMonthly || plan.price}'`}
+                                    />
+                                </>
+                            ) : (
+                                <span class="text-5xl font-extrabold text-white">
+                                    {plan.price}
+                                </span>
+                            )}
+                            {plan.period && (
+                                <span class="text-slate-400 text-sm ml-1">
+                                    /{plan.period}
+                                </span>
+                            )}
+                        </div>
+                        <ul class="space-y-3 mb-8 flex-1">
+                            {plan.features.map((f) => (
+                                <li class="flex items-start gap-2 text-sm text-slate-300">
+                                    <span class="text-green-400 mt-0.5 shrink-0">
+                                        ✓
+                                    </span>
+                                    {f}
+                                </li>
+                            ))}
+                        </ul>
+                        <a
+                            href={plan.ctaUrl}
+                            class={`block text-center py-3 px-6 rounded-xl font-semibold transition ${
+                                plan.highlighted
+                                    ? "bg-blue-600 hover:bg-blue-500 text-white"
+                                    : "plan-cta-default bg-slate-700 hover:bg-slate-600 text-white"
+                            }`}
+                        >
+                            {plan.cta}
+                        </a>
+                    </div>
+                ))
+            }
+        </div>
+
+        {
+            plans.length === 0 && (
+                <p class="text-center text-slate-500">
+                    No pricing plans configured yet.
+                </p>
+            )
+        }
+    </div>
+</section>
+
+<style>
+  /* Dark mode base */
+  .section-pricing {
+    background-color: var(--color-bg-surface);
+  }
+
+  /* Light mode: deeper blue-slate background so white cards pop */
+  :global([data-theme="light"]) .section-pricing {
+    background: linear-gradient(160deg, #dbeafe 0%, #eff6ff 50%, #e0e7ff 100%);
+  }
+
+  /* Light mode: non-highlighted plan cards — white with strong shadow */
+  :global([data-theme="light"]) .plan-card-default {
+    background: #ffffff !important;
+    border-color: #cbd5e1 !important;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.12), 0 2px 8px rgba(0,0,0,0.06) !important;
+  }
+
+  /* Light mode: highlighted plan card — vivid blue gradient */
+  :global([data-theme="light"]) .plan-card-highlighted {
+    background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 60%, #1e40af 100%) !important;
+    border-color: #3b82f6 !important;
+    box-shadow: 0 0 40px -8px rgba(59,130,246,0.6), 0 12px 40px rgba(29,78,216,0.35) !important;
+  }
+
+  /* Keep text white on the highlighted card in light mode */
+  :global([data-theme="light"]) .plan-card-highlighted h3,
+  :global([data-theme="light"]) .plan-card-highlighted span,
+  :global([data-theme="light"]) .plan-card-highlighted p,
+  :global([data-theme="light"]) .plan-card-highlighted li {
+    color: #ffffff !important;
+  }
+  :global([data-theme="light"]) .plan-card-highlighted .text-slate-400 {
+    color: rgba(255,255,255,0.75) !important;
+  }
+  :global([data-theme="light"]) .plan-card-highlighted .text-slate-300 {
+    color: rgba(255,255,255,0.9) !important;
+  }
+  :global([data-theme="light"]) .plan-card-highlighted .text-green-400 {
+    color: #86efac !important;
+  }
+
+  /* Light mode: non-highlighted CTA button */
+  :global([data-theme="light"]) .plan-cta-default {
+    background: #f1f5f9 !important;
+    color: #1e293b !important;
+    border: 1px solid #cbd5e1 !important;
+  }
+  :global([data-theme="light"]) .plan-cta-default:hover {
+    background: #e2e8f0 !important;
+  }
+
+  /* Light mode: section title and description */
+  :global([data-theme="light"]) .section-pricing .text-white {
+    color: #0f172a !important;
+  }
+  :global([data-theme="light"]) .section-pricing .text-slate-400 {
+    color: #475569 !important;
+  }
+</style>

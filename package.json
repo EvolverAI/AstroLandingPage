@@ -5,24 +5,36 @@
   "scripts": {
     "dev": "astro dev",
     "dev:local": "astro dev --host 0.0.0.0",
+    "dev:translate": "node scripts/watch-translate.js",
     "start": "astro dev",
-    "build": "astro build",
-    "build:production": "NODE_ENV=production astro build",
-    "build:staging": "NODE_ENV=staging astro build",
+    "build": "npm run validate && astro build",
+    "build:skip-validate": "astro build",
+    "build:production": "NODE_ENV=production npm run build",
     "preview": "astro preview",
-    "preview:production": "astro build && astro preview",
-    "check-images": "node scripts/check-images.js",
+    "validate": "node scripts/validate.js",
+    "validate:strict": "node scripts/validate.js --strict",
+    "translate": "node scripts/translate.js",
+    "translate:status": "node scripts/translate.js status",
+    "content": "node scripts/content-manager.js",
+    "admin": "node admin/server.js",
+    "dev:all": "concurrently --names 'astro,admin' --prefix-colors 'blue,green' \"npm run dev\" \"npm run admin\"",
+    "prepare": "husky",
+    "check-env": "node scripts/check-env.js",
     "astro": "astro"
   },
   "dependencies": {
     "@astrojs/check": "^0.9.4",
     "@astrojs/tailwind": "^5.1.0",
+    "@tailwindcss/typography": "^0.5.19",
     "astro": "^5.12.3",
+    "js-yaml": "^4.1.1",
     "tailwindcss": "^3.4.16",
     "tslib": "^2.8.1",
     "typescript": "^5.9.2"
   },
   "devDependencies": {
-    "@types/node": "^18.0.0"
+    "@types/node": "^18.0.0",
+    "concurrently": "^9.2.1",
+    "husky": "^9.0.0"
   }
 }

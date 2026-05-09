@@ -1,0 +1,91 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  validate-and-build:
+    name: Validate & Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check environment
+        run: npm run check-env
+        continue-on-error: true  # warn but don't fail CI for optional vars
+
+      - name: Validate content
+        run: npm run validate
+
+      - name: Build site
+        run: npm run build:skip-validate
+        env:
+          NODE_ENV: production
+
+      - name: Check build output
+        run: |
+          echo "📦 Build output:"
+          ls -lh dist/
+          echo ""
+          echo "📄 Pages built:"
+          find dist -name "index.html" | wc -l
+          echo ""
+          echo "🗺️  Sitemap:"
+          test -f dist/sitemap.xml && echo "✓ sitemap.xml exists" || echo "✗ sitemap.xml missing"
+          echo ""
+          echo "🤖 Robots:"
+          test -f dist/robots.txt && echo "✓ robots.txt exists" || echo "✗ robots.txt missing"
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        if: github.ref == 'refs/heads/main'
+        with:
+          name: dist
+          path: dist/
+          retention-days: 7
+
+  lighthouse:
+    name: Lighthouse CI
+    runs-on: ubuntu-latest
+    needs: validate-and-build
+    if: github.ref == 'refs/heads/main' || github.event_name == 'pull_request'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build site
+        run: npm run build:skip-validate
+        env:
+          NODE_ENV: production
+
+      - name: Install Lighthouse CI
+        run: npm install -g @lhci/cli@0.14.x
+
+      - name: Run Lighthouse CI
+        run: lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

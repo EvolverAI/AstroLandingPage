@@ -1,160 +1,124 @@
 ---
-// Reusable Content Section component
-// Can be used for About, Brainstorming, Contact, and similar sections
-import { getEntry } from "astro:content";
-
 export interface Props {
-    // Section identification
-    sectionId: string;
-    sectionType?: string;
-
-    // Content
-    heading?: string;
-    content: string;
-    buttonText?: string;
-    buttonAction?: string;
-
-    // Styling
-    backgroundImage: string;
-    minHeight?: string;
-    backgroundOpacity?: string;
-    contentOpacity?: string;
-    maxWidth?: string;
-    textAlign?: string;
-    contentPosition?: string;
-
-    // Company name highlighting
+  sectionId: string;
+  sectionType?: string;
+  content: string;
+  backgroundImage: string;
+  minHeight?: string;
+  logo?: string;
+  language?: string;
+  sectionContent?: {
+    title?: string;
+    description?: string;
     companyName?: string;
     companyNameHighlight?: string;
-
-    // Localization
-    language?: string;
-    languageFile?: string; // Override for specific language files
-    environment?: string;
+    buttonText?: string;
+  };
 }
 
 const {
-    sectionId,
-    sectionType = sectionId,
-    heading,
-    content,
-    buttonText,
-    buttonAction,
-    backgroundImage,
-    minHeight = "600px",
-    backgroundOpacity = "bg-opacity-10",
-    contentOpacity = "bg-opacity-75",
-    maxWidth = "max-w-lg",
-    textAlign = "text-right",
-    contentPosition = "justify-end",
-    companyName = "Evolver",
-    companyNameHighlight = "AI",
-    language = "en",
-    languageFile,
-    environment = "production",
+  sectionId,
+  sectionType = sectionId,
+  backgroundImage,
+  minHeight = "560px",
+  logo = "",
+  language = "en",
+  sectionContent = {},
 } = Astro.props;
 
-// Try to get localized content if available
-let localizedContent = content;
-let localizedHeading = heading;
-let localizedButtonText = buttonText;
-let localizedCompanyName = companyName;
-let localizedCompanyNameHighlight = companyNameHighlight;
+const heading = sectionContent.title || "";
+const description = sectionContent.description || "";
+const buttonText = sectionContent.buttonText || "";
+const companyName = sectionContent.companyName || "Evolver";
+const companyHL = sectionContent.companyNameHighlight || "AI";
 
-try {
-    // Use languageFile if provided, otherwise fall back to language
-    const langFileName = languageFile || language;
-    const langData = await getEntry("languages", langFileName);
-    const localizedSections = langData?.data?.sections || {};
+const normalised = description
+  .replace(/[\r\n]+/g, " ")
+  .replace(/\s+/g, " ")
+  .trim();
 
-    if (localizedSections[sectionType]) {
-        const sectionData = localizedSections[sectionType];
-        localizedContent =
-            sectionData.description || sectionData.content || content;
-        localizedHeading = sectionData.title || sectionData.heading || heading;
-        localizedButtonText = sectionData.buttonText || buttonText;
-        localizedCompanyName = sectionData.companyName || companyName;
-        localizedCompanyNameHighlight =
-            sectionData.companyNameHighlight || companyNameHighlight;
-    }
-} catch (error) {
-    console.warn("Localization not available for section:", sectionType, error);
-}
-
-// Process content to handle company name highlighting
-const normalizedContent = localizedContent
-    ? localizedContent
-          .replace(/[\r\n]+/g, " ")
-          .replace(/\s+/g, " ")
-          .trim()
-    : "";
-
-const processedContent = normalizedContent.replace(
-    new RegExp(`${localizedCompanyName}${localizedCompanyNameHighlight}`, "g"),
-    `${localizedCompanyName}<span class="text-blue-800">${localizedCompanyNameHighlight}</span>`,
+const processed = normalised.replace(
+  new RegExp(`${companyName}${companyHL}`, "g"),
+  `${companyName}<span class="text-blue-400">${companyHL}</span>`,
 );
 ---
 
 <section
-    id={sectionId}
-    class="relative bg-custom-slate py-2 bg-center bg-cover"
-    style={`background-image: url('${backgroundImage}'); min-height: ${minHeight};`}
-    data-section={sectionType}
+  id={sectionId}
+  class="relative bg-center bg-cover flex items-center"
+  style={`background-image: url('${backgroundImage}'); min-height: ${minHeight};`}
+  data-section={sectionType}
 >
-    <div class={`absolute inset-0 bg-black ${backgroundOpacity}`}></div>
-    <div
-        class={`container mx-auto px-4 flex ${contentPosition} items-center h-full relative z-10`}
-    >
-        <div
-            class={`bg-black ${contentOpacity} p-6 rounded-lg ${textAlign} ${maxWidth}`}
-        >
-            {
-                localizedHeading && (
-                    <h2 class="text-3xl font-noto-sans mb-4 text-white">
-                        {localizedHeading}
-                    </h2>
-                )
-            }
-            <hr class="my-4 border-orange-600" />
-            <p
-                class="p-noto-sans top-bottom-margins md:text-lg text-gray-200"
-                set:html={processedContent}
-            />
+  <!-- Dark overlay — lighter in light mode -->
+  <div class="absolute inset-0 content-header-overlay"></div>
 
-            {
-                localizedButtonText && buttonAction && (
-                    <button
-                        onclick={buttonAction}
-                        class="bg-blue-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-blue-700 transition duration-300 mt-4"
-                    >
-                        {localizedButtonText}
-                    </button>
-                )
-            }
-            <hr class="my-4 border-orange-600" />
-        </div>
+  <!-- Content panel — right-aligned glass card, full-width on mobile -->
+  <div
+    class="relative z-10 container mx-auto px-4 py-12 md:py-16 flex justify-center md:justify-end"
+  >
+    <div class="reveal-left w-full max-w-lg">
+      <div class="content-panel text-left md:text-right">
+        {
+          logo && (
+            <div class="mb-4 flex justify-end">
+              <img
+                src={logo}
+                alt="Company logo"
+                class="h-12 max-w-[180px] object-contain"
+                loading="lazy"
+              />
+            </div>
+          )
+        }
+        {
+          heading && (
+            <h2 class="text-3xl font-bold text-white mb-4 leading-tight">
+              {heading}
+            </h2>
+          )
+        }
+
+        <div class="divider-orange"></div>
+
+        <p
+          class="text-slate-200 text-lg leading-relaxed my-4"
+          set:html={processed}
+        />
+
+        <div class="divider-orange"></div>
+
+        {
+          buttonText && (
+            <button class="btn btn-primary mt-4">{buttonText}</button>
+          )
+        }
+      </div>
     </div>
-
-    <!-- Development helper -->
-    {
-        import.meta.env.DEV && (
-            <details class="absolute bottom-4 left-4 bg-black bg-opacity-75 text-white p-2 rounded text-xs max-w-xs">
-                <summary class="cursor-pointer">{sectionType} Debug</summary>
-                <pre class="mt-2 overflow-auto">
-                    {JSON.stringify(
-                        {
-                            sectionId,
-                            sectionType,
-                            localizedContent:
-                                localizedContent.substring(0, 100) + "...",
-                            language,
-                            backgroundImage,
-                        },
-                        null,
-                        2,
-                    )}
-                </pre>
-            </details>
-        )
-    }
+  </div>
 </section>
+
+<style>
+  .content-header-overlay {
+    background: rgba(0, 0, 0, 0.55);
+  }
+  :global([data-theme="light"]) .content-header-overlay {
+    background: rgba(0, 0, 0, 0.25);
+  }
+
+  .content-panel {
+    background: rgba(10, 15, 30, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(148, 163, 184, 0.15);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow:
+      0 0 60px rgba(0, 0, 0, 0.5),
+      0 24px 48px rgba(0, 0, 0, 0.4);
+  }
+
+  /* In light mode the panel stays dark — it sits over a photo so contrast must be preserved */
+  :global([data-theme="light"]) .content-panel {
+    background: rgba(10, 15, 30, 0.78);
+  }
+</style>

@@ -1,0 +1,46 @@
+---
+// Renders a visible placeholder when section content is missing.
+// In production: renders nothing (silent fail).
+// In development: renders a warning block so you can spot missing content.
+
+export interface Props {
+  sectionId: string;
+  reason?: string;
+}
+
+const { sectionId, reason = 'Content not found' } = Astro.props;
+const isDev = import.meta.env.DEV;
+---
+
+{isDev && (
+  <div class="content-fallback">
+    <span class="material-icons">warning</span>
+    <div>
+      <strong>Missing content: <code>{sectionId}</code></strong>
+      <p>{reason}</p>
+      <p>Check <code>src/content/master/</code> and run <code>npm run validate</code>.</p>
+    </div>
+  </div>
+)}
+
+<style>
+  .content-fallback {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin: 1rem;
+    padding: 1rem 1.25rem;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.4);
+    border-radius: 0.5rem;
+    color: #fbbf24;
+    font-size: 0.875rem;
+  }
+  .content-fallback code {
+    background: rgba(234, 179, 8, 0.15);
+    padding: 0.1em 0.4em;
+    border-radius: 0.25rem;
+    font-family: monospace;
+  }
+  .content-fallback p { margin: 0.25rem 0 0; opacity: 0.8; }
+</style>

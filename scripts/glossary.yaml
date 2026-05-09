@@ -1,0 +1,42 @@
+# Brand terms and proper nouns that should NOT be translated
+# The translation engine will preserve these exactly as written
+
+brand_terms:
+  - EvolverAI
+  - Evolver
+  - AI
+  - Elysia
+  - Workforce Manager
+  - PixelCraft
+  - EvolverAI Tech
+  - EvolverAI Medical
+  - EvolverAI Hospitality
+  - EvolverAI BPO
+  - EvolverAI Academy
+  - Infinite Workforce Shpk
+  - EvolverAI GmbH
+
+technical_terms:
+  - LLM
+  - Large Language Model
+  - Machine Learning
+  - Deep Learning
+  - TensorFlow
+  - PyTorch
+  - scikit-learn
+  - MLOps
+  - GDPR
+  - AES-256
+  - TLS 1.2
+  - BPO
+  - KPI
+  - CRM
+  - SLA
+  - NLP
+
+# Context instructions for the translator
+translation_context: >
+  This is a corporate website for EvolverAI, a technology company specializing in 
+  AI solutions, B2B outsourcing, and workforce management software. The tone should 
+  be professional yet approachable. Marketing copy should sound natural in the target 
+  language, not like a literal translation.

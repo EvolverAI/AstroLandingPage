@@ -1,107 +1,219 @@
 ---
-// Footer component with language support
-import { getCollection } from "astro:content";
-
 export interface Props {
   language?: string;
+  footerContent?: {
+    title?: string;
+    description?: string;
+    buttonText?: string;
+    copyright?: string;
+    contact?: {
+      email_label?: string;
+      phone_label?: string;
+      address_label?: string;
+    };
+  };
 }
 
-const { language = "en" } = Astro.props;
+const { language = "en", footerContent = {} } = Astro.props;
 
-// Get footer content from language files
-let footerContent;
-try {
-  const languagesCollection = await getCollection("languages");
-  const currentLang = languagesCollection.find(
-    (lang) => lang.data.code === language,
-  );
-  footerContent = currentLang?.data?.sections?.footer || {};
-} catch (error) {
-  console.warn("Error loading footer content:", error);
-  footerContent = {};
-}
+const title = footerContent.title || "Let's talk, tell us about your needs";
+const description =
+  footerContent.description ||
+  "We are here to help you unlock the potential of AI and transform your business operations.";
+const buttonText = footerContent.buttonText || "Tell us about your project";
+const copyright = footerContent.copyright || "All rights reserved";
+const emailLabel = footerContent.contact?.email_label || "Email";
+const phoneLabel = footerContent.contact?.phone_label || "Phone";
+const addressLabel = footerContent.contact?.address_label || "Address";
 ---
 
-<footer class="bg-slate-900 text-gray-200 py-8">
-  <div
-    class="container mx-auto px-4 flex flex-col md:flex-row justify-between items-start"
-  >
-    <!-- 3/4 Section -->
-    <div class="md:w-2/4 mb-8 md:mb-0">
-      <h2 class="text-2xl font-bold mb-4">
-        {footerContent?.title || "Let's talk, tell us about your needs"}
-      </h2>
-      <p class="mb-4">
-        {
-          footerContent?.description ||
-            "We are here to help you unlock the potential of AI and transform your business operations. Let's brainstorm together and create a brighter future for your company."
-        }
-      </p>
-      <button
-        onclick="window.location.href='/form';"
-        class="bg-green-600 text-white py-2 px-4 rounded-lg text-lg shadow-lg hover:bg-green-700 transition duration-300"
-      >
-        {footerContent?.buttonText || "Tell us about your project"}
-      </button>
-    </div>
-    <!-- 1/4 Section -->
-    <div class="md:w-1/4 flex flex-col space-y-4">
-      <div class="grid grid-cols-2 gap-4">
-        <div>
-          <h3 class="font-noto-sans text-orange-300">
-            {footerContent?.contact?.email?.label || "Email"}:
-          </h3>
-          <a href="mailto:info@evolverai.ch" class="underline"
-            >info@evolverai.ch</a
-          >
+<footer class="footer-root">
+  <!-- Gradient separator -->
+  <div class="divider-orange"></div>
+  <div class="container mx-auto px-4 py-16">
+    <!-- Top row -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 mb-12">
+      <!-- Brand + CTA -->
+      <div class="lg:col-span-1">
+        <div class="flex items-center gap-1 mb-4">
+          <span class="text-2xl font-black text-white">Evolver</span>
+          <span class="text-2xl font-black text-blue-500">AI</span>
         </div>
-        <div>
-          <h3 class="font-noto-sans text-orange-300">
-            {footerContent?.contact?.phone?.label || "Phone"}:
-          </h3>
-          <a href="tel:+41792156801" class="underline">+41 79 215 6801</a>
-        </div>
-        <div class="col-span-2">
-          <h3 class="font-noto-sans text-orange-300">
-            {footerContent?.contact?.address?.label || "Address"}:
-          </h3>
-          <p>EvolverAI GmbH</p>
-          <p>Zwydenweg, 3</p>
-          <p>CH-6052 Hergiswil</p>
-          <p>Switzerland</p>
-        </div>
+        <h2 class="text-2xl font-bold text-white mb-3 leading-snug max-w-md">
+          {title}
+        </h2>
+        <p class="text-slate-400 leading-relaxed mb-6 max-w-lg">
+          {description}
+        </p>
+        <a href="/form" class="btn bg-green-600 hover:bg-green-500 text-white">
+          {buttonText}
+        </a>
       </div>
-      <div class="flex space-x-4 mt-4">
+
+      <!-- Contact -->
+      <div>
+        <h3
+          class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4"
+        >
+          Contact
+        </h3>
+        <ul class="space-y-4">
+          <li>
+            <p class="text-xs text-orange-300 mb-0.5">{emailLabel}</p>
+            <a
+              href="mailto:info@evolverai.ch"
+              class="text-slate-300 hover:text-white transition-colors"
+            >
+              info@evolverai.ch
+            </a>
+          </li>
+          <li>
+            <p class="text-xs text-orange-300 mb-0.5">{phoneLabel}</p>
+            <a
+              href="tel:+41792156801"
+              class="text-slate-300 hover:text-white transition-colors"
+            >
+              +41 79 215 6801
+            </a>
+          </li>
+          <li>
+            <p class="text-xs text-orange-300 mb-0.5">{addressLabel}</p>
+            <address class="not-italic text-slate-300 text-sm leading-relaxed">
+              EvolverAI GmbH<br />
+              Zwydenweg 3<br />
+              CH-6052 Hergiswil<br />
+              Switzerland
+            </address>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Newsletter -->
+      <div>
+        <h3 class="text-sm font-semibold text-slate-400 uppercase tracking-wider mb-4">Newsletter</h3>
+        <p class="text-slate-400 text-sm mb-4 leading-relaxed">Stay updated with the latest AI insights from EvolverAI.</p>
+        <form id="newsletter-form" class="flex flex-col gap-2">
+          <input
+            type="email"
+            id="newsletter-email"
+            placeholder="your@email.com"
+            required
+            class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2.5 text-sm text-white placeholder-slate-500 focus:outline-none focus:border-blue-500 transition-colors"
+          />
+          <button
+            type="submit"
+            class="btn bg-blue-600 hover:bg-blue-500 text-white text-sm py-2.5"
+          >
+            Subscribe
+          </button>
+          <p id="newsletter-msg" class="text-xs text-green-400 hidden">Thanks for subscribing!</p>
+          <p id="newsletter-err" class="text-xs text-red-400 hidden">Something went wrong. Try again.</p>
+        </form>
+      </div>
+    </div>
+
+    <!-- Divider -->
+    <div class="footer-divider mb-6"></div>
+
+    <!-- Bottom row -->
+    <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-slate-500 text-sm">
+        &copy; 2025 Evolver<span class="text-blue-500">AI</span> GmbH. {
+          copyright
+        }.
+      </p>
+
+      <!-- Social links -->
+      <div class="flex items-center gap-4">
         <a
-          href="https://facebook.com"
+          href="https://linkedin.com"
           target="_blank"
           rel="noopener noreferrer"
+          class="social-link"
+          aria-label="LinkedIn"
         >
-          <i class="fa-brands fa-facebook"></i>
+          <i class="fa-brands fa-linkedin text-lg"></i>
         </a>
-        <a href="https://twitter.com" target="_blank" rel="noopener noreferrer">
-          <i class="fa-brands fa-x-twitter"></i>
+        <a
+          href="https://twitter.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="social-link"
+          aria-label="X / Twitter"
+        >
+          <i class="fa-brands fa-x-twitter text-lg"></i>
         </a>
         <a
           href="https://instagram.com"
           target="_blank"
           rel="noopener noreferrer"
+          class="social-link"
+          aria-label="Instagram"
         >
-          <i class="fa-brands fa-instagram"></i>
+          <i class="fa-brands fa-instagram text-lg"></i>
         </a>
         <a
-          href="https://linkedin.com"
+          href="https://facebook.com"
           target="_blank"
           rel="noopener noreferrer"
+          class="social-link"
+          aria-label="Facebook"
         >
-          <i class="fa-brands fa-linkedin"></i>
+          <i class="fa-brands fa-facebook text-lg"></i>
         </a>
       </div>
     </div>
   </div>
-  <p class="text-center">
-    &copy; 2025 Evolver<span class="text-blue-800">AI</span> GmbH. {
-      footerContent?.copyright || "All rights reserved"
-    }.
-  </p>
 </footer>
+
+<script>
+  document.getElementById('newsletter-form')?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const email = (document.getElementById('newsletter-email') as HTMLInputElement)?.value?.trim();
+    const msg = document.getElementById('newsletter-msg');
+    const err = document.getElementById('newsletter-err');
+    if (!email) return;
+    try {
+      const res = await fetch('http://localhost:4322/api/subscribe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+      if (res.ok) {
+        msg?.classList.remove('hidden');
+        err?.classList.add('hidden');
+        (document.getElementById('newsletter-email') as HTMLInputElement).value = '';
+      } else { throw new Error(); }
+    } catch {
+      err?.classList.remove('hidden');
+      msg?.classList.add('hidden');
+    }
+  });
+</script>
+
+<style>
+  .footer-root {
+    background: var(--color-bg-base);
+    border-top: 1px solid var(--color-border);
+  }
+  .footer-divider {
+    height: 1px;
+    background: var(--color-border);
+  }
+  .social-link {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+    transition: all var(--transition-base);
+  }
+  .social-link:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-border-hover);
+    background: var(--color-bg-raised);
+  }
+</style>

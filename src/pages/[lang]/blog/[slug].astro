@@ -1,0 +1,300 @@
+---
+/**
+ * /[lang]/blog/[slug] — Individual blog post
+ */
+import { getCollection } from "astro:content";
+import Layout from "../../../layouts/Layout.astro";
+import Header from "../../../components/Header.astro";
+import Footer from "../../../components/Footer.astro";
+
+export async function getStaticPaths() {
+    const posts = await getCollection("blog");
+    const langs = ["en", "it", "de"];
+    return langs.flatMap((lang) =>
+        posts.map((post, idx) => ({
+            params: { lang, slug: post.slug },
+            props: { post, lang, allPosts: posts },
+        })),
+    );
+}
+
+const { post, lang = "en", allPosts = [] } = Astro.props;
+const { title, date, author, excerpt, coverImage, tags = [] } = post.data;
+const { Content } = await post.render();
+
+const BASE_URL = "https://evolverai.ch";
+const postUrl = `${BASE_URL}/${lang}/blog/${post.slug}`;
+
+const formattedDate = new Intl.DateTimeFormat("en-GB", {
+    day: "2-digit",
+    month: "long",
+    year: "numeric",
+}).format(date);
+
+// Prev / next navigation (sorted by date desc)
+const sorted = [...allPosts].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const currentIdx = sorted.findIndex(p => p.slug === post.slug);
+const prevPost = currentIdx < sorted.length - 1 ? sorted[currentIdx + 1] : null;
+const nextPost = currentIdx > 0 ? sorted[currentIdx - 1] : null;
+
+// Related posts: same tag, different slug, max 3
+const relatedPosts = allPosts
+    .filter(p => p.slug !== post.slug && p.data.tags?.some((t: string) => tags.includes(t)))
+    .slice(0, 3);
+
+const articleJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Article",
+    headline: title,
+    description: excerpt ?? "",
+    datePublished: date.toISOString(),
+    dateModified: date.toISOString(),
+    author: {
+        "@type": "Person",
+        name: author ?? "EvolverAI Team",
+    },
+    publisher: {
+        "@type": "Organization",
+        name: "EvolverAI GmbH",
+        logo: {
+            "@type": "ImageObject",
+            url: `${BASE_URL}/img/icons/apple-touch-icon.png`,
+        },
+    },
+    url: postUrl,
+    mainEntityOfPage: { "@type": "WebPage", "@id": postUrl },
+    ...(coverImage ? { image: `${BASE_URL}${coverImage}` } : {}),
+    ...(tags.length > 0 ? { keywords: tags.join(", ") } : {}),
+    inLanguage: lang,
+};
+
+const backLabels: Record<string, string> = {
+    en: "← Back to Blog",
+    it: "← Torna al Blog",
+    de: "← Zurück zum Blog",
+};
+
+const shareLabels: Record<string, Record<string, string>> = {
+    en: { share: "Share", copy: "Copy link", copied: "Copied!", related: "Related Posts" },
+    it: { share: "Condividi", copy: "Copia link", copied: "Copiato!", related: "Articoli correlati" },
+    de: { share: "Teilen", copy: "Link kopieren", copied: "Kopiert!", related: "Ähnliche Artikel" },
+};
+const s = shareLabels[lang] ?? shareLabels.en;
+---
+
+<Layout
+    title={`${title} — EvolverAI Blog`}
+    description={excerpt}
+    language={lang}
+    page="blog"
+    ogImage={coverImage}
+>
+    <!-- Article structured data -->
+    <script
+        type="application/ld+json"
+        set:html={JSON.stringify(articleJsonLd)}
+        slot="head"
+    />
+    <Header currentLanguage={lang} />
+
+    <!-- Reading progress bar -->
+    <div id="reading-progress" class="fixed top-0 left-0 h-0.5 bg-blue-500 z-[9999] transition-none" style="width:0%" aria-hidden="true"></div>
+
+    <main id="main-content" class="pt-24 pb-20">
+        <div class="container mx-auto px-4 max-w-3xl">
+            <!-- Back link -->
+            <a
+                href={`/${lang}/blog`}
+                class="inline-flex items-center gap-1.5 text-sm text-slate-400 hover:text-white transition-colors mb-8"
+            >
+                <i class="material-icons text-base">arrow_back</i>
+                {backLabels[lang] ?? backLabels.en}
+            </a>
+
+            <!-- Cover -->
+            {
+                coverImage && (
+                    <img
+                        src={coverImage}
+                        alt={title}
+                        width="800"
+                        height="256"
+                        class="w-full h-64 object-cover rounded-xl mb-8"
+                        loading="eager"
+                        fetchpriority="high"
+                    />
+                )
+            }
+
+            <!-- Tags -->
+            {
+                tags.length > 0 && (
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        {tags.map((tag: string) => (
+                            <span class="text-xs font-semibold uppercase tracking-wider px-2.5 py-1 rounded-full bg-blue-900/40 text-blue-400">
+                                {tag}
+                            </span>
+                        ))}
+                    </div>
+                )
+            }
+
+            <!-- Title -->
+            <h1 class="text-4xl font-bold text-white leading-tight mb-4">
+                {title}
+            </h1>
+
+            <!-- Meta -->
+            <div
+                class="flex items-center gap-3 text-sm text-slate-500 mb-10 pb-6 border-b border-white/10"
+            >
+                <i class="material-icons text-base">person</i>
+                <span>{author}</span>
+                <span class="text-slate-600">•</span>
+                <i class="material-icons text-base">calendar_today</i>
+                <time datetime={date.toISOString()}>{formattedDate}</time>
+            </div>
+
+            <!-- Body -->
+            <div
+                id="post-body"
+                class="prose prose-invert prose-lg max-w-none
+        prose-headings:font-bold prose-headings:text-white
+        prose-p:text-slate-300 prose-p:leading-relaxed
+        prose-a:text-blue-400 prose-a:no-underline hover:prose-a:underline
+        prose-strong:text-white
+        prose-code:text-emerald-400 prose-code:bg-slate-800 prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+        prose-pre:bg-slate-800 prose-pre:border prose-pre:border-slate-700
+        prose-blockquote:border-l-blue-500 prose-blockquote:text-slate-400
+        prose-th:text-slate-300 prose-td:text-slate-400
+        prose-hr:border-slate-700
+        prose-li:text-slate-300
+        prose-img:rounded-lg"
+            >
+                <Content />
+            </div>
+
+            <!-- Social share -->
+            <div class="mt-12 pt-8 border-t border-white/10">
+                <p class="text-sm text-slate-400 mb-3">{s.share}</p>
+                <div class="flex flex-wrap gap-3">
+                    <a
+                        href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(title)}&url=${encodeURIComponent(postUrl)}`}
+                        target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm transition-colors border border-slate-700"
+                        aria-label="Share on X / Twitter"
+                    >
+                        <i class="fa-brands fa-x-twitter text-base"></i> X
+                    </a>
+                    <a
+                        href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(postUrl)}`}
+                        target="_blank" rel="noopener noreferrer"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm transition-colors border border-slate-700"
+                        aria-label="Share on LinkedIn"
+                    >
+                        <i class="fa-brands fa-linkedin text-base"></i> LinkedIn
+                    </a>
+                    <button
+                        id="copy-link-btn"
+                        class="inline-flex items-center gap-2 px-4 py-2 rounded-lg bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white text-sm transition-colors border border-slate-700"
+                        aria-label="Copy link"
+                    >
+                        <i class="material-icons text-base">link</i>
+                        <span id="copy-link-label">{s.copy}</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Prev / Next navigation -->
+            {
+                (prevPost || nextPost) && (
+                    <nav class="mt-12 grid grid-cols-1 sm:grid-cols-2 gap-4" aria-label="Post navigation">
+                        {prevPost && (
+                            <a
+                                href={`/${lang}/blog/${prevPost.slug}`}
+                                class="group flex flex-col p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-700 transition-all"
+                            >
+                                <span class="text-xs text-slate-500 mb-1 flex items-center gap-1">
+                                    <i class="material-icons text-sm">arrow_back</i> Previous
+                                </span>
+                                <span class="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2">
+                                    {prevPost.data.title}
+                                </span>
+                            </a>
+                        )}
+                        {nextPost && (
+                            <a
+                                href={`/${lang}/blog/${nextPost.slug}`}
+                                class="group flex flex-col p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-700 transition-all sm:text-right"
+                            >
+                                <span class="text-xs text-slate-500 mb-1 flex items-center gap-1 sm:justify-end">
+                                    Next <i class="material-icons text-sm">arrow_forward</i>
+                                </span>
+                                <span class="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2">
+                                    {nextPost.data.title}
+                                </span>
+                            </a>
+                        )}
+                    </nav>
+                )
+            }
+
+            <!-- Related posts -->
+            {
+                relatedPosts.length > 0 && (
+                    <section class="mt-16">
+                        <h2 class="text-xl font-bold text-white mb-6">{s.related}</h2>
+                        <div class="grid gap-4 sm:grid-cols-3">
+                            {relatedPosts.map((related) => (
+                                <a
+                                    href={`/${lang}/blog/${related.slug}`}
+                                    class="group block p-4 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 hover:border-blue-700 transition-all"
+                                >
+                                    {related.data.coverImage && (
+                                        <img
+                                            src={related.data.coverImage}
+                                            alt={related.data.title}
+                                            class="w-full h-28 object-cover rounded-lg mb-3"
+                                            loading="lazy"
+                                        />
+                                    )}
+                                    <p class="text-sm font-semibold text-white group-hover:text-blue-300 transition-colors line-clamp-2">
+                                        {related.data.title}
+                                    </p>
+                                </a>
+                            ))}
+                        </div>
+                    </section>
+                )
+            }
+        </div>
+    </main>
+
+    <Footer currentLanguage={lang} />
+
+    <script define:vars={{ postUrl, copiedLabel: s.copied }}>
+        // Reading progress bar
+        const bar = document.getElementById('reading-progress');
+        const body = document.getElementById('post-body');
+        if (bar && body) {
+            window.addEventListener('scroll', () => {
+                const bodyTop = body.getBoundingClientRect().top + window.scrollY;
+                const bodyH = body.offsetHeight;
+                const scrolled = window.scrollY - bodyTop;
+                const pct = Math.min(100, Math.max(0, (scrolled / bodyH) * 100));
+                bar.style.width = pct + '%';
+            }, { passive: true });
+        }
+
+        // Copy link button
+        document.getElementById('copy-link-btn')?.addEventListener('click', () => {
+            navigator.clipboard.writeText(postUrl).then(() => {
+                const label = document.getElementById('copy-link-label');
+                if (label) {
+                    label.textContent = copiedLabel;
+                    setTimeout(() => { label.textContent = 'Copy link'; }, 2000);
+                }
+            });
+        });
+    </script>
+</Layout>

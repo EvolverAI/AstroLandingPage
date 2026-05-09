@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Submissions — EvolverAI Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <style>[x-cloak]{display:none!important}body{background:#0f172a}</style>
+</head>
+<body class="text-gray-200 min-h-screen font-sans">
+<div x-data="submissions()" x-init="init()" x-cloak>
+
+  <header class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+    <div class="flex items-center gap-3">
+      <a href="/" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+      <span class="text-slate-600">/</span>
+      <span class="font-semibold">Form Submissions</span>
+      <span x-show="unreadCount > 0" class="text-xs bg-blue-600 text-white px-2 py-0.5 rounded-full" x-text="unreadCount + ' unread'"></span>
+    </div>
+    <div class="flex items-center gap-3">
+      <button @click="exportCsv()" class="text-xs border border-slate-600 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition">
+        ↓ Export CSV
+      </button>
+      <button @click="load()" class="text-xs border border-slate-600 text-slate-400 hover:text-white px-3 py-1.5 rounded-lg transition">↻ Refresh</button>
+    </div>
+  </header>
+
+  <div class="max-w-4xl mx-auto px-6 py-8">
+
+    <div x-show="loading" class="text-slate-400 text-center py-16">Loading...</div>
+
+    <div x-show="!loading && submissions.length === 0" class="text-center py-20">
+      <span class="material-icons text-slate-600 text-5xl block mb-3">inbox</span>
+      <p class="text-slate-400">No submissions yet.</p>
+      <p class="text-slate-600 text-sm mt-1">Contact form submissions will appear here.</p>
+    </div>
+
+    <div x-show="!loading" class="space-y-4">
+      <template x-for="sub in submissions" :key="sub.id">
+        <div class="bg-slate-800 border rounded-xl overflow-hidden transition"
+          :class="sub.read ? 'border-slate-700' : 'border-blue-700/50'">
+          <div class="flex items-start justify-between px-5 py-4 border-b border-slate-700/50">
+            <div class="flex items-center gap-3">
+              <!-- Unread dot -->
+              <span x-show="!sub.read" class="w-2 h-2 rounded-full bg-blue-400 shrink-0 mt-1"></span>
+              <div>
+                <div class="flex items-center gap-2">
+                  <span class="font-semibold text-sm" x-text="sub.name || '(no name)'"></span>
+                  <a :href="'mailto:' + sub.email" class="text-blue-400 hover:text-blue-300 text-xs" x-text="sub.email"></a>
+                </div>
+                <span class="text-xs text-slate-500" x-text="new Date(sub.timestamp || sub.id).toLocaleString()"></span>
+              </div>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <button x-show="!sub.read" @click="markRead(sub)"
+                class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded transition">Mark read</button>
+              <button @click="deleteSubmission(sub)"
+                class="text-xs bg-red-900/40 hover:bg-red-700 text-red-400 hover:text-white px-2 py-1 rounded transition">Delete</button>
+            </div>
+          </div>
+          <div class="px-5 py-4">
+            <p class="text-slate-300 text-sm leading-relaxed whitespace-pre-wrap" x-text="sub.message"></p>
+          </div>
+        </div>
+      </template>
+    </div>
+  </div>
+</div>
+
+<script>
+function submissions() {
+  return {
+    submissions: [],
+    loading: true,
+
+    get unreadCount() { return this.submissions.filter(s => !s.read).length; },
+
+    async init() { await this.load(); },
+
+    async load() {
+      this.loading = true;
+      const res = await fetch('/api/submissions').then(r => r.json());
+      this.submissions = res.submissions || [];
+      this.loading = false;
+    },
+
+    async markRead(sub) {
+      await fetch(`/api/submissions/${sub.id}/read`, { method: 'PUT' });
+      sub.read = true;
+    },
+
+    async deleteSubmission(sub) {
+      if (!confirm('Delete this submission?')) return;
+      await fetch(`/api/submissions/${sub.id}`, { method: 'DELETE' });
+      this.submissions = this.submissions.filter(s => s.id !== sub.id);
+    },
+
+    exportCsv() {
+      const rows = [['ID', 'Name', 'Email', 'Message', 'Timestamp', 'Read']];
+      for (const s of this.submissions) {
+        rows.push([s.id, s.name || '', s.email || '', (s.message || '').replace(/"/g, '""'), s.timestamp || s.id, s.read ? 'yes' : 'no']);
+      }
+      const csv = rows.map(r => r.map(v => `"${v}"`).join(',')).join('\n');
+      const a = document.createElement('a');
+      a.href = 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv);
+      a.download = 'submissions.csv';
+      a.click();
+    },
+  };
+}
+</script>
+</body>
+</html>

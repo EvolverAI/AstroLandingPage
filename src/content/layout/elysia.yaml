@@ -1,0 +1,125 @@
+# Elysia page layout - section order, types, and non-translatable config
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-elysia-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "use_cases"
+    order: 4
+  - type: "cards"
+    section_id: "benefits"
+    order: 5
+  - type: "cards"
+    section_id: "roi"
+    order: 5.1
+  - type: "cards"
+    section_id: "demo"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-lg"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-lg"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-sm"
+      weight: "font-normal"
+      color: "text-gray-600"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+
+section_config:
+  overview:
+    cards:
+      - icon: { type: "warning", alignment: "left", color: "text-yellow-100" }
+        features_config:
+          bulletType: "icon"
+          bullet: "error"
+          bulletColor: "text-red-400"
+      - icon: { type: "lightbulb", alignment: "left", color: "text-green-500" }
+        features_config:
+          bulletType: "icon"
+          bullet: "check"
+          bulletColor: "text-green-400"
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - icon: { type: "insights", alignment: "left-big" }
+  features:
+    cards:
+      - icon: { type: "refresh", alignment: "left" }
+      - icon: { type: "chat", alignment: "left" }
+      - icon: { type: "integration_instructions", alignment: "left" }
+      - icon: { type: "schedule", alignment: "left" }
+      - icon: { type: "security", alignment: "left" }
+      - icon: { type: "analytics", alignment: "left" }
+  use_cases:
+    cards:
+      - icon: { type: "headset_mic", alignment: "left-big" }
+      - icon: { type: "document_scanner", alignment: "left-big" }
+      - icon: { type: "access_time", alignment: "left-big" }
+      - icon: { type: "hub", alignment: "left-big" }
+  benefits:
+    cards:
+      - icon: { type: "speed", alignment: "top-big" }
+      - icon: { type: "savings", alignment: "top-big" }
+      - icon: { type: "trending_up", alignment: "top-big" }
+      - icon: { type: "link", alignment: "top-big" }
+  roi:
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - icon: { type: "percent", alignment: "top" }
+      - icon: { type: "percent", alignment: "top" }
+      - icon: { type: "percent", alignment: "top" }
+  demo:
+    background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+    alignment: "center"
+    cards:
+      - icon: { type: "calendar_today", alignment: "left-big" }
+        buttonUrl: "/schedule-demo"
+      - icon: { type: "support_agent", alignment: "left-big" }
+        buttonUrl: "/contact-us"

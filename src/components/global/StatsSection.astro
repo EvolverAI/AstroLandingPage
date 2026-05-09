@@ -1,0 +1,144 @@
+---
+export interface StatItem {
+    value: string | number;
+    label: string;
+    prefix?: string;
+    suffix?: string;
+    icon?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    items?: StatItem[];
+    language?: string;
+}
+
+const {
+    sectionId = "stats",
+    title = "",
+    description = "",
+    items = [],
+    language = "en",
+} = Astro.props;
+---
+
+<section
+    id={sectionId}
+    class="relative bg-slate-900 py-16 px-4 border-y border-slate-800"
+    data-section="stats"
+>
+    <div class="container mx-auto">
+        {
+            (title || description) && (
+                <div class="text-center mb-12 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl font-bold text-white mb-3">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-slate-400">{description}</p>
+                    )}
+                </div>
+            )
+        }
+
+        <div
+            class={`grid gap-8 ${
+                items.length <= 2
+                    ? "grid-cols-2 max-w-lg mx-auto"
+                    : items.length === 3
+                      ? "grid-cols-3 max-w-2xl mx-auto"
+                      : items.length === 4
+                        ? "grid-cols-2 md:grid-cols-4"
+                        : "grid-cols-2 md:grid-cols-3 lg:grid-cols-5"
+            }`}
+        >
+            {
+                items.map((stat, i) => (
+                    <div
+                        class="text-center reveal-fade"
+                        style={`animation-delay:${i * 80}ms`}
+                    >
+                        {stat.icon && (
+                            <div class="text-blue-400 text-3xl mb-2">
+                                {stat.icon}
+                            </div>
+                        )}
+                        <div
+                            class="stat-counter text-4xl md:text-5xl font-extrabold text-white tracking-tight"
+                            data-target={String(stat.value).replace(/[^0-9.]/g, "")}
+                            data-prefix={stat.prefix || ""}
+                            data-suffix={stat.suffix || ""}
+                        >
+                            {stat.prefix || ""}
+                            {stat.value}
+                            {stat.suffix || ""}
+                        </div>
+                        <p class="text-slate-400 text-sm mt-2 font-medium">
+                            {stat.label}
+                        </p>
+                    </div>
+                ))
+            }
+        </div>
+
+        {
+            items.length === 0 && (
+                <p class="text-center text-slate-500">
+                    No stats configured yet.
+                </p>
+            )
+        }
+    </div>
+</section>
+
+<script>
+    // Animated count-up on scroll
+    const counters = document.querySelectorAll<HTMLElement>(".stat-counter");
+    if (counters.length === 0) {
+        // nothing to do
+    } else {
+        const obs = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (!entry.isIntersecting) return;
+                    const el = entry.target as HTMLElement;
+                    const target = parseFloat(el.dataset.target || "0");
+                    const prefix = el.dataset.prefix || "";
+                    const suffix = el.dataset.suffix || "";
+                    const isDecimal = el.dataset.target?.includes(".") ?? false;
+                    const duration = 1800;
+                    const start = performance.now();
+                    function tick(now: number) {
+                        const elapsed = Math.min(now - start, duration);
+                        const progress = elapsed / duration;
+                        // Ease out cubic
+                        const ease = 1 - Math.pow(1 - progress, 3);
+                        const current = target * ease;
+                        el.textContent =
+                            prefix +
+                            (isDecimal
+                                ? current.toFixed(1)
+                                : Math.floor(current).toLocaleString()) +
+                            suffix;
+                        if (elapsed < duration) requestAnimationFrame(tick);
+                        else
+                            el.textContent =
+                                prefix +
+                                (isDecimal
+                                    ? target.toFixed(1)
+                                    : target.toLocaleString()) +
+                                suffix;
+                    }
+                    requestAnimationFrame(tick);
+                    obs.unobserve(el);
+                });
+            },
+            { threshold: 0.3 },
+        );
+        counters.forEach((c) => obs.observe(c));
+    }
+</script>

@@ -1,0 +1,163 @@
+---
+/**
+ * BlogSection.astro
+ * Displays a grid of recent blog posts. Embeddable in any page via DynamicSection.
+ * Data comes from src/content/blog/*.md (Astro content collection).
+ */
+import { getCollection } from "astro:content";
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    maxPosts?: number;
+    language?: string;
+    buttonText?: string;
+    buttonUrl?: string;
+}
+
+const {
+    sectionId = "blog",
+    title = "Latest News & Insights",
+    description = "",
+    maxPosts = 6,
+    language = "en",
+    buttonText = "Read all articles",
+    buttonUrl = "/blog",
+} = Astro.props;
+
+// Load blog posts, filter by language, sort by date
+const allPosts = await getCollection("blog");
+const posts = allPosts
+    .filter(
+        (p) =>
+            (p.data.lang ?? "en") === language ||
+            (p.data.lang ?? "en") === "en",
+    )
+    .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf())
+    .slice(0, maxPosts);
+---
+
+<section id={sectionId} class="section-base">
+    <div class="container mx-auto px-4">
+        <!-- Header -->
+        <div class="mb-10 text-center">
+            <h2 class="h1-noto-sans inline-block mb-4">{title}</h2>
+            {
+                description && (
+                    <p class="text-slate-400 max-w-2xl mx-auto text-base leading-relaxed">
+                        {description}
+                    </p>
+                )
+            }
+        </div>
+
+        {
+            posts.length === 0 ? (
+                <p class="text-center text-slate-500 py-16">
+                    No posts yet. Check back soon!
+                </p>
+            ) : (
+                <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                    {posts.map((post) => {
+                        const slug = post.slug;
+                        const {
+                            title: postTitle,
+                            date,
+                            author,
+                            excerpt,
+                            coverImage,
+                            tags = [],
+                            featured,
+                        } = post.data;
+                        const formattedDate = new Intl.DateTimeFormat(
+                            language === "de"
+                                ? "de-CH"
+                                : language === "it"
+                                  ? "it-CH"
+                                  : "en-GB",
+                            {
+                                day: "2-digit",
+                                month: "short",
+                                year: "numeric",
+                            },
+                        ).format(date);
+
+                        return (
+                            <article class="card-base group flex flex-col">
+                                {/* Cover image */}
+                                {coverImage && (
+                                    <a
+                                        href={`/blog/${slug}`}
+                                        class="block -mx-[var(--space-card)] -mt-[var(--space-card)] mb-4 overflow-hidden rounded-t-[var(--radius-lg)]"
+                                        tabindex="-1"
+                                    >
+                                        <img
+                                            src={coverImage}
+                                            alt={postTitle}
+                                            class="w-full h-44 object-cover transition-transform duration-500 group-hover:scale-105"
+                                            loading="lazy"
+                                        />
+                                    </a>
+                                )}
+
+                                {/* Tags */}
+                                {tags.length > 0 && (
+                                    <div class="flex flex-wrap gap-1.5 mb-3">
+                                        {tags.slice(0, 3).map((tag) => (
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-blue-900/40 text-blue-400">
+                                                {tag}
+                                            </span>
+                                        ))}
+                                        {featured && (
+                                            <span class="text-[10px] font-semibold uppercase tracking-wider px-2 py-0.5 rounded-full bg-yellow-900/40 text-yellow-400">
+                                                Featured
+                                            </span>
+                                        )}
+                                    </div>
+                                )}
+
+                                {/* Title */}
+                                <h3 class="text-lg font-semibold text-gray-800 leading-snug mb-2 flex-1">
+                                    <a
+                                        href={`/blog/${slug}`}
+                                        class="hover:text-blue-600 transition-colors"
+                                    >
+                                        {postTitle}
+                                    </a>
+                                </h3>
+
+                                {/* Excerpt */}
+                                {excerpt && (
+                                    <p class="text-sm text-slate-500 leading-relaxed mb-4 line-clamp-3">
+                                        {excerpt}
+                                    </p>
+                                )}
+
+                                {/* Meta */}
+                                <div class="flex items-center justify-between text-xs text-slate-400 mt-auto pt-3 border-t border-slate-100">
+                                    <span>{author}</span>
+                                    <time datetime={date.toISOString()}>
+                                        {formattedDate}
+                                    </time>
+                                </div>
+                            </article>
+                        );
+                    })}
+                </div>
+            )
+        }
+
+        {/* CTA */}
+        {
+            buttonText && buttonUrl && posts.length > 0 && (
+                <div class="text-center mt-10">
+                    <a href={buttonUrl} class="btn btn-primary">
+                        <i class="material-icons text-base">article</i>
+                        {buttonText}
+                    </a>
+                </div>
+            )
+        }
+    </div>
+</section>

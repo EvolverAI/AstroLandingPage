@@ -1,0 +1,2807 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Editor — EvolverAI Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.3/Sortable.min.js"></script>
+  <!-- Quill rich text editor -->
+  <link href="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.snow.css" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/quill@2.0.2/dist/quill.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <script>
+    (function() {
+      const token = sessionStorage.getItem('adminToken');
+      if (!token) return;
+      const _fetch = window.fetch;
+      window.fetch = function(url, opts = {}) {
+        if (typeof url === 'string' && url.startsWith('/api')) {
+          opts.headers = { ...(opts.headers || {}), 'Authorization': 'Bearer ' + token };
+        }
+        return _fetch(url, opts).then(res => {
+          if (res.status === 401) { sessionStorage.removeItem('adminToken'); location.href = '/login.html?next=' + encodeURIComponent(location.pathname + location.search); }
+          return res;
+        });
+      };
+    })();
+  </script>
+  <style>
+    [x-cloak] {
+      display: none !important;
+    }
+
+    body {
+      background: #0f172a;
+    }
+
+    textarea {
+      resize: vertical;
+    }
+
+    .insert-bar {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      cursor: pointer;
+      padding: 4px 0;
+      opacity: 0.3;
+      transition: opacity 0.15s;
+    }
+
+    .insert-bar:hover {
+      opacity: 1;
+    }
+
+    .insert-bar-line {
+      flex: 1;
+      height: 2px;
+      background: #3b82f6;
+      border-radius: 1px;
+    }
+
+    .insert-bar-label {
+      font-size: 0.7rem;
+      color: #3b82f6;
+      white-space: nowrap;
+      background: #0f172a;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #3b82f6;
+    }
+
+    .drag-handle {
+      cursor: grab;
+      touch-action: none;
+    }
+    .drag-handle:active { cursor: grabbing; }
+    .sortable-ghost { opacity: 0.4; }
+    .sortable-chosen { box-shadow: 0 0 0 2px #3b82f6; border-radius: 0.75rem; }
+
+    /* Quill dark theme overrides */
+    .ql-toolbar.ql-snow {
+      background: #1e293b;
+      border-color: #475569;
+      border-radius: 0.5rem 0.5rem 0 0;
+    }
+    .ql-container.ql-snow {
+      background: #334155;
+      border-color: #475569;
+      border-radius: 0 0 0.5rem 0.5rem;
+      min-height: 80px;
+      font-size: 0.875rem;
+      color: #e2e8f0;
+    }
+    .ql-editor { min-height: 80px; }
+    .ql-snow .ql-stroke { stroke: #94a3b8; }
+    .ql-snow .ql-fill { fill: #94a3b8; }
+    .ql-snow .ql-picker { color: #94a3b8; }
+    .ql-snow .ql-picker-options { background: #1e293b; border-color: #475569; }
+    .ql-snow.ql-toolbar button:hover .ql-stroke,
+    .ql-snow .ql-toolbar button:hover .ql-stroke { stroke: #fff; }
+    .ql-snow.ql-toolbar button.ql-active .ql-stroke { stroke: #60a5fa; }
+    .ql-editor.ql-blank::before { color: #64748b; font-style: normal; }
+  </style>
+</head>
+
+<body class="text-gray-200 min-h-screen font-sans">
+
+  <div x-data="editor()" x-init="init()" x-cloak>
+
+    <!-- Header -->
+    <header
+      class="bg-slate-900 border-b border-slate-700 px-6 py-4 flex items-center justify-between sticky top-0 z-50">
+      <div class="flex items-center gap-3">
+        <a href="/" class="text-slate-400 hover:text-white text-sm">← Dashboard</a>
+        <span class="text-slate-600">/</span>
+        <span class="font-semibold capitalize" x-text="page"></span>
+        <span class="text-slate-600">/</span>
+        <span class="text-blue-400 text-sm" x-text="currentLang"></span>
+      </div>
+      <div class="flex items-center gap-3">
+        <select x-model="currentLang" @change="loadContent()"
+          class="bg-slate-800 border border-slate-600 rounded-lg px-3 py-1.5 text-sm focus:outline-none focus:border-blue-500">
+          <template x-for="lang in languages" :key="lang.code">
+            <option :value="lang.code" x-text="`${lang.flag} ${lang.name}`"></option>
+          </template>
+        </select>
+        <a :href="`/translate.html?page=${page}`"
+          class="text-purple-400 hover:text-purple-300 text-sm border border-purple-800 px-3 py-1.5 rounded-lg transition">
+          Translate ✦
+        </a>
+        <a :href="`http://localhost:4321/${currentLang}${page !== 'home' ? '/' + page : ''}`" target="_blank"
+          class="text-slate-400 hover:text-white text-sm border border-slate-600 px-3 py-1.5 rounded-lg transition">
+          Preview ↗
+        </a>
+        <!-- Draft / Publish toggle -->
+        <button @click="togglePageStatus()"
+          :disabled="togglingStatus"
+          :class="pageStatus === 'published' ? 'border-green-700 text-green-400 hover:bg-green-900/20' : 'border-yellow-700 text-yellow-400 hover:bg-yellow-900/20'"
+          class="text-sm border px-3 py-1.5 rounded-lg transition disabled:opacity-50"
+          :title="pageStatus === 'published' ? 'Click to set as Draft' : 'Click to Publish'">
+          <span x-show="!togglingStatus" x-text="pageStatus === 'published' ? '● Published' : '○ Draft'"></span>
+          <span x-show="togglingStatus">...</span>
+        </button>
+        <!-- Undo / Redo -->
+        <button @click="undoAction()" :disabled="undoStack.length === 0" title="Undo (Ctrl+Z)"
+          class="text-slate-400 hover:text-white disabled:opacity-20 px-2 py-1.5 rounded-lg border border-slate-700 text-sm transition">↩</button>
+        <button @click="redoAction()" :disabled="redoStack.length === 0" title="Redo (Ctrl+Shift+Z)"
+          class="text-slate-400 hover:text-white disabled:opacity-20 px-2 py-1.5 rounded-lg border border-slate-700 text-sm transition">↪</button>
+        <!-- Device toggles (shown when preview open) -->
+        <div x-show="previewOpen" class="flex items-center border border-slate-700 rounded-lg overflow-hidden">
+          <button @click="previewDevice='desktop'"
+            :class="previewDevice==='desktop' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'"
+            class="px-2.5 py-1.5 text-sm transition" title="Desktop">🖥</button>
+          <button @click="previewDevice='tablet'"
+            :class="previewDevice==='tablet' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'"
+            class="px-2.5 py-1.5 text-sm transition border-x border-slate-700" title="Tablet (768px)">⬜</button>
+          <button @click="previewDevice='mobile'"
+            :class="previewDevice==='mobile' ? 'bg-slate-600 text-white' : 'text-slate-400 hover:text-white'"
+            class="px-2.5 py-1.5 text-sm transition" title="Mobile (390px)">📱</button>
+        </div>
+        <button @click="previewOpen = !previewOpen" class="text-sm border px-3 py-1.5 rounded-lg transition"
+          :class="previewOpen ? 'border-blue-500 text-blue-400 bg-blue-900/20' : 'border-slate-600 text-slate-400 hover:text-white'">
+          ⊙ Live
+        </button>
+        <button @click="shortcutPanel = true" class="text-slate-500 hover:text-white text-sm px-2 py-1.5 rounded-lg transition" title="Keyboard shortcuts (?)">?</button>
+      </div>
+    </header>
+
+    <!-- Loading -->
+    <div x-show="loading" class="flex items-center justify-center h-64">
+      <div class="text-slate-400">Loading...</div>
+    </div>
+
+    <!-- Split-pane wrapper -->
+    <div :class="previewOpen ? 'flex h-[calc(100vh-65px)] overflow-hidden' : 'block'">
+      <div x-show="!loading" :class="previewOpen ? 'flex-1 overflow-y-auto h-full px-6 py-8' : 'max-w-4xl mx-auto px-6 py-8'">
+
+        <!-- Global feedback -->
+        <div x-show="globalSaveError"
+          class="mb-4 bg-red-900/40 border border-red-700 text-red-300 text-sm px-4 py-2 rounded-lg flex items-center justify-between">
+          <span x-text="globalSaveError"></span>
+          <button @click="globalSaveError = ''" class="text-red-400 hover:text-red-200 ml-4">✕</button>
+        </div>
+
+        <!-- Toast notifications -->
+        <div class="fixed bottom-6 right-6 z-[9998] flex flex-col gap-2 pointer-events-none" style="max-width:320px">
+          <template x-for="toast in toasts" :key="toast.id">
+            <div class="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl text-sm font-medium transition-all"
+              :class="toast.type === 'error' ? 'bg-red-900 border border-red-700 text-red-200' : toast.type === 'success' ? 'bg-green-900 border border-green-700 text-green-200' : 'bg-slate-700 border border-slate-600 text-slate-200'">
+              <span x-text="toast.type === 'error' ? '⚠️' : toast.type === 'success' ? '✓' : 'ℹ️'"></span>
+              <span x-text="toast.message" class="flex-1"></span>
+              <button @click="toasts = toasts.filter(t => t.id !== toast.id)" class="opacity-60 hover:opacity-100">✕</button>
+            </div>
+          </template>
+        </div>
+
+        <!-- ── SEO Meta ──────────────────────────────────────────────────────── -->
+        <div class="mb-6 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden">
+          <div class="flex items-center justify-between px-5 py-3 bg-slate-700/50 border-b border-slate-700">
+            <div class="flex items-center gap-2">
+              <span class="font-mono text-sm text-blue-300">meta</span>
+              <span class="text-xs px-1.5 py-0.5 rounded bg-slate-600 text-slate-400">SEO</span>
+            </div>
+            <button @click="saveMeta()"
+              class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition"
+              :disabled="savingMeta">
+              <span x-show="!savingMeta">Save</span>
+              <span x-show="savingMeta">Saving...</span>
+            </button>
+          </div>
+          <div class="p-5 space-y-3">
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Page Title <span class="text-slate-600">(shown in browser
+                  tab and Google)</span></label>
+              <input type="text" x-model="metaFields.title"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                placeholder="e.g. EvolverAI - Integrated AI Solutions" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-400 block mb-1">Meta Description <span class="text-slate-600">(shown in
+                  Google search results)</span></label>
+              <textarea x-model="metaFields.description" rows="2"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                placeholder="e.g. Discover EvolverAI, your trusted partner..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Sections ─────────────────────────────────────────────────────── -->
+
+        <!-- Insert bar at the very top -->
+        <div class="insert-bar group mb-2" @click="openInsertAt(null)">
+          <div class="insert-bar-line"></div>
+          <span class="insert-bar-label">+ Insert section here</span>
+          <div class="insert-bar-line"></div>
+        </div>
+
+        <!-- Section search (shown when 6+ sections) -->
+        <div x-show="sectionOrder.length >= 6" class="mb-3">
+          <input type="text" x-model="sectionSearch" placeholder="🔍 Filter sections..."
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <div id="sections-sortable">
+        <template x-for="sectionKey in sectionOrder.filter(k => !sectionSearch || k.toLowerCase().includes(sectionSearch.toLowerCase()))" :key="sectionKey">
+          <div x-show="editableContent[sectionKey] !== undefined" :data-section-id="sectionKey">
+
+            <!-- Section card -->
+            <div class="mb-1 bg-slate-800 border border-slate-700 rounded-xl overflow-hidden"
+              :class="!isSectionVisible(sectionKey) ? 'opacity-60' : ''"
+              @input="markDirty(sectionKey)" @change="markDirty(sectionKey)">
+              <div class="flex items-center justify-between px-5 py-3 bg-slate-700/50 border-b border-slate-700">
+                <div class="flex items-center gap-2">
+                  <button @click="toggleSection(sectionKey); scrollPreviewTo(sectionKey)"
+                    class="text-slate-400 hover:text-white">
+                    <span x-text="collapsed[sectionKey] ? '▶' : '▼'" class="text-xs"></span>
+                  </button>
+                  <!-- Drag handle -->
+                  <span class="drag-handle text-slate-600 hover:text-slate-400 select-none px-0.5" title="Drag to reorder">⠿</span>
+                  <span class="font-mono text-sm text-blue-300" x-text="sectionKey"></span>
+                  <span class="text-xs px-1.5 py-0.5 rounded bg-slate-600 text-slate-400"
+                    x-text="getSectionType(sectionKey)"></span>
+                  <!-- Hidden badge -->
+                  <span x-show="!isSectionVisible(sectionKey)" class="text-xs px-1.5 py-0.5 rounded bg-yellow-900/50 text-yellow-400 border border-yellow-800">Hidden</span>
+                  <!-- Auto-save status badge -->
+                  <span x-show="autoSaveStatus[sectionKey] === 'saving'"
+                    class="text-xs text-blue-400 flex items-center gap-1">
+                    <span
+                      class="inline-block w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin"></span>
+                    Saving…
+                  </span>
+                  <span x-show="autoSaveStatus[sectionKey] === 'saved'" class="text-xs text-green-400">✓ Saved</span>
+                  <span x-show="autoSaveStatus[sectionKey] === 'error'" class="text-xs text-red-400 cursor-pointer"
+                    @click="autoSaveSection(sectionKey)" title="Click to retry">⚠ Failed — retry?</span>
+                  <span x-show="dirtyKeys[sectionKey] && !autoSaveStatus[sectionKey]" class="text-xs text-yellow-500"
+                    title="Unsaved changes">●</span>
+                </div>
+                <div class="flex items-center gap-2">
+                  <!-- Explicit save (kept as fallback) -->
+                  <button @click="autoSaveSection(sectionKey)"
+                    class="text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1 rounded-lg transition"
+                    :disabled="autoSaveStatus[sectionKey] === 'saving'">
+                    <span x-show="autoSaveStatus[sectionKey] !== 'saving'">Save</span>
+                    <span x-show="autoSaveStatus[sectionKey] === 'saving'">Saving...</span>
+                  </button>
+                  <!-- Visibility toggle -->
+                  <button @click="toggleSectionVisibility(sectionKey)"
+                    :title="isSectionVisible(sectionKey) ? 'Hide section' : 'Show section'"
+                    :class="isSectionVisible(sectionKey) ? 'text-slate-400 hover:text-white' : 'text-yellow-500 hover:text-yellow-300'"
+                    class="px-1 py-1 rounded transition text-sm">
+                    <span x-text="isSectionVisible(sectionKey) ? '👁' : '🚫'"></span>
+                  </button>
+                  <!-- Duplicate section -->
+                  <button @click="duplicateSection(sectionKey)"
+                    class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white px-2 py-1 rounded-lg transition"
+                    title="Duplicate section">⊞</button>
+                  <!-- Revision history -->
+                  <button @click="openRevisionPanel(sectionKey)"
+                    class="text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 hover:text-white px-2 py-1 rounded-lg transition"
+                    title="Revision history">🕓</button>
+                  <!-- Reorder arrows (kept as fallback) -->
+                  <button @click="moveSection(sectionKey, 'up')" :disabled="sectionOrder.indexOf(sectionKey) === 0"
+                    class="text-slate-400 hover:text-white disabled:opacity-20 px-1 py-1 rounded transition"
+                    title="Move up">↑</button>
+                  <button @click="moveSection(sectionKey, 'down')"
+                    :disabled="sectionOrder.indexOf(sectionKey) === sectionOrder.length - 1"
+                    class="text-slate-400 hover:text-white disabled:opacity-20 px-1 py-1 rounded transition"
+                    title="Move down">↓</button>
+                  <button @click="confirmDeleteSection(sectionKey)"
+                    class="text-xs bg-red-900/50 hover:bg-red-700 text-red-300 hover:text-white px-2 py-1 rounded-lg transition"
+                    title="Delete section">✕</button>
+                </div>
+              </div>
+
+              <!-- Section fields -->
+              <div x-show="!collapsed[sectionKey]" class="p-5 space-y-4">
+                <template x-for="(value, key) in editableContent[sectionKey]" :key="key">
+                  <div x-show="isEditable(key, value)">
+                    <label class="text-xs text-slate-400 block mb-1 font-mono" x-text="key"></label>
+
+                    <!-- String field: Quill WYSIWYG for description, textarea for others -->
+                    <template x-if="typeof value === 'string'">
+                      <div>
+                        <!-- Quill rich text editor for description fields -->
+                        <template x-if="key === 'description'">
+                          <div>
+                            <div :id="'quill-' + sectionKey + '-' + key"
+                              x-init="$nextTick(() => initQuill(sectionKey, key, $el))"></div>
+                            <p class="text-xs text-slate-600 mt-1">Rich text — bold, italic, lists, links supported</p>
+                          </div>
+                        </template>
+                        <!-- Plain textarea for all other string fields -->
+                        <template x-if="key !== 'description'">
+                          <div class="relative">
+                            <textarea :rows="value.length > 100 ? 4 : 2"
+                              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500 pr-20"
+                              x-model="editableContent[sectionKey][key]"></textarea>
+                            <!-- Image browse button for image-like keys -->
+                            <template x-if="/image|photo|logo|background|bg|img/i.test(key)">
+                              <button @click="openImageBrowser(sectionKey, key)"
+                                class="absolute top-2 right-10 text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-2 py-1 rounded transition"
+                                title="Browse images">🖼</button>
+                            </template>
+                            <button @click="improveCopy(sectionKey, key)"
+                              class="absolute top-2 right-2 text-xs bg-purple-700 hover:bg-purple-600 text-white px-2 py-1 rounded transition"
+                              :disabled="improving[sectionKey + '.' + key]" title="Improve with AI">
+                              <span x-show="!improving[sectionKey + '.' + key]">❆ AI</span>
+                              <span x-show="improving[sectionKey + '.' + key]">...</span>
+                            </button>
+                          </div>
+                        </template>
+                      </div>
+                    </template>
+
+                    <!-- Cards array -->
+                    <template x-if="key === 'cards' && Array.isArray(value)">
+                      <div class="space-y-3">
+                        <div :id="'cards-sortable-' + sectionKey" class="space-y-3">
+                        <template x-for="(card, ci) in value" :key="ci">
+                          <div class="bg-slate-700/50 border border-slate-600 rounded-lg p-4">
+                            <div class="flex items-center justify-between mb-3">
+                              <div class="flex items-center gap-2">
+                                <span class="drag-handle text-slate-600 hover:text-slate-400 select-none px-0.5" title="Drag to reorder">⠿</span>
+                                <span class="text-xs text-slate-500 font-mono bg-slate-700 px-1.5 py-0.5 rounded"
+                                  x-text="'#' + (ci + 1)"></span>
+                                <!-- Icon picker trigger -->
+                                <button @click="openIconPicker(sectionKey, ci)"
+                                  class="flex items-center gap-1 bg-slate-700 hover:bg-slate-600 border border-slate-600 rounded px-2 py-1 text-xs transition"
+                                  :title="getCardIcon(sectionKey, ci) || 'Pick icon'">
+                                  <template x-if="getCardIcon(sectionKey, ci)">
+                                    <span class="material-icons text-base leading-none"
+                                      :class="getCardIconColor(sectionKey, ci)"
+                                      x-text="getCardIcon(sectionKey, ci)"></span>
+                                  </template>
+                                  <template x-if="!getCardIcon(sectionKey, ci)">
+                                    <span class="flex items-center gap-1 text-slate-400">
+                                      <span class="material-icons text-base leading-none">add_circle_outline</span>
+                                      <span>icon</span>
+                                    </span>
+                                  </template>
+                                </button>
+                                <!-- Card image indicator -->
+                                <template x-if="getCardLayoutProp(sectionKey, ci, 'image')">
+                                  <span
+                                    class="text-xs text-emerald-400 border border-emerald-800 rounded px-1.5 py-0.5">🖼
+                                    img</span>
+                                </template>
+                              </div>
+                              <div class="flex items-center gap-1">
+                                <button @click="moveCard(sectionKey, ci, 'up')" :disabled="ci === 0"
+                                  class="text-slate-400 hover:text-white disabled:opacity-20 px-1.5 py-1 rounded transition text-xs"
+                                  title="Move up">↑</button>
+                                <button @click="moveCard(sectionKey, ci, 'down')"
+                                  :disabled="ci >= (editableContent[sectionKey]?.cards?.length || 1) - 1"
+                                  class="text-slate-400 hover:text-white disabled:opacity-20 px-1.5 py-1 rounded transition text-xs"
+                                  title="Move down">↓</button>
+                                <button @click="duplicateCard(sectionKey, ci)"
+                                  class="text-xs text-blue-400 hover:text-blue-300 border border-slate-600 hover:border-blue-500 px-2 py-1 rounded transition"
+                                  title="Duplicate card">⧉</button>
+                                <button @click="deleteCard(sectionKey, ci)"
+                                  class="text-xs text-red-400 hover:text-red-300 border border-slate-600 hover:border-red-800 px-2 py-1 rounded transition"
+                                  title="Delete card">✕</button>
+                              </div>
+                            </div>
+                            <template x-for="(cv, ck) in card" :key="ck">
+                              <div x-show="isEditable(ck, cv)" class="mb-3">
+                                <label class="text-xs text-slate-500 block mb-1 font-mono" x-text="ck"></label>
+                                <template x-if="typeof cv === 'string'">
+                                  <div class="relative">
+                                    <textarea :rows="cv.length > 80 ? 3 : 2"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-xs focus:outline-none focus:border-blue-500 pr-7"
+                                      x-model="editableContent[sectionKey]['cards'][ci][ck]"></textarea>
+                                    <template x-if="/image|photo|logo|background|bg|img/i.test(ck)">
+                                      <button @click="openImageBrowserForCard(sectionKey, ci)"
+                                        class="absolute top-1.5 right-1.5 text-xs bg-emerald-800 hover:bg-emerald-700 text-white px-1.5 py-0.5 rounded transition"
+                                        title="Browse images">🖼</button>
+                                    </template>
+                                  </div>
+                                </template>
+                                <!-- Features list inside card -->
+                                <template x-if="ck === 'features' && Array.isArray(cv)">
+                                  <div class="space-y-2">
+                                    <template x-for="(feat, fi) in cv" :key="fi">
+                                      <div class="flex gap-2 items-center">
+                                        <span class="text-slate-500 text-xs shrink-0" x-text="fi + 1 + '.'"></span>
+                                        <input type="text"
+                                          class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                          :value="typeof feat === 'string' ? feat : feat.text"
+                                          @input="setFeatureText(sectionKey, ci, fi, $event.target.value)" />
+                                        <button @click="deleteFeature(sectionKey, ci, fi)"
+                                          class="text-red-400 hover:text-red-300 text-xs shrink-0">✕</button>
+                                      </div>
+                                    </template>
+                                    <button @click="addFeature(sectionKey, ci)"
+                                      class="text-xs text-green-400 hover:text-green-300 transition mt-1">+ Add
+                                      feature</button>
+                                  </div>
+                                </template>
+                              </div>
+                            </template>
+
+                            <!-- Add feature list if none exist yet -->
+                            <template x-if="!editableContent[sectionKey]?.cards?.[ci]?.features">
+                              <button @click="addFeature(sectionKey, ci)"
+                                class="w-full mt-1 text-xs text-blue-400 hover:text-blue-300 border border-dashed border-blue-900 hover:border-blue-500 rounded-lg py-1.5 transition">
+                                + Add Feature List to this card
+                              </button>
+                            </template>
+
+                            <!-- Links & Buttons row — INSIDE card div, ci is in scope -->
+                            <div class="mt-3 pt-3 border-t border-slate-600 space-y-3">
+
+                              <!-- Card Image -->
+                              <div>
+                                <p class="text-xs text-slate-500 font-semibold mb-1.5">🖼 Card Image <span
+                                    class="text-slate-600 font-normal">(replaces icon with an image)</span></p>
+                                <div class="flex gap-1">
+                                  <input type="text"
+                                    class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                    :value="getCardLayoutProp(sectionKey, ci, 'image') || ''"
+                                    @input="setCardLayoutProp(sectionKey, ci, 'image', $event.target.value)"
+                                    placeholder="/img/your-image.jpg (optional)" />
+                                  <button @click="openImageBrowserForCard(sectionKey, ci)"
+                                    class="bg-slate-600 hover:bg-slate-500 border border-slate-500 text-white px-2 py-1.5 rounded text-xs transition"
+                                    title="Browse images">🖼</button>
+                                  <template x-if="getCardLayoutProp(sectionKey, ci, 'image')">
+                                    <button @click="setCardLayoutProp(sectionKey, ci, 'image', '')"
+                                      class="bg-red-900/30 hover:bg-red-900/60 text-red-400 px-2 py-1.5 rounded text-xs transition"
+                                      title="Remove image">✕</button>
+                                  </template>
+                                </div>
+                              </div>
+
+                              <!-- Badges -->
+                              <div>
+                                <div class="flex items-center justify-between mb-1.5">
+                                  <p class="text-xs text-slate-500 font-semibold">🏷 Badges</p>
+                                  <button @click="addCardBadge(sectionKey, ci)"
+                                    class="text-xs text-green-400 hover:text-green-300 transition">+ Add badge</button>
+                                </div>
+                                <div x-show="!editableContent[sectionKey]?.cards?.[ci]?.badges?.length"
+                                  class="text-xs text-slate-600 italic">No badges</div>
+                                <div class="space-y-1">
+                                  <template
+                                    x-for="(badge, bi) in (editableContent[sectionKey]?.cards?.[ci]?.badges || [])"
+                                    :key="bi">
+                                    <div class="flex gap-1.5 items-center">
+                                      <input type="text"
+                                        class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                                        :value="badge.text || badge"
+                                        @input="setCardBadgeText(sectionKey, ci, bi, $event.target.value)"
+                                        placeholder="Badge label" />
+                                      <select :value="badge.color || 'bg-blue-600'"
+                                        @change="setCardBadgeColor(sectionKey, ci, bi, $event.target.value)"
+                                        class="bg-slate-700 border border-slate-600 rounded px-1.5 py-1 text-xs focus:outline-none focus:border-blue-500">
+                                        <option value="bg-blue-600">Blue</option>
+                                        <option value="bg-green-600">Green</option>
+                                        <option value="bg-purple-600">Purple</option>
+                                        <option value="bg-orange-600">Orange</option>
+                                        <option value="bg-red-600">Red</option>
+                                        <option value="bg-teal-600">Teal</option>
+                                        <option value="bg-pink-600">Pink</option>
+                                        <option value="bg-slate-600">Slate</option>
+                                      </select>
+                                      <button @click="removeCardBadge(sectionKey, ci, bi)"
+                                        class="text-red-400 hover:text-red-300 text-xs shrink-0">✕</button>
+                                    </div>
+                                  </template>
+                                </div>
+                              </div>
+
+                              <!-- Note -->
+                              <div>
+                                <p class="text-xs text-slate-500 font-semibold mb-1.5">📝 Note <span
+                                    class="text-slate-600 font-normal">(small callout at card bottom)</span></p>
+                                <input type="text"
+                                  class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                  :value="typeof (editableContent[sectionKey]?.cards?.[ci]?.note) === 'string' ? editableContent[sectionKey].cards[ci].note : (editableContent[sectionKey]?.cards?.[ci]?.note?.content || '')"
+                                  @input="setCardNote(sectionKey, ci, $event.target.value)"
+                                  placeholder="e.g. * Requires subscription (leave blank for none)" />
+                              </div>
+
+                              <!-- Link (text + URL pair) -->
+                              <div>
+                                <p class="text-xs text-slate-500 font-semibold mb-1.5">🔗 Link</p>
+                                <div class="grid grid-cols-2 gap-2">
+                                  <div>
+                                    <label class="text-xs text-slate-600 block mb-1">Label</label>
+                                    <input type="text"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                      :value="card.linkText || ''"
+                                      @input="editableContent[sectionKey].cards[ci].linkText = $event.target.value || undefined"
+                                      placeholder="e.g. Learn More" />
+                                  </div>
+                                  <div>
+                                    <label class="text-xs text-slate-600 block mb-1">URL</label>
+                                    <input type="text"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                      :value="getCardLayoutProp(sectionKey, ci, 'linkUrl') || card.linkUrl || ''"
+                                      @input="setCardLayoutProp(sectionKey, ci, 'linkUrl', $event.target.value)"
+                                      placeholder="e.g. /b2b or #section-id" />
+                                  </div>
+                                </div>
+                              </div>
+
+                              <!-- Button (text + URL + color) -->
+                              <div>
+                                <p class="text-xs text-slate-500 font-semibold mb-1.5">🔘 Button</p>
+                                <div class="grid grid-cols-3 gap-2">
+                                  <div>
+                                    <label class="text-xs text-slate-600 block mb-1">Label</label>
+                                    <input type="text"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                      :value="card.buttonText || ''"
+                                      @input="editableContent[sectionKey].cards[ci].buttonText = $event.target.value || undefined"
+                                      placeholder="e.g. Enroll Now" />
+                                  </div>
+                                  <div>
+                                    <label class="text-xs text-slate-600 block mb-1">URL</label>
+                                    <input type="text"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                      :value="getCardLayoutProp(sectionKey, ci, 'buttonUrl') || card.buttonUrl || ''"
+                                      @input="setCardLayoutProp(sectionKey, ci, 'buttonUrl', $event.target.value)"
+                                      placeholder="e.g. /enroll/course" />
+                                  </div>
+                                  <div>
+                                    <label class="text-xs text-slate-600 block mb-1">Color</label>
+                                    <select
+                                      :value="getCardLayoutProp(sectionKey, ci, 'buttonColor') || 'bg-blue-600 hover:bg-blue-700'"
+                                      @change="setCardLayoutProp(sectionKey, ci, 'buttonColor', $event.target.value)"
+                                      class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                                      <option value="bg-blue-600 hover:bg-blue-700">Blue</option>
+                                      <option value="bg-green-600 hover:bg-green-700">Green</option>
+                                      <option value="bg-purple-600 hover:bg-purple-700">Purple</option>
+                                      <option value="bg-pink-600 hover:bg-pink-700">Pink</option>
+                                      <option value="bg-indigo-600 hover:bg-indigo-700">Indigo</option>
+                                      <option value="bg-red-600 hover:bg-red-700">Red</option>
+                                      <option value="bg-orange-600 hover:bg-orange-700">Orange</option>
+                                      <option value="bg-teal-600 hover:bg-teal-700">Teal</option>
+                                    </select>
+                                  </div>
+                                </div>
+                              </div>
+
+                            </div>
+                          </div>
+                        </template>
+                        </div><!-- end cards-sortable -->
+
+                        <!-- Add card button -->
+                        <button @click="addCard(sectionKey)"
+                          class="w-full py-2 border border-dashed border-slate-600 hover:border-blue-500 text-slate-400 hover:text-blue-400 rounded-lg text-sm transition">
+                          + Add Card
+                        </button>
+                      </div>
+                    </template>
+
+                    <!-- Features at section level -->
+                    <template x-if="Array.isArray(editableContent[sectionKey].features)">
+                      <div>
+                        <label class="text-xs text-slate-400 block mb-1 font-mono">features</label>
+                        <div class="space-y-2">
+                          <template x-for="(feat, fi) in editableContent[sectionKey].features" :key="fi">
+                            <div class="flex gap-2 items-center">
+                              <span class="text-slate-500 text-xs shrink-0" x-text="fi + 1 + '.'"></span>
+                              <input type="text"
+                                class="flex-1 bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500"
+                                :value="typeof feat === 'string' ? feat : feat.text"
+                                @input="setSectionFeatureText(sectionKey, fi, $event.target.value)" />
+                              <button @click="deleteSectionFeature(sectionKey, fi)"
+                                class="text-red-400 hover:text-red-300 text-xs shrink-0">✕</button>
+                            </div>
+                          </template>
+                          <button @click="addSectionFeature(sectionKey)"
+                            class="text-xs text-green-400 hover:text-green-300 transition">+ Add feature</button>
+                        </div>
+                      </div>
+                    </template>
+
+                  </div>
+                </template>
+              </div>
+
+              <!-- ── Layout controls (shown for product + content_header sections) ── -->
+              <template x-if="getSectionType(sectionKey) === 'product'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Layout Settings</p>
+                  <div class="grid grid-cols-2 gap-3 mb-3">
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Image</label>
+                      <div class="flex gap-1">
+                        <input type="text" :value="layoutConfig?.section_config?.[sectionKey]?.image || ''"
+                          @input="setSectionLayoutProp(sectionKey, 'image', $event.target.value)"
+                          class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="/img/evolverai-web-wfm-bg.png" />
+                        <button @click="openImageBrowser(sectionKey, 'image')"
+                          class="bg-slate-600 hover:bg-slate-500 text-white px-2 py-1.5 rounded-lg text-xs transition"
+                          title="Browse images">🖼</button>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Image Position</label>
+                      <select :value="layoutConfig?.section_config?.[sectionKey]?.imagePosition || 'right'"
+                        @change="setSectionLayoutProp(sectionKey, 'imagePosition', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                        <option value="right">Right ▶</option>
+                        <option value="left">◀ Left</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Button URL</label>
+                      <input type="text" :value="layoutConfig?.section_config?.[sectionKey]?.buttonUrl || ''"
+                        @input="setSectionLayoutProp(sectionKey, 'buttonUrl', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                        placeholder="e.g. /wfm" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Button Color</label>
+                      <select
+                        :value="layoutConfig?.section_config?.[sectionKey]?.buttonColor || 'bg-blue-600 hover:bg-blue-700'"
+                        @change="setSectionLayoutProp(sectionKey, 'buttonColor', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                        <option value="bg-blue-600 hover:bg-blue-700">Blue</option>
+                        <option value="bg-green-600 hover:bg-green-700">Green</option>
+                        <option value="bg-purple-600 hover:bg-purple-700">Purple</option>
+                        <option value="bg-pink-600 hover:bg-pink-700">Pink</option>
+                        <option value="bg-indigo-600 hover:bg-indigo-700">Indigo</option>
+                        <option value="bg-red-600 hover:bg-red-700">Red</option>
+                        <option value="bg-orange-600 hover:bg-orange-700">Orange</option>
+                        <option value="bg-teal-600 hover:bg-teal-700">Teal</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Layout controls for content_header ── -->
+              <template x-if="getSectionType(sectionKey) === 'content_header'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Layout Settings</p>
+                  <div class="space-y-3">
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Background Image</label>
+                      <div class="flex gap-1">
+                        <input type="text" :value="getSectionPageProp(sectionKey, 'background_image') || ''"
+                          @input="setSectionPageProp(sectionKey, 'background_image', $event.target.value)"
+                          class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="/img/evolverai-web-company-bg.jpg" />
+                        <button @click="openImageBrowser(sectionKey, 'background_image')"
+                          class="bg-slate-600 hover:bg-slate-500 text-white px-2 py-1.5 rounded-lg text-xs transition"
+                          title="Browse images">🖼</button>
+                      </div>
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Min Height</label>
+                      <input type="text" :value="getSectionPageProp(sectionKey, 'min_height') || '560px'"
+                        @input="setSectionPageProp(sectionKey, 'min_height', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                        placeholder="560px" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Company Logo <span class="text-slate-600">(image
+                          shown inside the content panel)</span></label>
+                      <div class="flex gap-1">
+                        <input type="text" :value="getSectionPageProp(sectionKey, 'logo') || ''"
+                          @input="setSectionPageProp(sectionKey, 'logo', $event.target.value)"
+                          class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="/img/your-logo.svg (optional)" />
+                        <button @click="openImageBrowser(sectionKey, 'logo')"
+                          class="bg-slate-600 hover:bg-slate-500 text-white px-2 py-1.5 rounded-lg text-xs transition"
+                          title="Browse images">🖼</button>
+                        <template x-if="getSectionPageProp(sectionKey, 'logo')">
+                          <button @click="setSectionPageProp(sectionKey, 'logo', '')"
+                            class="bg-red-900/30 hover:bg-red-900/60 text-red-400 px-2 py-1.5 rounded-lg text-xs transition">✕</button>
+                        </template>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Layout controls for cards sections ── -->
+              <template x-if="getSectionType(sectionKey) === 'cards'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider mb-3">Layout Settings</p>
+                  <!-- Responsive columns -->
+                  <div class="mb-3">
+                    <label class="text-xs text-slate-400 block mb-2">Columns per row</label>
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">📱 Mobile</label>
+                        <select
+                          :value="layoutConfig?.section_config?.[sectionKey]?.responsiveColumns?.mobile || layoutConfig?.defaults?.cards?.responsiveColumns?.mobile || 1"
+                          @change="setSectionColumns(sectionKey, 'mobile', parseInt($event.target.value))"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">💻 Tablet</label>
+                        <select
+                          :value="layoutConfig?.section_config?.[sectionKey]?.responsiveColumns?.tablet || layoutConfig?.defaults?.cards?.responsiveColumns?.tablet || 2"
+                          @change="setSectionColumns(sectionKey, 'tablet', parseInt($event.target.value))"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                        </select>
+                      </div>
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">🖥 Desktop</label>
+                        <select
+                          :value="layoutConfig?.section_config?.[sectionKey]?.responsiveColumns?.desktop || layoutConfig?.defaults?.cards?.responsiveColumns?.desktop || 3"
+                          @change="setSectionColumns(sectionKey, 'desktop', parseInt($event.target.value))"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                          <option value="1">1</option>
+                          <option value="2">2</option>
+                          <option value="3">3</option>
+                          <option value="4">4</option>
+                          <option value="5">5</option>
+                          <option value="6">6</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Section-level CTA (label + URL + color) -->
+                  <div>
+                    <p class="text-xs text-slate-400 font-semibold mb-2">Section CTA Button <span
+                        class="text-slate-600 font-normal">(optional — appears below cards)</span></p>
+                    <div class="grid grid-cols-3 gap-2">
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">Label</label>
+                        <input type="text" :value="editableContent[sectionKey]?.buttonText || ''"
+                          @input="editableContent[sectionKey].buttonText = $event.target.value || undefined"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="e.g. Learn More" />
+                      </div>
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">URL</label>
+                        <input type="text" :value="layoutConfig?.section_config?.[sectionKey]?.buttonUrl || ''"
+                          @input="setSectionLayoutProp(sectionKey, 'buttonUrl', $event.target.value)"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                          placeholder="e.g. /b2b" />
+                      </div>
+                      <div>
+                        <label class="text-xs text-slate-600 block mb-1">Color</label>
+                        <select
+                          :value="layoutConfig?.section_config?.[sectionKey]?.buttonColor || 'bg-blue-600 hover:bg-blue-700'"
+                          @change="setSectionLayoutProp(sectionKey, 'buttonColor', $event.target.value)"
+                          class="w-full bg-slate-700 border border-slate-600 rounded px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500">
+                          <option value="bg-blue-600 hover:bg-blue-700">Blue</option>
+                          <option value="bg-green-600 hover:bg-green-700">Green</option>
+                          <option value="bg-purple-600 hover:bg-purple-700">Purple</option>
+                          <option value="bg-pink-600 hover:bg-pink-700">Pink</option>
+                          <option value="bg-indigo-600 hover:bg-indigo-700">Indigo</option>
+                          <option value="bg-red-600 hover:bg-red-700">Red</option>
+                          <option value="bg-orange-600 hover:bg-orange-700">Orange</option>
+                          <option value="bg-teal-600 hover:bg-teal-700">Teal</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Testimonials editor ── -->
+              <template x-if="getSectionType(sectionKey) === 'testimonials'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Testimonials</p>
+                    <button @click="addTestimonial(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition flex items-center gap-1">
+                      <span>+</span> Add Testimonial
+                    </button>
+                  </div>
+                  <div x-show="!(editableContent[sectionKey]?.testimonials?.length)"
+                    class="text-slate-500 text-sm py-4 text-center border border-dashed border-slate-600 rounded-lg">
+                    No testimonials yet — click "Add Testimonial" above.
+                  </div>
+                  <div class="space-y-4">
+                    <template x-for="(t, ti) in (editableContent[sectionKey]?.testimonials || [])" :key="ti">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4 space-y-3">
+                        <div class="flex items-center justify-between">
+                          <span class="text-xs font-mono text-slate-400 bg-slate-700 px-2 py-0.5 rounded"
+                            x-text="'#' + (ti+1)"></span>
+                          <div class="flex items-center gap-1">
+                            <button @click="moveTestimonial(sectionKey, ti, -1)" :disabled="ti === 0"
+                              class="text-slate-400 hover:text-white disabled:opacity-20 px-1.5 py-1 rounded text-xs transition"
+                              title="Move up">↑</button>
+                            <button @click="moveTestimonial(sectionKey, ti, 1)"
+                              :disabled="ti >= (editableContent[sectionKey]?.testimonials?.length||1)-1"
+                              class="text-slate-400 hover:text-white disabled:opacity-20 px-1.5 py-1 rounded text-xs transition"
+                              title="Move down">↓</button>
+                            <button @click="deleteTestimonial(sectionKey, ti)"
+                              class="text-xs text-red-400 hover:text-red-300 border border-slate-600 hover:border-red-800 px-2 py-1 rounded transition">✕</button>
+                          </div>
+                        </div>
+
+                        <!-- Quote -->
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Quote *</label>
+                          <textarea rows="3" x-model="editableContent[sectionKey].testimonials[ti].quote"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                            placeholder="The testimonial text…"></textarea>
+                        </div>
+
+                        <!-- Name + Role + Company row -->
+                        <div class="grid grid-cols-3 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Name</label>
+                            <input type="text" x-model="editableContent[sectionKey].testimonials[ti].name"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="Jane Smith" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Role / Title</label>
+                            <input type="text" x-model="editableContent[sectionKey].testimonials[ti].role"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="CEO" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Company</label>
+                            <input type="text" x-model="editableContent[sectionKey].testimonials[ti].company"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="Acme AG" />
+                          </div>
+                        </div>
+
+                        <!-- Avatar + Rating + Case Study URL -->
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Avatar image (optional)</label>
+                            <div class="flex gap-1">
+                              <input type="text" x-model="editableContent[sectionKey].testimonials[ti].avatar"
+                                class="flex-1 bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                                placeholder="/img/avatar.jpg" />
+                              <button @click="openImageBrowserForTestimonial(sectionKey, ti)"
+                                class="bg-emerald-800 hover:bg-emerald-700 text-white px-2 py-1 rounded-lg text-xs transition"
+                                title="Browse">🖼</button>
+                            </div>
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Star rating (1–5)</label>
+                            <div class="flex gap-1 mt-1.5">
+                              <template x-for="star in [1,2,3,4,5]" :key="star">
+                                <button @click="editableContent[sectionKey].testimonials[ti].rating = star"
+                                  class="text-xl leading-none transition"
+                                  :class="star <= (editableContent[sectionKey].testimonials[ti].rating || 0) ? 'text-yellow-400' : 'text-slate-600 hover:text-yellow-300'"
+                                  :title="star + ' star' + (star > 1 ? 's' : '')">★</button>
+                              </template>
+                              <button x-show="editableContent[sectionKey].testimonials[ti].rating"
+                                @click="delete editableContent[sectionKey].testimonials[ti].rating"
+                                class="text-xs text-slate-500 hover:text-slate-300 ml-1">clear</button>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Case study URL (optional)</label>
+                          <input type="text" x-model="editableContent[sectionKey].testimonials[ti].caseStudyUrl"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500"
+                            placeholder="/case-studies/acme" />
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Blog section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'blog'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Blog Settings</p>
+                    <a href="/blog.html" target="_blank"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">
+                      ✏ Edit Articles →
+                    </a>
+                  </div>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Max articles shown</label>
+                      <input type="number" min="1" max="12" :value="editableContent[sectionKey]?.maxPosts || 6"
+                        @input="editableContent[sectionKey].maxPosts = parseInt($event.target.value) || 6"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">"Read all" button URL</label>
+                      <input type="text" :value="layoutConfig?.section_config?.[sectionKey]?.buttonUrl || '/blog'"
+                        @input="setSectionLayoutProp(sectionKey, 'buttonUrl', $event.target.value)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                        placeholder="/en/blog" />
+                    </div>
+                  </div>
+                  <p class="text-xs text-slate-600 mt-3">Articles are written in Markdown. Use the Blog Editor (link
+                    above) to create and manage posts.</p>
+                </div>
+              </template>
+
+              <!-- ── FAQ section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'faq'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">FAQ Items</p>
+                    <button @click="editableContent[sectionKey].items = [...(editableContent[sectionKey].items||[]), {question:'New question?',answer:'Answer here.'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Item</button>
+                  </div>
+                  <div class="space-y-3">
+                    <template x-for="(item, idx) in (editableContent[sectionKey]?.items || [])" :key="idx">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-xs font-mono text-slate-400" x-text="'#' + (idx+1)"></span>
+                          <button @click="editableContent[sectionKey].items.splice(idx,1); markDirty(sectionKey)"
+                            class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                        </div>
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Question</label>
+                          <input type="text" x-model="editableContent[sectionKey].items[idx].question" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                        </div>
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Answer</label>
+                          <textarea rows="2" x-model="editableContent[sectionKey].items[idx].answer" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Stats section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'stats'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Stat Items</p>
+                    <button @click="editableContent[sectionKey].items = [...(editableContent[sectionKey].items||[]), {value:'0',label:'Metric'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Stat</button>
+                  </div>
+                  <div class="space-y-3">
+                    <template x-for="(item, idx) in (editableContent[sectionKey]?.items || [])" :key="idx">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4">
+                        <div class="flex items-center justify-between mb-2">
+                          <span class="text-xs font-mono text-slate-400" x-text="'#' + (idx+1)"></span>
+                          <button @click="editableContent[sectionKey].items.splice(idx,1); markDirty(sectionKey)"
+                            class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Value</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[idx].value" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="100" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Label</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[idx].label" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="Clients" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Prefix</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[idx].prefix" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="€" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Suffix</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[idx].suffix" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="+" />
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Pricing section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'pricing'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Pricing Plans</p>
+                    <button @click="editableContent[sectionKey].plans = [...(editableContent[sectionKey].plans||[]), {name:'New Plan',price:'€0',features:['Feature 1'],cta:'Get Started',ctaUrl:'#'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Plan</button>
+                  </div>
+                  <div class="space-y-4">
+                    <template x-for="(plan, pi) in (editableContent[sectionKey]?.plans || [])" :key="pi">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-xs font-mono text-slate-400" x-text="plan.name || '#' + (pi+1)"></span>
+                          <button @click="editableContent[sectionKey].plans.splice(pi,1); markDirty(sectionKey)"
+                            class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Plan Name</label>
+                            <input type="text" x-model="editableContent[sectionKey].plans[pi].name" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Price</label>
+                            <input type="text" x-model="editableContent[sectionKey].plans[pi].price" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="€49" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">CTA Label</label>
+                            <input type="text" x-model="editableContent[sectionKey].plans[pi].cta" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">CTA URL</label>
+                            <input type="text" x-model="editableContent[sectionKey].plans[pi].ctaUrl" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                        </div>
+                        <div class="flex items-center gap-4 text-sm mt-1">
+                          <label class="flex items-center gap-2 cursor-pointer">
+                            <input type="checkbox" x-model="editableContent[sectionKey].plans[pi].highlighted" @change="markDirty(sectionKey)" class="rounded" />
+                            <span class="text-xs text-slate-400">Highlighted</span>
+                          </label>
+                          <div class="flex-1">
+                            <input type="text" x-model="editableContent[sectionKey].plans[pi].badge" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1 text-xs focus:outline-none focus:border-blue-500"
+                              placeholder="Badge text (e.g. Most Popular)" />
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Team section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'team'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Team Members</p>
+                    <button @click="editableContent[sectionKey].members = [...(editableContent[sectionKey].members||[]), {name:'New Member',role:'Role'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Member</button>
+                  </div>
+                  <div class="space-y-3">
+                    <template x-for="(member, mi) in (editableContent[sectionKey]?.members || [])" :key="mi">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-xs font-mono text-slate-400" x-text="member.name || '#' + (mi+1)"></span>
+                          <button @click="editableContent[sectionKey].members.splice(mi,1); markDirty(sectionKey)"
+                            class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Name</label>
+                            <input type="text" x-model="editableContent[sectionKey].members[mi].name" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Role / Title</label>
+                            <input type="text" x-model="editableContent[sectionKey].members[mi].role" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                        </div>
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Bio (optional)</label>
+                          <textarea rows="2" x-model="editableContent[sectionKey].members[mi].bio" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">LinkedIn URL</label>
+                            <input type="text" x-model="editableContent[sectionKey].members[mi].linkedIn" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="https://linkedin.com/in/..." />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Avatar image</label>
+                            <input type="text" x-model="editableContent[sectionKey].members[mi].avatar" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="/img/avatar.jpg" />
+                          </div>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── CTA Banner section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'cta_banner'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50 space-y-3">
+                  <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">CTA Banner</p>
+                  <div class="grid grid-cols-2 gap-3">
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Primary CTA Label</label>
+                      <input type="text" x-model="editableContent[sectionKey].primaryCta" @input="markDirty(sectionKey)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Primary CTA URL</label>
+                      <input type="text" x-model="editableContent[sectionKey].primaryCtaUrl" @input="markDirty(sectionKey)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Secondary CTA Label</label>
+                      <input type="text" x-model="editableContent[sectionKey].secondaryCta" @input="markDirty(sectionKey)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    </div>
+                    <div>
+                      <label class="text-xs text-slate-400 block mb-1">Secondary CTA URL</label>
+                      <input type="text" x-model="editableContent[sectionKey].secondaryCtaUrl" @input="markDirty(sectionKey)"
+                        class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                    </div>
+                  </div>
+                  <div>
+                    <label class="text-xs text-slate-400 block mb-1">Background Style</label>
+                    <select x-model="editableContent[sectionKey].backgroundStyle" @change="markDirty(sectionKey)"
+                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                      <option value="gradient">Gradient (animated)</option>
+                      <option value="solid">Solid blue</option>
+                      <option value="image">Background image</option>
+                    </select>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Video section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'video'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50 space-y-3">
+                  <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Video Settings</p>
+                  <div>
+                    <label class="text-xs text-slate-400 block mb-1">Video URL (YouTube, Vimeo, or direct .mp4)</label>
+                    <input type="text" x-model="editableContent[sectionKey].videoUrl" @input="markDirty(sectionKey)"
+                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      placeholder="https://www.youtube.com/watch?v=..." />
+                  </div>
+                  <div>
+                    <label class="text-xs text-slate-400 block mb-1">Thumbnail image (optional)</label>
+                    <input type="text" x-model="editableContent[sectionKey].thumbnail" @input="markDirty(sectionKey)"
+                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+                      placeholder="/img/video-thumb.jpg" />
+                  </div>
+                  <div class="flex items-center gap-4">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" x-model="editableContent[sectionKey].autoplay" @change="markDirty(sectionKey)" class="rounded" />
+                      <span class="text-xs text-slate-400">Autoplay</span>
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" x-model="editableContent[sectionKey].loop" @change="markDirty(sectionKey)" class="rounded" />
+                      <span class="text-xs text-slate-400">Loop</span>
+                    </label>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Gallery section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'gallery'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Gallery Images</p>
+                    <button @click="editableContent[sectionKey].images = [...(editableContent[sectionKey].images||[]), {src:'',alt:'Image'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Image</button>
+                  </div>
+                  <div class="mb-3">
+                    <label class="text-xs text-slate-400 block mb-1">Layout</label>
+                    <select x-model="editableContent[sectionKey].layout" @change="markDirty(sectionKey)"
+                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                      <option value="grid">Grid</option>
+                      <option value="masonry">Masonry</option>
+                      <option value="carousel">Carousel</option>
+                    </select>
+                  </div>
+                  <div class="space-y-2">
+                    <template x-for="(img, ii) in (editableContent[sectionKey]?.images || [])" :key="ii">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-3 flex gap-2 items-start">
+                        <div class="flex-1 space-y-2">
+                          <input type="text" x-model="editableContent[sectionKey].images[ii].src" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="/img/photo.jpg" />
+                          <input type="text" x-model="editableContent[sectionKey].images[ii].alt" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="Alt text" />
+                        </div>
+                        <button @click="editableContent[sectionKey].images.splice(ii,1); markDirty(sectionKey)"
+                          class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Timeline section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'timeline'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Timeline Items</p>
+                    <button @click="editableContent[sectionKey].items = [...(editableContent[sectionKey].items||[]), {year:'',title:'Milestone',description:''}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Item</button>
+                  </div>
+                  <div class="mb-3">
+                    <label class="text-xs text-slate-400 block mb-1">Layout</label>
+                    <select x-model="editableContent[sectionKey].layout" @change="markDirty(sectionKey)"
+                      class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                      <option value="vertical">Vertical</option>
+                      <option value="horizontal">Horizontal</option>
+                    </select>
+                  </div>
+                  <div class="space-y-3">
+                    <template x-for="(item, ti) in (editableContent[sectionKey]?.items || [])" :key="ti">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4 space-y-2">
+                        <div class="flex items-center justify-between mb-1">
+                          <span class="text-xs font-mono text-slate-400" x-text="item.year || '#' + (ti+1)"></span>
+                          <button @click="editableContent[sectionKey].items.splice(ti,1); markDirty(sectionKey)"
+                            class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2">
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Year / Date</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[ti].year" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" placeholder="2024" />
+                          </div>
+                          <div>
+                            <label class="text-xs text-slate-500 block mb-1">Title</label>
+                            <input type="text" x-model="editableContent[sectionKey].items[ti].title" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-sm focus:outline-none focus:border-blue-500" />
+                          </div>
+                        </div>
+                        <div>
+                          <label class="text-xs text-slate-500 block mb-1">Description</label>
+                          <textarea rows="2" x-model="editableContent[sectionKey].items[ti].description" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"></textarea>
+                        </div>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+              <!-- ── Logo Strip section settings ── -->
+              <template x-if="getSectionType(sectionKey) === 'logo_strip'">
+                <div class="border-t border-slate-700 p-5 bg-slate-800/50">
+                  <div class="flex items-center justify-between mb-3">
+                    <p class="text-xs text-slate-500 font-semibold uppercase tracking-wider">Logos</p>
+                    <button @click="editableContent[sectionKey].logos = [...(editableContent[sectionKey].logos||[]), {src:'',alt:'Partner'}]; markDirty(sectionKey)"
+                      class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">+ Add Logo</button>
+                  </div>
+                  <div class="mb-3 flex items-center gap-3">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                      <input type="checkbox" x-model="editableContent[sectionKey].scrolling" @change="markDirty(sectionKey)" class="rounded" />
+                      <span class="text-xs text-slate-400">Scrolling marquee</span>
+                    </label>
+                  </div>
+                  <div class="space-y-2">
+                    <template x-for="(logo, li) in (editableContent[sectionKey]?.logos || [])" :key="li">
+                      <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-3 flex gap-2 items-start">
+                        <div class="flex-1 space-y-2">
+                          <input type="text" x-model="editableContent[sectionKey].logos[li].src" @input="markDirty(sectionKey)"
+                            class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="/img/logo.svg" />
+                          <div class="grid grid-cols-2 gap-2">
+                            <input type="text" x-model="editableContent[sectionKey].logos[li].alt" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="Alt text" />
+                            <input type="text" x-model="editableContent[sectionKey].logos[li].url" @input="markDirty(sectionKey)"
+                              class="w-full bg-slate-800 border border-slate-600 rounded-lg px-2 py-1.5 text-xs focus:outline-none focus:border-blue-500" placeholder="Link URL (optional)" />
+                          </div>
+                        </div>
+                        <button @click="editableContent[sectionKey].logos.splice(li,1); markDirty(sectionKey)"
+                          class="text-xs text-red-400 hover:text-red-300 border border-slate-600 px-2 py-1 rounded transition">✕</button>
+                      </div>
+                    </template>
+                  </div>
+                </div>
+              </template>
+
+            </div><!-- end section card -->
+
+            <!-- Insert bar after each section -->
+            <div class="insert-bar group mb-2" @click="openInsertAt(sectionKey)">
+              <div class="insert-bar-line"></div>
+              <span class="insert-bar-label">+ Insert section here</span>
+              <div class="insert-bar-line"></div>
+            </div>
+
+        </template>
+        </div><!-- end sections-sortable -->
+
+        <!-- Empty state -->
+        <div x-show="sectionOrder.length === 0 && !loading"
+          class="text-center py-16 border-2 border-dashed border-slate-700 rounded-xl mb-4">
+          <span class="material-icons text-slate-600 text-5xl block mb-3">view_agenda</span>
+          <p class="text-slate-400 font-medium">No sections yet</p>
+          <p class="text-slate-600 text-sm mt-1">Use the form below to add your first section, or click ✨ Templates to start from a preset.</p>
+        </div>
+
+        <!-- ── Add Section ──────────────────────────────────────────────────── -->
+        <div id="add-section-panel" class="mt-4 bg-slate-800/50 border border-dashed rounded-xl p-5 transition-colors"
+          :class="newSection.insertAfter !== undefined ? 'border-blue-500 bg-blue-900/10' : 'border-slate-600'">
+          <div class="flex items-center justify-between mb-4">
+            <h3 class="text-sm font-semibold text-slate-300">+ Add New Section</h3>
+            <div class="flex items-center gap-2">
+              <button @click="openTemplateLibrary()"
+                class="text-xs bg-purple-700 hover:bg-purple-600 text-white px-3 py-1.5 rounded-lg transition flex items-center gap-1">
+                ✨ Templates
+              </button>
+              <span x-show="newSection.insertAfter === null"
+                class="text-xs text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded-full">At top</span>
+              <span x-show="newSection.insertAfter !== null && newSection.insertAfter !== undefined"
+                class="text-xs text-blue-400 bg-blue-900/30 px-2 py-0.5 rounded-full">
+                After: <span x-text="newSection.insertAfter" class="font-mono"></span>
+              </span>
+              <span x-show="newSection.insertAfter === undefined" class="text-xs text-slate-500">At end — click a blue
+                bar above to change position</span>
+              <button x-show="newSection.insertAfter !== undefined" @click="newSection.insertAfter = undefined"
+                class="text-xs text-slate-500 hover:text-white transition">✕ Reset</button>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Section ID</label>
+              <input type="text" x-model="newSection.id" placeholder="e.g. testimonials"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Type</label>
+              <select x-model="newSection.type"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                <option value="cards">Cards</option>
+                <option value="content_header">Content Header (with background image)</option>
+                <option value="product">Product (image + text)</option>
+                <option value="hero">Hero</option>
+                <option value="blog">Blog / News feed</option>
+                <option value="testimonials">Testimonials / Case Studies</option>
+                <option value="faq">FAQ / Accordion</option>
+                <option value="stats">Stats / Counters</option>
+                <option value="pricing">Pricing Table</option>
+                <option value="team">Team / People Grid</option>
+                <option value="cta_banner">CTA Banner</option>
+                <option value="video">Video Embed</option>
+                <option value="gallery">Image Gallery</option>
+                <option value="timeline">Timeline</option>
+                <option value="logo_strip">Logo / Partner Strip</option>
+                <option value="divider">Divider</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button @click="addSection()"
+                class="w-full bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition"
+                :disabled="!newSection.id">
+                Add Section
+              </button>
+            </div>
+          </div>
+          <div x-show="newSection.type === 'content_header'" class="mt-3 space-y-2">
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Background Image Path</label>
+              <div class="flex gap-1">
+                <input type="text" x-model="newSection.backgroundImage" placeholder="/img/evolverai-web-company-bg.jpg"
+                  class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                <button @click="openImageBrowserForNewSection('backgroundImage')"
+                  class="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-sm transition"
+                  title="Browse images">🖼</button>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Logo Image <span
+                  class="text-slate-600">(optional)</span></label>
+              <div class="flex gap-1">
+                <input type="text" x-model="newSection.logo" placeholder="/img/logo.svg"
+                  class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                <button @click="openImageBrowserForNewSection('logo')"
+                  class="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-sm transition"
+                  title="Browse images">🖼</button>
+              </div>
+            </div>
+          </div>
+          <div x-show="newSection.type === 'product'" class="mt-3 grid grid-cols-2 gap-3">
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Product Image</label>
+              <div class="flex gap-1">
+                <input type="text" x-model="newSection.productImage" placeholder="/img/product.png"
+                  class="flex-1 bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+                <button @click="openImageBrowserForNewSection('productImage')"
+                  class="bg-slate-600 hover:bg-slate-500 text-white px-3 py-2 rounded-lg text-sm transition"
+                  title="Browse images">🖼</button>
+              </div>
+            </div>
+            <div>
+              <label class="text-xs text-slate-500 block mb-1">Image Position</label>
+              <select x-model="newSection.imagePosition"
+                class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+                <option value="right">Right ▶</option>
+                <option value="left">◀ Left</option>
+              </select>
+            </div>
+          </div>
+          <div x-show="newSection.type === 'cards'" class="mt-3">
+            <label class="text-xs text-slate-500 block mb-1">Desktop Columns</label>
+            <select x-model="newSection.desktopColumns"
+              class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500">
+              <option value="1">1 column</option>
+              <option value="2">2 columns</option>
+              <option value="3" selected>3 columns (default)</option>
+              <option value="4">4 columns</option>
+            </select>
+          </div>
+          <div x-show="addSectionError" class="mt-2 text-red-400 text-xs" x-text="addSectionError"></div>
+        </div>
+
+      </div><!-- end editor pane -->
+
+      <!-- Live preview pane -->
+      <div x-show="previewOpen" x-cloak class="w-[50vw] border-l border-slate-700 flex flex-col shrink-0"
+        style="height: 100%;">
+        <!-- Toolbar -->
+        <div
+          class="px-3 py-2 bg-slate-800 border-b border-slate-700 text-xs text-slate-500 flex items-center justify-between shrink-0 gap-2">
+          <span class="truncate">Live Preview — Astro dev server must be running on :4321</span>
+          <div class="flex items-center gap-2 shrink-0">
+            <button @click="reloadPreview()" title="Reload preview"
+              class="text-slate-400 hover:text-white px-2 py-0.5 rounded border border-slate-600 hover:border-slate-400 transition">↺
+              Reload</button>
+            <a :href="`http://localhost:4321/${currentLang}${page !== 'home' ? '/' + page : ''}`" target="_blank"
+              title="Open in new tab"
+              class="text-slate-400 hover:text-white px-2 py-0.5 rounded border border-slate-600 hover:border-slate-400 transition">↗</a>
+            <button @click="previewOpen = false" class="text-slate-500 hover:text-white ml-1">✕</button>
+          </div>
+        </div>
+        <!-- Device frame wrapper -->
+        <div class="flex-1 overflow-auto bg-slate-950 flex items-start justify-center p-4">
+          <div class="transition-all duration-300 bg-white shadow-2xl rounded-lg overflow-hidden" :style="previewDevice === 'desktop' ? 'width:100%;height:100%;min-height:400px'
+                  : previewDevice === 'tablet' ? 'width:768px;min-height:400px'
+                  : 'width:390px;min-height:400px'">
+            <iframe x-ref="previewFrame"
+              :src="previewOpen ? `http://localhost:4321/${currentLang}${page !== 'home' ? '/' + page : ''}` : ''"
+              class="border-0 w-full" :style="previewDevice === 'desktop' ? 'height:100%;min-height:400px'
+                    : previewDevice === 'tablet' ? 'height:calc(100vh - 130px)'
+                    : 'height:calc(100vh - 130px)'"></iframe>
+          </div>
+        </div>
+      </div>
+    </div><!-- end split-pane -->
+
+    <!-- ── Image Browser Modal ──────────────────────────────────────────── -->
+    <div x-show="imageBrowser.open" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      @click.self="imageBrowser.open = false">
+      <div
+        class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-2xl max-h-[80vh] flex flex-col">
+
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+          <h2 class="font-semibold text-sm">Choose Image</h2>
+          <button @click="imageBrowser.open = false" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <!-- Current value -->
+        <div class="px-5 py-3 border-b border-slate-700">
+          <label class="text-xs text-slate-400 block mb-1">Path</label>
+          <input type="text" x-model="imageBrowser.current"
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500"
+            placeholder="/img/your-image.jpg" />
+        </div>
+
+        <!-- Upload zone -->
+        <div class="px-5 py-3 border-b border-slate-700">
+          <span class="text-xs text-slate-400 block mb-2">Upload Image</span>
+          <div
+            class="border-2 border-dashed border-slate-600 hover:border-blue-500 rounded-lg p-5 text-center transition cursor-pointer"
+            @dragover.prevent @drop.prevent="handleImageDrop($event)" @click="$refs.imageUploadInput.click()">
+            <span class="material-icons text-slate-500 text-2xl block mb-1">upload</span>
+            <span class="text-slate-500 text-xs">Drop image here or click to browse</span>
+            <input type="file" x-ref="imageUploadInput" class="hidden"
+              accept="image/jpeg,image/png,image/gif,image/webp,image/avif,image/svg+xml"
+              @change="handleImageUpload($event)" />
+          </div>
+          <div x-show="uploadProgress" class="mt-2 text-xs text-blue-400" x-text="uploadProgress"></div>
+          <div x-show="uploadError" class="mt-2 text-xs text-red-400" x-text="uploadError"></div>
+        </div>
+
+        <!-- Image grid -->
+        <div class="overflow-y-auto p-4">
+          <div x-show="imageBrowser.images.length === 0" class="text-slate-500 text-sm text-center py-8">
+            No images found in public/img/
+          </div>
+          <div class="grid grid-cols-3 sm:grid-cols-4 gap-3">
+            <template x-for="img in imageBrowser.images" :key="img">
+              <button @click="imageBrowser.current = img"
+                class="relative rounded-lg overflow-hidden border-2 transition aspect-video bg-slate-700"
+                :class="imageBrowser.current === img ? 'border-blue-500' : 'border-transparent hover:border-slate-500'">
+                <img :src="img" :alt="img" class="w-full h-full object-cover" loading="lazy" />
+                <div class="absolute bottom-0 left-0 right-0 bg-black/60 px-1 py-0.5">
+                  <span class="text-white truncate block" style="font-size:9px" x-text="img.replace('/img/','')"></span>
+                </div>
+                <div x-show="imageBrowser.current === img"
+                  class="absolute top-1 right-1 w-5 h-5 bg-blue-500 rounded-full flex items-center justify-center">
+                  <span class="material-icons text-white" style="font-size:12px">check</span>
+                </div>
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <div class="px-5 py-3 border-t border-slate-700 flex gap-3">
+          <button @click="applyImageBrowser()"
+            class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition">
+            Use This Image
+          </button>
+          <button @click="imageBrowser.open = false"
+            class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Delete Card Confirm Modal ────────────────────────────────────── -->
+    <div x-show="pendingDeleteCard" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      @click.self="pendingDeleteCard = null">
+      <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-80 shadow-2xl">
+        <h2 class="text-base font-semibold mb-2">Remove Card</h2>
+        <p class="text-slate-400 text-sm mb-4">Remove card <span
+            x-text="pendingDeleteCard ? pendingDeleteCard.index + 1 : ''" class="font-bold text-white"></span>? This
+          cannot be undone.</p>
+        <div class="flex gap-3">
+          <button @click="confirmDeleteCard()"
+            class="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg text-sm transition">Remove</button>
+          <button @click="pendingDeleteCard = null"
+            class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">Cancel</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Icon Picker Modal ─────────────────────────────────────────────── -->
+    <div x-show="iconPicker.open" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      @click.self="iconPicker.open = false">
+      <div
+        class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+
+        <!-- Modal header -->
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+          <h2 class="font-semibold text-sm">Choose Icon</h2>
+          <button @click="iconPicker.open = false" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+
+        <!-- Current selection preview -->
+        <div class="px-5 py-3 border-b border-slate-700 flex items-center gap-4">
+          <div class="flex items-center gap-2">
+            <span class="text-xs text-slate-400">Selected:</span>
+            <template x-if="iconPicker.current">
+              <span class="material-icons text-2xl" :class="iconPicker.color" x-text="iconPicker.current"></span>
+            </template>
+            <template x-if="!iconPicker.current">
+              <span class="text-slate-500 text-xs italic">none</span>
+            </template>
+            <span class="text-xs text-slate-300 font-mono" x-text="iconPicker.current || ''"></span>
+          </div>
+          <!-- Color picker -->
+          <div class="flex items-center gap-1 ml-auto flex-wrap">
+            <template x-for="c in iconColors" :key="c.value">
+              <button @click="iconPicker.color = c.value" :title="c.label"
+                class="w-5 h-5 rounded-full border-2 transition"
+                :class="iconPicker.color === c.value ? 'border-white scale-110' : 'border-transparent'"
+                :style="`background:${c.hex}`">
+              </button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Alignment -->
+        <div class="px-5 py-3 border-b border-slate-700">
+          <span class="text-xs text-slate-400 block mb-2">Icon Alignment</span>
+          <div class="flex flex-wrap gap-1.5">
+            <template x-for="al in ['top','left','left-big','top-big','left-headline','top-headline']" :key="al">
+              <button @click="iconPicker.alignment = al"
+                :class="iconPicker.alignment === al ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-700 text-slate-300 border-slate-600'"
+                class="text-xs px-2.5 py-1 rounded border transition" x-text="al"></button>
+            </template>
+          </div>
+        </div>
+
+        <!-- Search -->
+        <div class="px-5 py-3 border-b border-slate-700">
+          <input type="text" x-model="iconPicker.search" placeholder="Search icons..."
+            class="w-full bg-slate-700 border border-slate-600 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-blue-500" />
+        </div>
+
+        <!-- Icon grid -->
+        <div class="overflow-y-auto p-4 grid grid-cols-8 gap-2">
+          <!-- No icon option -->
+          <button @click="iconPicker.current = ''"
+            class="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-slate-700 transition border"
+            :class="iconPicker.current === '' ? 'border-blue-500 bg-blue-900/20' : 'border-transparent'">
+            <span class="material-icons text-xl text-slate-600">block</span>
+            <span class="text-xs text-slate-600" style="font-size:9px">none</span>
+          </button>
+          <template x-for="ico in filteredIcons" :key="ico">
+            <button @click="iconPicker.current = ico" :title="ico"
+              class="flex flex-col items-center gap-1 p-2 rounded-lg hover:bg-slate-700 transition border"
+              :class="iconPicker.current === ico ? 'border-blue-500 bg-blue-900/20' : 'border-transparent'">
+              <span class="material-icons text-xl" :class="iconPicker.color" x-text="ico"></span>
+              <span class="text-slate-500 truncate w-full text-center" style="font-size:9px" x-text="ico"></span>
+            </button>
+          </template>
+        </div>
+
+        <!-- Footer -->
+        <div class="px-5 py-3 border-t border-slate-700 flex gap-3">
+          <button @click="applyIconPicker()"
+            class="flex-1 bg-blue-600 hover:bg-blue-500 text-white py-2 rounded-lg text-sm transition">
+            Apply
+          </button>
+          <button @click="iconPicker.open = false"
+            class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Delete Section Confirm Modal ──────────────────────────────────── -->
+    <div x-show="deletingSectionKey" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      @click.self="deletingSectionKey = null">
+      <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-96 shadow-2xl">
+        <h2 class="text-lg font-semibold mb-2">Delete Section</h2>
+        <p class="text-slate-400 text-sm mb-5">
+          Delete section <code class="bg-slate-700 px-1 rounded" x-text="deletingSectionKey"></code>?
+          This removes it from master, layout, and all translations. Cannot be undone.
+        </p>
+        <div class="flex gap-3">
+          <button @click="deleteSection()"
+            class="flex-1 bg-red-600 hover:bg-red-500 text-white py-2 rounded-lg text-sm transition">
+            Delete
+          </button>
+          <button @click="deletingSectionKey = null"
+            class="flex-1 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">
+            Cancel
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Section Templates Library Modal ──────────────────────────────── -->
+    <div x-show="templateLibrary.open" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      @click.self="templateLibrary.open = false">
+      <div class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+          <div>
+            <h2 class="font-semibold text-sm">✨ Section Templates</h2>
+            <p class="text-xs text-slate-500 mt-0.5">Click a template to pre-fill the Add Section form</p>
+          </div>
+          <button @click="templateLibrary.open = false" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+        <div class="px-5 py-3 border-b border-slate-700 flex flex-wrap gap-2">
+          <template x-for="cat in templateCategories" :key="cat">
+            <button @click="templateLibrary.activeCategory = cat"
+              :class="templateLibrary.activeCategory === cat ? 'bg-blue-600 text-white border-blue-500' : 'bg-slate-700 text-slate-300 border-slate-600 hover:border-slate-400'"
+              class="text-xs px-3 py-1 rounded-full border transition" x-text="cat"></button>
+          </template>
+        </div>
+        <div class="overflow-y-auto p-5">
+          <div class="grid grid-cols-2 sm:grid-cols-3 gap-4">
+            <template x-for="tpl in filteredTemplates" :key="tpl.id">
+              <button @click="applyTemplate(tpl)"
+                class="text-left bg-slate-700/50 hover:bg-slate-700 border border-slate-600 hover:border-blue-500 rounded-xl p-4 transition group">
+                <div class="w-full h-20 rounded-lg mb-3 flex items-center justify-center text-3xl"
+                  :style="'background:' + tpl.previewBg">
+                  <span x-text="tpl.icon"></span>
+                </div>
+                <div class="font-semibold text-sm text-white group-hover:text-blue-300 transition" x-text="tpl.name"></div>
+                <div class="text-xs text-slate-500 mt-0.5" x-text="tpl.description"></div>
+                <div class="mt-2"><span class="text-xs px-1.5 py-0.5 rounded bg-slate-600 text-slate-400" x-text="tpl.type"></span></div>
+              </button>
+            </template>
+          </div>
+        </div>
+        <div class="px-5 py-3 border-t border-slate-700">
+          <button @click="templateLibrary.open = false"
+            class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Revision History Panel ────────────────────────────────────────────────── -->
+    <div x-show="revisionPanel.open" x-cloak class="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4"
+      @click.self="revisionPanel.open = false">
+      <div class="bg-slate-800 border border-slate-600 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col">
+        <div class="flex items-center justify-between px-5 py-4 border-b border-slate-700">
+          <div>
+            <h2 class="font-semibold text-sm">🕓 Revision History</h2>
+            <p class="text-xs text-slate-500 mt-0.5" x-text="'Section: ' + revisionPanel.sectionKey"></p>
+          </div>
+          <button @click="revisionPanel.open = false" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+        <div class="overflow-y-auto flex-1 p-4">
+          <div x-show="revisionPanel.loading" class="text-slate-400 text-sm text-center py-8">Loading...</div>
+          <div x-show="!revisionPanel.loading && revisionPanel.revisions.length === 0" class="text-slate-500 text-sm text-center py-8">No revisions saved yet.</div>
+          <div class="space-y-2">
+            <template x-for="(rev, ri) in revisionPanel.revisions.slice().reverse()" :key="ri">
+              <div class="bg-slate-700/50 border border-slate-600 rounded-xl p-4">
+                <div class="flex items-center justify-between mb-2">
+                  <div>
+                    <span class="text-xs font-mono text-slate-300" x-text="new Date(rev.timestamp).toLocaleString()"></span>
+                    <span class="ml-2 text-xs text-slate-500" x-text="rev.lang"></span>
+                  </div>
+                  <button @click="restoreRevision(rev)"
+                    class="text-xs bg-blue-700 hover:bg-blue-600 text-white px-3 py-1 rounded-lg transition">Restore</button>
+                </div>
+                <pre class="text-xs text-slate-400 bg-slate-800 rounded p-2 overflow-x-auto max-h-24" x-text="JSON.stringify(JSON.parse(rev.snapshot), null, 2).slice(0, 400) + '...'"></pre>
+              </div>
+            </template>
+          </div>
+        </div>
+        <div class="px-5 py-3 border-t border-slate-700">
+          <button @click="revisionPanel.open = false"
+            class="w-full bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">Close</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Keyboard Shortcuts Panel ────────────────────────────────────────────────── -->
+    <div x-show="shortcutPanel" x-cloak class="fixed inset-0 bg-black/60 flex items-center justify-center z-50"
+      @click.self="shortcutPanel = false" @keydown.escape.window="shortcutPanel = false">
+      <div class="bg-slate-800 border border-slate-600 rounded-xl p-6 w-96 shadow-2xl">
+        <div class="flex items-center justify-between mb-5">
+          <h2 class="font-semibold">Keyboard Shortcuts</h2>
+          <button @click="shortcutPanel = false" class="text-slate-400 hover:text-white">✕</button>
+        </div>
+        <div class="space-y-2 text-sm">
+          <div class="flex justify-between"><span class="text-slate-400">Save all dirty sections</span><kbd class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">⌘/Ctrl + S</kbd></div>
+          <div class="flex justify-between"><span class="text-slate-400">Undo</span><kbd class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">⌘/Ctrl + Z</kbd></div>
+          <div class="flex justify-between"><span class="text-slate-400">Redo</span><kbd class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">⌘/Ctrl + Shift + Z</kbd></div>
+          <div class="flex justify-between"><span class="text-slate-400">Toggle shortcuts</span><kbd class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">?</kbd></div>
+          <div class="flex justify-between"><span class="text-slate-400">Close modal</span><kbd class="bg-slate-700 px-2 py-0.5 rounded text-xs font-mono">Esc</kbd></div>
+        </div>
+        <button @click="shortcutPanel = false"
+          class="w-full mt-5 bg-slate-700 hover:bg-slate-600 text-white py-2 rounded-lg text-sm transition">Close</button>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    function editor() {
+      const params = new URLSearchParams(location.search);
+      return {
+        page: params.get('page') || 'home',
+        currentLang: 'en',
+        languages: [],
+        editableContent: {},
+        collapsed: {},
+        loading: true,
+        saving: {},
+        improving: {},
+        saved: false,
+        saveError: '',
+        globalSaveError: '',
+        sectionOrder: [],
+        layoutConfig: {},
+        deletingSectionKey: null,
+        pendingDeleteCard: null,
+        iconPicker: { open: false, sectionKey: '', cardIndex: 0, current: '', color: 'text-blue-400', search: '', alignment: 'top' },
+        imageBrowser: { open: false, images: [], current: '', targetSection: '', targetProp: '' },
+        uploadProgress: '',
+        uploadError: '',
+        previewOpen: false,
+        previewDevice: 'desktop',
+        previewScrollY: 0,
+        metaFields: { title: '', description: '' },
+        savingMeta: false,
+        newSection: { id: '', type: 'cards', backgroundImage: '', logo: '', productImage: '', imagePosition: 'right', desktopColumns: '3', insertAfter: undefined },
+        addSectionError: '',
+        // Auto-save
+        dirtyKeys: {},
+        autoSaveTimers: {},
+        autoSaveStatus: {},
+        saveClearTimers: {},
+        // Undo / redo
+        undoStack: [],
+        redoStack: [],
+        // Template library
+        templateLibrary: { open: false, activeCategory: 'All' },
+        // Draft / publish
+        pageStatus: 'published',
+        togglingStatus: false,
+        // Revision history
+        revisionPanel: { open: false, sectionKey: '', revisions: [], loading: false },
+        // Section search
+        sectionSearch: '',
+        // Keyboard shortcut panel
+        shortcutPanel: false,
+        // Toast notifications (max 3, auto-dismiss)
+        toasts: [],
+
+        async init() {
+          const res = await fetch('/api/languages').then(r => r.json());
+          this.languages = res.languages || [];
+          await this.loadContent();
+
+          // Init SortableJS for section reorder
+          this.$nextTick(() => this.initSortable());
+
+          // Keyboard shortcuts
+          document.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && !e.shiftKey && e.key === 'z') {
+              e.preventDefault();
+              this.undoAction();
+            } else if ((e.metaKey || e.ctrlKey) && ((e.shiftKey && e.key === 'z') || e.key === 'y')) {
+              e.preventDefault();
+              this.redoAction();
+            } else if ((e.metaKey || e.ctrlKey) && e.key === 's') {
+              e.preventDefault();
+              this.saveAll();
+            } else if (e.key === '?' && !e.metaKey && !e.ctrlKey && e.target.tagName !== 'INPUT' && e.target.tagName !== 'TEXTAREA') {
+              e.preventDefault();
+              this.shortcutPanel = !this.shortcutPanel;
+            }
+          });
+
+          // Track iframe scroll position so we can restore after reload
+          window.addEventListener('message', (e) => {
+            if (e.data?.type === 'scroll-pos') this.previewScrollY = e.data.y;
+          });
+
+          // Unsaved changes guard
+          window.addEventListener('beforeunload', (e) => {
+            if (Object.keys(this.dirtyKeys).length > 0) {
+              e.preventDefault();
+              e.returnValue = '';
+            }
+          });
+        },
+
+        async loadContent() {
+          this.loading = true;
+          this.saved = false;
+          this.saveError = '';
+          this.dirtyKeys = {};
+          this.autoSaveStatus = {};
+          const res = await fetch(`/api/content/${this.page}?lang=${this.currentLang}`).then(r => r.json());
+          this.editableContent = JSON.parse(JSON.stringify(res.content || {}));
+          delete this.editableContent.meta;
+          // Build ordered section list from layout page_sections
+          const sections = res.layout?.page_sections || [];
+          this.sectionOrder = sections
+            .sort((a, b) => (a.order || 0) - (b.order || 0))
+            .map(s => s.section_id)
+            .filter(id => this.editableContent[id] !== undefined);
+          this.layoutConfig = res.layout || {};
+          const meta = res.content?.meta || {};
+          this.metaFields = { title: meta.title || '', description: meta.description || '' };
+          this.loading = false;
+          // Load page status
+          fetch(`/api/layout/${this.page}/status`).then(r => r.json()).then(d => { this.pageStatus = d.status || 'published'; });
+          this.$nextTick(() => this.initSortable());
+        },
+
+        isEditable(key, value) {
+          const skip = ['meta', 'icon', 'buttonColor', 'buttonUrl', 'linkUrl', 'imagePosition', 'image',
+            'responsiveColumns', 'alignment', 'background', 'linkText', 'buttonText',
+            'badge', 'badgeTooltip', 'badges', 'note'];
+          if (skip.includes(key)) return false;
+          if (typeof value === 'object' && !Array.isArray(value)) return false;
+          return true;
+        },
+
+        getSectionType(sectionKey) {
+          const s = this.layoutConfig?.page_sections?.find(p => p.section_id === sectionKey);
+          return s?.type || '';
+        },
+
+        async saveMeta() {
+          this.savingMeta = true;
+          const res = await fetch(`/api/content/${this.page}/section/meta`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: this.currentLang, data: this.metaFields }),
+          }).then(r => r.json());
+          this.savingMeta = false;
+          if (res.error) { this.globalSaveError = res.error; return; }
+          this.saved = true;
+          setTimeout(() => this.saved = false, 3000);
+        },
+
+        toggleSection(key) {
+          this.collapsed[key] = !this.collapsed[key];
+          if (!this.collapsed[key]) this.$nextTick(() => this.initCardSortable(key));
+        },
+
+        // ── Auto-save ──────────────────────────────────────────────────────────
+
+        markDirty(sectionKey) {
+          if (!sectionKey) return;
+          this.dirtyKeys[sectionKey] = true;
+          // Update page title to show dirty state
+          if (!document.title.startsWith('*')) document.title = '* ' + document.title;
+          // Debounce auto-save
+          clearTimeout(this.autoSaveTimers[sectionKey]);
+          this.autoSaveTimers[sectionKey] = setTimeout(() => this.autoSaveSection(sectionKey), 1500);
+        },
+
+        async autoSaveSection(sectionKey) {
+          if (!this.editableContent[sectionKey]) return;
+          // Push undo snapshot before saving
+          this.pushUndo(sectionKey);
+          this.autoSaveStatus = { ...this.autoSaveStatus, [sectionKey]: 'saving' };
+          const res = await fetch(`/api/content/${this.page}/section/${sectionKey}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: this.currentLang, data: this.editableContent[sectionKey] }),
+          }).then(r => r.json());
+          if (res.error) {
+            this.autoSaveStatus = { ...this.autoSaveStatus, [sectionKey]: 'error' };
+            this.globalSaveError = `Failed to save "${sectionKey}": ${res.error}`;
+            return;
+          }
+          delete this.dirtyKeys[sectionKey];
+          this.autoSaveStatus = { ...this.autoSaveStatus, [sectionKey]: 'saved' };
+          // Update page title
+          const hasOtherDirty = Object.keys(this.dirtyKeys).length > 0;
+          if (!hasOtherDirty) document.title = document.title.replace(/^\* /, '');
+          clearTimeout(this.saveClearTimers[sectionKey]);
+          this.saveClearTimers[sectionKey] = setTimeout(() => {
+            const s = { ...this.autoSaveStatus };
+            delete s[sectionKey];
+            this.autoSaveStatus = s;
+          }, 3000);
+          // Reload preview iframe
+          this.reloadPreview();
+        },
+
+        async saveAll() {
+          const keys = [...this.sectionOrder];
+          for (const key of keys) {
+            if (this.dirtyKeys[key]) await this.autoSaveSection(key);
+          }
+        },
+
+        reloadPreview() {
+          if (!this.previewOpen || !this.$refs.previewFrame) return;
+          const frame = this.$refs.previewFrame;
+          const savedY = this.previewScrollY;
+          const ts = Date.now();
+          const lang = this.currentLang;
+          const pg = this.page;
+          // After iframe loads, restore scroll position
+          frame.onload = () => {
+            if (savedY > 50) {
+              try {
+                frame.contentWindow.postMessage({ type: 'scroll-to-y', y: savedY }, '*');
+              } catch (_) {}
+            }
+            frame.onload = null;
+          };
+          frame.src = `http://localhost:4321/${lang}${pg !== 'home' ? '/' + pg : ''}?_t=${ts}`;
+        },
+
+        scrollPreviewTo(sectionKey) {
+          if (!this.previewOpen || !this.$refs.previewFrame) return;
+          try {
+            this.$refs.previewFrame.contentWindow.postMessage({ type: 'scroll-to', id: sectionKey }, '*');
+          } catch (_) { }
+        },
+
+        // ── Undo / Redo ────────────────────────────────────────────────────────
+
+        pushUndo(sectionKey) {
+          this.undoStack = [...this.undoStack, {
+            sectionKey,
+            snapshot: JSON.stringify(this.editableContent[sectionKey]),
+          }].slice(-50);
+          this.redoStack = [];
+        },
+
+        async undoAction() {
+          const entry = this.undoStack[this.undoStack.length - 1];
+          if (!entry) return;
+          this.undoStack = this.undoStack.slice(0, -1);
+          const { sectionKey, snapshot } = entry;
+          this.redoStack = [...this.redoStack, {
+            sectionKey,
+            snapshot: JSON.stringify(this.editableContent[sectionKey]),
+          }].slice(-50);
+          this.editableContent[sectionKey] = JSON.parse(snapshot);
+          await this.autoSaveSection(sectionKey);
+        },
+
+        async redoAction() {
+          const entry = this.redoStack[this.redoStack.length - 1];
+          if (!entry) return;
+          this.redoStack = this.redoStack.slice(0, -1);
+          const { sectionKey, snapshot } = entry;
+          this.undoStack = [...this.undoStack, {
+            sectionKey,
+            snapshot: JSON.stringify(this.editableContent[sectionKey]),
+          }].slice(-50);
+          this.editableContent[sectionKey] = JSON.parse(snapshot);
+          await this.autoSaveSection(sectionKey);
+        },
+
+        // ── Section duplicate ─────────────────────────────────────────────────
+
+        async duplicateSection(sectionKey) {
+          const res = await fetch(`/api/content/${this.page}/sections/duplicate`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionId: sectionKey }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          await this.loadContent();
+          this.reloadPreview();
+        },
+
+        // ── Legacy saveSection (still used by saveMeta) ────────────────────────
+
+        async saveSection(sectionKey) {
+          return this.autoSaveSection(sectionKey);
+        },
+
+        // ── Card CRUD ──────────────────────────────────────────────────────────
+
+        async addCard(sectionKey) {
+          const res = await fetch(`/api/content/${this.page}/section/${sectionKey}/cards`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: this.currentLang }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          await this.loadContent();
+          this.collapsed[sectionKey] = false;
+        },
+
+        async deleteCard(sectionKey, index) {
+          this.pendingDeleteCard = { sectionKey, index };
+        },
+
+        async confirmDeleteCard() {
+          const { sectionKey, index } = this.pendingDeleteCard;
+          this.pendingDeleteCard = null;
+          const res = await fetch(`/api/content/${this.page}/section/${sectionKey}/cards/${index}?lang=${this.currentLang}`, {
+            method: 'DELETE',
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          await this.loadContent();
+        },
+
+        // ── Feature CRUD (inside cards) ────────────────────────────────────────
+
+        setFeatureText(sectionKey, cardIndex, featIndex, value) {
+          const feat = this.editableContent[sectionKey].cards[cardIndex].features[featIndex];
+          if (typeof feat === 'string') {
+            this.editableContent[sectionKey].cards[cardIndex].features[featIndex] = value;
+          } else {
+            this.editableContent[sectionKey].cards[cardIndex].features[featIndex].text = value;
+          }
+        },
+
+        addFeature(sectionKey, cardIndex) {
+          if (!this.editableContent[sectionKey].cards[cardIndex].features) {
+            this.editableContent[sectionKey].cards[cardIndex].features = [];
+          }
+          this.editableContent[sectionKey].cards[cardIndex].features.push({ text: 'New feature' });
+        },
+
+        deleteFeature(sectionKey, cardIndex, featIndex) {
+          this.editableContent[sectionKey].cards[cardIndex].features.splice(featIndex, 1);
+        },
+
+        // ── Feature CRUD (section level) ──────────────────────────────────────
+
+        setSectionFeatureText(sectionKey, featIndex, value) {
+          const feat = this.editableContent[sectionKey].features[featIndex];
+          if (typeof feat === 'string') {
+            this.editableContent[sectionKey].features[featIndex] = value;
+          } else {
+            this.editableContent[sectionKey].features[featIndex].text = value;
+          }
+        },
+
+        addSectionFeature(sectionKey) {
+          if (!this.editableContent[sectionKey].features) this.editableContent[sectionKey].features = [];
+          this.editableContent[sectionKey].features.push({ text: 'New feature' });
+        },
+
+        deleteSectionFeature(sectionKey, featIndex) {
+          this.editableContent[sectionKey].features.splice(featIndex, 1);
+        },
+
+        // ── Section CRUD ───────────────────────────────────────────────────────
+
+        async addSection() {
+          this.addSectionError = '';
+          if (!this.newSection.id) return;
+          const res = await fetch(`/api/content/${this.page}/sections`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              sectionId: this.newSection.id,
+              type: this.newSection.type,
+              backgroundImage: this.newSection.backgroundImage || undefined,
+              logo: this.newSection.logo || undefined,
+              productImage: this.newSection.productImage || undefined,
+              imagePosition: this.newSection.imagePosition || 'right',
+              desktopColumns: parseInt(this.newSection.desktopColumns) || 3,
+              insertAfter: this.newSection.insertAfter,
+            }),
+          }).then(r => r.json());
+          if (res.error) { this.addSectionError = res.error; return; }
+          this.newSection = { id: '', type: 'cards', backgroundImage: '', logo: '', productImage: '', imagePosition: 'right', desktopColumns: '3', insertAfter: undefined };
+          await this.loadContent();
+        },
+
+        openInsertAt(afterSectionKey) {
+          // afterSectionKey: null = top, string = after that section, undefined = end
+          this.newSection.insertAfter = afterSectionKey;
+          // Scroll to the add section panel
+          document.getElementById('add-section-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+
+        confirmDeleteSection(sectionKey) {
+          this.deletingSectionKey = sectionKey;
+        },
+
+        async deleteSection() {
+          const key = this.deletingSectionKey;
+          this.deletingSectionKey = null;
+          const res = await fetch(`/api/content/${this.page}/sections/${key}`, { method: 'DELETE' }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          await this.loadContent();
+        },
+
+        async moveSection(sectionKey, direction) {
+          const res = await fetch(`/api/layout/${this.page}/reorder`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionId: sectionKey, direction }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          // Update local order immediately without full reload
+          const idx = this.sectionOrder.indexOf(sectionKey);
+          const swapIdx = direction === 'up' ? idx - 1 : idx + 1;
+          if (swapIdx >= 0 && swapIdx < this.sectionOrder.length) {
+            const tmp = this.sectionOrder[idx];
+            this.sectionOrder[idx] = this.sectionOrder[swapIdx];
+            this.sectionOrder[swapIdx] = tmp;
+            this.sectionOrder = [...this.sectionOrder]; // trigger reactivity
+          }
+        },
+
+        // ── Icon / Layout helpers ─────────────────────────────────────────────
+
+        iconList: [
+          // Business & Finance
+          'star', 'star_border', 'check_circle', 'check_circle_outline', 'insights', 'speed', 'business', 'tune',
+          'autorenew', 'handshake', 'lightbulb', 'lightbulb_outline', 'psychology', 'refresh', 'chat', 'security',
+          'analytics', 'schedule', 'savings', 'trending_up', 'trending_down', 'moving', 'percent', 'monetization_on',
+          'account_balance', 'account_balance_wallet', 'payments', 'price_check', 'currency_exchange',
+          'business_center', 'work', 'work_outline', 'corporate_fare', 'domain', 'store', 'storefront',
+          'local_mall', 'shopping_cart', 'shopping_bag', 'point_of_sale', 'receipt_long', 'request_quote',
+          'bar_chart', 'pie_chart', 'show_chart', 'leaderboard', 'query_stats', 'data_usage',
+          // Technology
+          'computer', 'devices', 'phone_android', 'phone_iphone', 'tablet', 'laptop', 'desktop_windows',
+          'memory', 'storage', 'cloud', 'cloud_done', 'cloud_upload', 'cloud_download', 'cloud_sync',
+          'dns', 'router', 'wifi', 'network_wifi', 'signal_cellular_alt', 'hub',
+          'code', 'terminal', 'developer_mode', 'api', 'integration_instructions', 'settings_ethernet',
+          'precision_manufacturing', 'smart_toy', 'engineering', 'construction', 'build', 'build_circle',
+          'settings', 'settings_applications', 'settings_suggest', 'tune', 'manage_accounts',
+          'lock', 'lock_open', 'shield', 'security', 'enhanced_encryption', 'verified_user', 'gpp_good',
+          'policy', 'privacy_tip', 'https', 'vpn_lock', 'fingerprint', 'key',
+          // AI & Data
+          'psychology', 'psychology_alt', 'neurology', 'biotech', 'science', 'data_object', 'dataset',
+          'document_scanner', 'fact_check', 'search', 'manage_search', 'find_in_page', 'filter_list',
+          'sort', 'category', 'label', 'tag', 'new_label', 'bookmark',
+          // People & Communication
+          'people', 'group', 'groups', 'person', 'person_add', 'supervisor_account', 'manage_accounts',
+          'support_agent', 'headset_mic', 'forum', 'chat_bubble', 'chat_bubble_outline', 'message',
+          'email', 'mail', 'drafts', 'send', 'campaign', 'record_voice_over', 'voice_chat',
+          'video_call', 'videocam', 'call', 'phone', 'phone_in_talk', 'contact_phone',
+          'language', 'translate', 'public', 'location_on', 'place', 'map', 'travel_explore',
+          // Health & Education
+          'health_and_safety', 'local_hospital', 'medical_services', 'healing', 'monitor_heart',
+          'medication', 'vaccines', 'biotech', 'stethoscope', 'personal_injury',
+          'school', 'menu_book', 'library_books', 'auto_stories', 'article', 'description',
+          'assignment', 'task', 'task_alt', 'quiz', 'grade', 'military_tech', 'workspace_premium',
+          // Operations & Logistics
+          'rocket_launch', 'flight', 'local_shipping', 'airport_shuttle', 'directions_car',
+          'inventory', 'inventory_2', 'warehouse', 'forklift', 'package_2',
+          'access_time', 'alarm', 'calendar_today', 'event', 'date_range', 'today',
+          'sync', 'sync_alt', 'cached', 'loop', 'repeat', 'update',
+          // Design & Creative
+          'palette', 'brush', 'color_lens', 'auto_awesome', 'stars', 'flare', 'lens',
+          'wb_sunny', 'wb_incandescent', 'lightbulb_circle', 'highlight',
+          'format_paint', 'design_services', 'style', 'wallpaper', 'image', 'photo',
+          // UI / Feedback
+          'check', 'close', 'done', 'done_all', 'warning', 'error', 'info', 'help',
+          'thumb_up', 'thumb_down', 'favorite', 'favorite_border', 'sentiment_satisfied',
+          'sentiment_very_satisfied', 'sentiment_dissatisfied', 'emoji_events', 'celebration',
+          'arrow_forward', 'arrow_back', 'expand_more', 'expand_less', 'chevron_right', 'open_in_new',
+          'download', 'upload', 'share', 'link', 'attach_file', 'file_copy',
+          // Hospitality & Services
+          'room_service', 'restaurant', 'local_cafe', 'hotel', 'king_bed', 'spa', 'pool',
+          'fitness_center', 'sports', 'sports_tennis', 'sports_soccer', 'stadium',
+          'theater_comedy', 'movie', 'music_note', 'queue_music', 'mic',
+        ],
+
+        iconColors: [
+          { label: 'Blue', value: 'text-blue-400', hex: '#60a5fa' },
+          { label: 'Green', value: 'text-green-400', hex: '#4ade80' },
+          { label: 'Purple', value: 'text-purple-400', hex: '#c084fc' },
+          { label: 'Pink', value: 'text-pink-400', hex: '#f472b6' },
+          { label: 'Yellow', value: 'text-yellow-400', hex: '#facc15' },
+          { label: 'Orange', value: 'text-orange-400', hex: '#fb923c' },
+          { label: 'Red', value: 'text-red-400', hex: '#f87171' },
+          { label: 'Teal', value: 'text-teal-400', hex: '#2dd4bf' },
+          { label: 'White', value: 'text-white', hex: '#f1f5f9' },
+          { label: 'Slate', value: 'text-slate-400', hex: '#94a3b8' },
+        ],
+
+        get filteredIcons() {
+          const q = this.iconPicker.search.toLowerCase();
+          return q ? this.iconList.filter(i => i.includes(q)) : this.iconList;
+        },
+
+        openIconPicker(sectionKey, cardIndex) {
+          this.iconPicker.sectionKey = sectionKey;
+          this.iconPicker.cardIndex = cardIndex;
+          this.iconPicker.current = this.getCardIcon(sectionKey, cardIndex);
+          this.iconPicker.color = this.getCardIconColor(sectionKey, cardIndex) || 'text-blue-400';
+          this.iconPicker.alignment = this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.alignment || 'top';
+          this.iconPicker.search = '';
+          this.iconPicker.open = true;
+        },
+
+        async applyIconPicker() {
+          const { sectionKey, cardIndex, current, color, alignment } = this.iconPicker;
+          this.iconPicker.open = false;
+          await this.setCardIcon(sectionKey, cardIndex, current);
+          await this._updateLayoutCardIcon(sectionKey, cardIndex, { color, alignment });
+        },
+
+        // Read/write arbitrary layout props for a card (linkUrl, buttonUrl, buttonColor)
+        getCardLayoutProp(sectionKey, cardIndex, prop) {
+          return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.[prop] || '';
+        },
+
+        async setCardLayoutProp(sectionKey, cardIndex, prop, value) {
+          // Update local layoutConfig immediately
+          if (!this.layoutConfig.section_config) this.layoutConfig.section_config = {};
+          if (!this.layoutConfig.section_config[sectionKey]) this.layoutConfig.section_config[sectionKey] = {};
+          if (!Array.isArray(this.layoutConfig.section_config[sectionKey].cards))
+            this.layoutConfig.section_config[sectionKey].cards = [];
+          while (this.layoutConfig.section_config[sectionKey].cards.length <= cardIndex)
+            this.layoutConfig.section_config[sectionKey].cards.push({});
+          this.layoutConfig.section_config[sectionKey].cards[cardIndex][prop] = value;
+          // Persist to server
+          await fetch(`/api/layout/${this.page}/card-icon`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionId: sectionKey, cardIndex, patch: { [prop]: value } }),
+          });
+        },
+
+        // Read icon type for a card from the layout section_config
+        getCardIcon(sectionKey, cardIndex) {
+          return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.type || '';
+        },
+
+        getCardIconColor(sectionKey, cardIndex) {
+          return this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.color || 'text-blue-400';
+        },
+
+        async setCardIcon(sectionKey, cardIndex, iconType) {
+          await this._updateLayoutCardIcon(sectionKey, cardIndex, { type: iconType });
+        },
+
+        async setCardIconColor(sectionKey, cardIndex, color) {
+          await this._updateLayoutCardIcon(sectionKey, cardIndex, { color });
+        },
+
+        async _updateLayoutCardIcon(sectionKey, cardIndex, patch) {
+          const res = await fetch(`/api/layout/${this.page}/card-icon`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionId: sectionKey, cardIndex, patch }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          // Update local layoutConfig
+          if (!this.layoutConfig) this.layoutConfig = {};
+          if (!this.layoutConfig.section_config) this.layoutConfig.section_config = {};
+          if (!this.layoutConfig.section_config[sectionKey]) this.layoutConfig.section_config[sectionKey] = {};
+          if (!this.layoutConfig.section_config[sectionKey].cards) this.layoutConfig.section_config[sectionKey].cards = [];
+          while (this.layoutConfig.section_config[sectionKey].cards.length <= cardIndex) {
+            this.layoutConfig.section_config[sectionKey].cards.push({ icon: { type: '', alignment: 'top' } });
+          }
+          const existing = this.layoutConfig.section_config[sectionKey].cards[cardIndex].icon || {};
+          this.layoutConfig.section_config[sectionKey].cards[cardIndex].icon = { ...existing, ...patch };
+        },
+
+        // ── Image browser ─────────────────────────────────────────────────────
+
+        async openImageBrowser(sectionKey, prop) {
+          this.imageBrowser.targetSection = sectionKey;
+          this.imageBrowser.targetProp = prop;
+          // Pre-fill with current value
+          if (prop === 'background_image') {
+            this.imageBrowser.current = this.getSectionPageProp(sectionKey, prop) || '';
+          } else {
+            this.imageBrowser.current = this.layoutConfig?.section_config?.[sectionKey]?.[prop] || '';
+          }
+          // Load image list
+          const res = await fetch('/api/images').then(r => r.json());
+          this.imageBrowser.images = res.images || [];
+          this.imageBrowser.open = true;
+        },
+
+        async applyImageBrowser() {
+          const { targetSection, targetProp, current } = this.imageBrowser;
+          this.imageBrowser.open = false;
+          if (targetProp === '__new_section_bg__') {
+            this.newSection.backgroundImage = current;
+          } else if (targetProp === '__new_section_logo__') {
+            this.newSection.logo = current;
+          } else if (targetProp === '__new_section_product_image__') {
+            this.newSection.productImage = current;
+          } else if (targetProp.startsWith('__card_image__')) {
+            const cardIndex = parseInt(targetProp.replace('__card_image__', ''));
+            await this._updateLayoutCardIcon(targetSection, cardIndex, { image: current });
+          } else if (targetProp.startsWith('__testimonial_avatar__')) {
+            const tIndex = parseInt(targetProp.replace('__testimonial_avatar__', ''));
+            if (this.editableContent[targetSection]?.testimonials?.[tIndex] !== undefined) {
+              this.editableContent[targetSection].testimonials[tIndex].avatar = current;
+            }
+          } else if (targetProp === 'background_image' || targetProp === 'min_height' || targetProp === 'logo') {
+            await this.setSectionPageProp(targetSection, targetProp, current);
+          } else {
+            await this.setSectionLayoutProp(targetSection, targetProp, current);
+          }
+        },
+
+        async handleImageUpload(event) {
+          const file = event.target.files[0];
+          if (file) await this.uploadImageFile(file);
+        },
+
+        async handleImageDrop(event) {
+          const file = event.dataTransfer?.files[0];
+          if (file) await this.uploadImageFile(file);
+        },
+
+        async uploadImageFile(file) {
+          this.uploadProgress = 'Uploading...';
+          this.uploadError = '';
+          const reader = new FileReader();
+          reader.onload = async (e) => {
+            try {
+              const res = await fetch('/api/images/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filename: file.name, data: e.target.result, mimeType: file.type }),
+              }).then(r => r.json());
+              if (res.error) { this.uploadError = res.error; this.uploadProgress = ''; return; }
+              this.uploadProgress = '✓ Uploaded: ' + res.path;
+              const imgRes = await fetch('/api/images').then(r => r.json());
+              this.imageBrowser.images = imgRes.images || [];
+              this.imageBrowser.current = res.path;
+              setTimeout(() => { this.uploadProgress = ''; }, 4000);
+            } catch (err) {
+              this.uploadError = 'Upload failed: ' + err.message;
+              this.uploadProgress = '';
+            }
+          };
+          reader.readAsDataURL(file);
+        },
+
+        // ── Section layout props ──────────────────────────────────────────────
+
+        // Read a property from page_sections entry (e.g. background_image)
+        getSectionPageProp(sectionKey, prop) {
+          return this.layoutConfig?.page_sections?.find(s => s.section_id === sectionKey)?.[prop] || '';
+        },
+
+        async setSectionPageProp(sectionKey, prop, value) {
+          const s = this.layoutConfig?.page_sections?.find(p => p.section_id === sectionKey);
+          if (s) s[prop] = value;
+          await fetch(`/api/layout/${this.page}/section/${sectionKey}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionPatch: { [prop]: value } }),
+          });
+        },
+
+        async setSectionColumns(sectionKey, breakpoint, value) {
+          if (!this.layoutConfig.section_config) this.layoutConfig.section_config = {};
+          if (!this.layoutConfig.section_config[sectionKey]) this.layoutConfig.section_config[sectionKey] = {};
+          if (!this.layoutConfig.section_config[sectionKey].responsiveColumns)
+            this.layoutConfig.section_config[sectionKey].responsiveColumns = {};
+          this.layoutConfig.section_config[sectionKey].responsiveColumns[breakpoint] = value;
+          await fetch(`/api/layout/${this.page}/section/${sectionKey}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ configPatch: { responsiveColumns: { [breakpoint]: value } } }),
+          });
+        },
+
+        async setSectionLayoutProp(sectionKey, prop, value) {
+          // Update local layoutConfig immediately
+          if (!this.layoutConfig.section_config) this.layoutConfig.section_config = {};
+          if (!this.layoutConfig.section_config[sectionKey]) this.layoutConfig.section_config[sectionKey] = {};
+          this.layoutConfig.section_config[sectionKey][prop] = value;
+          // Persist to server
+          await fetch(`/api/layout/${this.page}/section/${sectionKey}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ configPatch: { [prop]: value } }),
+          });
+        },
+
+        // ── Card reorder + duplicate ───────────────────────────────────────────
+
+        async moveCard(sectionKey, cardIndex, direction) {
+          const cards = this.editableContent[sectionKey]?.cards;
+          if (!cards) return;
+          const swapIdx = direction === 'up' ? cardIndex - 1 : cardIndex + 1;
+          if (swapIdx < 0 || swapIdx >= cards.length) return;
+          const res = await fetch(`/api/content/${this.page}/section/${sectionKey}/cards/reorder`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: this.currentLang, fromIndex: cardIndex, toIndex: swapIdx }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          await this.loadContent();
+        },
+
+        async duplicateCard(sectionKey, cardIndex) {
+          const card = this.editableContent[sectionKey]?.cards?.[cardIndex];
+          if (!card) return;
+          const cardCopy = JSON.parse(JSON.stringify(card));
+          cardCopy.title = (cardCopy.title || 'Card') + ' (copy)';
+          const res = await fetch(`/api/content/${this.page}/section/${sectionKey}/cards`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ lang: this.currentLang, card: cardCopy }),
+          }).then(r => r.json());
+          if (res.error) { this.globalSaveError = res.error; return; }
+          // Copy layout entry too
+          const srcLayout = this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex];
+          if (srcLayout) {
+            await this._updateLayoutCardIcon(sectionKey, res.index, JSON.parse(JSON.stringify(srcLayout.icon || {})));
+          }
+          await this.loadContent();
+        },
+
+        // ── Badge CRUD (inside cards) ──────────────────────────────────────────
+
+        addCardBadge(sectionKey, cardIndex) {
+          if (!this.editableContent[sectionKey].cards[cardIndex].badges)
+            this.editableContent[sectionKey].cards[cardIndex].badges = [];
+          this.editableContent[sectionKey].cards[cardIndex].badges.push({ text: 'New', color: 'bg-blue-600' });
+        },
+
+        removeCardBadge(sectionKey, cardIndex, badgeIndex) {
+          this.editableContent[sectionKey].cards[cardIndex].badges.splice(badgeIndex, 1);
+        },
+
+        setCardBadgeText(sectionKey, cardIndex, badgeIndex, value) {
+          this.editableContent[sectionKey].cards[cardIndex].badges[badgeIndex].text = value;
+        },
+
+        setCardBadgeColor(sectionKey, cardIndex, badgeIndex, value) {
+          this.editableContent[sectionKey].cards[cardIndex].badges[badgeIndex].color = value;
+        },
+
+        // ── Card note ─────────────────────────────────────────────────────────
+
+        setCardNote(sectionKey, cardIndex, value) {
+          if (!value) {
+            delete this.editableContent[sectionKey].cards[cardIndex].note;
+          } else {
+            this.editableContent[sectionKey].cards[cardIndex].note = value;
+          }
+        },
+
+        // ── Card image browser ────────────────────────────────────────────────
+
+        async openImageBrowserForCard(sectionKey, cardIndex) {
+          this.imageBrowser.targetSection = sectionKey;
+          this.imageBrowser.targetProp = `__card_image__${cardIndex}`;
+          this.imageBrowser.current = this.layoutConfig?.section_config?.[sectionKey]?.cards?.[cardIndex]?.icon?.image || '';
+          const res = await fetch('/api/images').then(r => r.json());
+          this.imageBrowser.images = res.images || [];
+          this.imageBrowser.open = true;
+        },
+
+        async openImageBrowserForNewSection(field) {
+          const propMap = { backgroundImage: '__new_section_bg__', logo: '__new_section_logo__', productImage: '__new_section_product_image__' };
+          this.imageBrowser.targetSection = '';
+          this.imageBrowser.targetProp = propMap[field] || '__new_section_bg__';
+          this.imageBrowser.current = this.newSection[field] || '';
+          const res = await fetch('/api/images').then(r => r.json());
+          this.imageBrowser.images = res.images || [];
+          this.imageBrowser.open = true;
+        },
+
+        // ── Testimonial image browser ─────────────────────────────────────────
+
+        async openImageBrowserForTestimonial(sectionKey, testimonialIndex) {
+          this.imageBrowser.targetSection = sectionKey;
+          this.imageBrowser.targetProp = `__testimonial_avatar__${testimonialIndex}`;
+          this.imageBrowser.current = this.editableContent[sectionKey]?.testimonials?.[testimonialIndex]?.avatar || '';
+          const res = await fetch('/api/images').then(r => r.json());
+          this.imageBrowser.images = res.images || [];
+          this.imageBrowser.open = true;
+        },
+
+        // ── Testimonial CRUD ─────────────────────────────────────────────────
+
+        addTestimonial(sectionKey) {
+          if (!this.editableContent[sectionKey]) return;
+          if (!Array.isArray(this.editableContent[sectionKey].testimonials)) {
+            this.editableContent[sectionKey].testimonials = [];
+          }
+          this.editableContent[sectionKey].testimonials.push({
+            quote: '',
+            name: '',
+            role: '',
+            company: '',
+          });
+        },
+
+        deleteTestimonial(sectionKey, index) {
+          this.editableContent[sectionKey]?.testimonials?.splice(index, 1);
+        },
+
+        moveTestimonial(sectionKey, index, direction) {
+          const arr = this.editableContent[sectionKey]?.testimonials;
+          if (!arr) return;
+          const newIndex = index + direction;
+          if (newIndex < 0 || newIndex >= arr.length) return;
+          const tmp = arr[index];
+          arr[index] = arr[newIndex];
+          arr[newIndex] = tmp;
+        },
+
+        // ── AI copy improvement ────────────────────────────────────────────────
+
+        async improveCopy(sectionKey, fieldKey) {
+          const stateKey = `${sectionKey}.${fieldKey}`;
+          const text = this.editableContent[sectionKey]?.[fieldKey];
+          if (!text) return;
+          this.improving[stateKey] = true;
+          const res = await fetch('/api/suggest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ text, context: `Page: ${this.page}, Section: ${sectionKey}, Field: ${fieldKey}` }),
+          }).then(r => r.json());
+          this.improving[stateKey] = false;
+          if (res.suggestion) this.editableContent[sectionKey][fieldKey] = res.suggestion;
+          else if (res.error) this.globalSaveError = res.error;
+        },
+
+        // ── Quill WYSIWYG ─────────────────────────────────────────────────────
+
+        initQuill(sectionKey, fieldKey, el) {
+          if (typeof Quill === 'undefined') return;
+          if (el._quill) return; // already initialised
+          const quill = new Quill(el, {
+            theme: 'snow',
+            modules: { toolbar: [['bold','italic','underline'], [{ list: 'ordered' }, { list: 'bullet' }], ['link'], ['clean']] },
+          });
+          el._quill = quill;
+          // Seed with current value
+          const initial = this.editableContent[sectionKey]?.[fieldKey] ?? '';
+          quill.clipboard.dangerouslyPasteHTML(initial);
+          // Sync back to editableContent on every change
+          quill.on('text-change', () => {
+            if (!this.editableContent[sectionKey]) this.editableContent[sectionKey] = {};
+            this.editableContent[sectionKey][fieldKey] = quill.root.innerHTML;
+            this.markDirty(sectionKey);
+          });
+        },
+
+        // ── 3.1 SortableJS — section drag-and-drop ────────────────────────────
+
+        initSortable() {
+          const el = document.getElementById('sections-sortable');
+          if (!el || typeof Sortable === 'undefined') return;
+          Sortable.create(el, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            draggable: '[data-section-id]',
+            onEnd: async (evt) => {
+              const items = [...el.querySelectorAll('[data-section-id]')];
+              const newOrder = items.map(el => el.getAttribute('data-section-id'));
+              // Update local sectionOrder immediately
+              this.sectionOrder = newOrder;
+              // Persist new order to server
+              await fetch(`/api/layout/${this.page}/reorder-bulk`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ order: newOrder }),
+              });
+              this.reloadPreview();
+            },
+          });
+        },
+
+        // Re-init sortable after content reload (called from loadContent)
+        reinitSortable() {
+          this.$nextTick(() => this.initSortable());
+        },
+
+        // ── 3.2 SortableJS — card drag-and-drop ───────────────────────────────
+
+        initCardSortable(sectionKey) {
+          const el = document.getElementById(`cards-sortable-${sectionKey}`);
+          if (!el || typeof Sortable === 'undefined') return;
+          if (el._sortable) el._sortable.destroy();
+          el._sortable = Sortable.create(el, {
+            animation: 150,
+            handle: '.drag-handle',
+            ghostClass: 'sortable-ghost',
+            chosenClass: 'sortable-chosen',
+            onEnd: async (evt) => {
+              const { oldIndex, newIndex } = evt;
+              if (oldIndex === newIndex) return;
+              const res = await fetch(`/api/content/${this.page}/section/${sectionKey}/cards/reorder`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ lang: this.currentLang, fromIndex: oldIndex, toIndex: newIndex }),
+              }).then(r => r.json());
+              if (res.error) { this.globalSaveError = res.error; return; }
+              await this.loadContent();
+            },
+          });
+        },
+
+        // ── 3.4 Section visibility toggle ─────────────────────────────────────
+
+        isSectionVisible(sectionKey) {
+          const s = this.layoutConfig?.page_sections?.find(p => p.section_id === sectionKey);
+          return s ? s.visible !== false : true;
+        },
+
+        async toggleSectionVisibility(sectionKey) {
+          const current = this.isSectionVisible(sectionKey);
+          const s = this.layoutConfig?.page_sections?.find(p => p.section_id === sectionKey);
+          if (s) s.visible = !current;
+          await fetch(`/api/layout/${this.page}/section/${sectionKey}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ sectionPatch: { visible: !current } }),
+          });
+          this.reloadPreview();
+        },
+
+        // ── 3.3 Section Templates Library ─────────────────────────────────────
+
+        templateCategories: ['All', 'Hero', 'Content', 'Cards', 'Social Proof', 'CTA', 'FAQ', 'Pricing', 'Stats', 'Team', 'Media', 'Divider'],
+
+        sectionTemplates: [
+          // Hero
+          { id: 'hero_default', name: 'Hero — Default', category: 'Hero', type: 'hero', icon: '🚀', previewBg: 'linear-gradient(135deg,#1e3a5f,#0f172a)', description: 'Full-width hero with headline, subtitle and CTA' },
+          // Content
+          { id: 'content_header_dark', name: 'Content Header', category: 'Content', type: 'content_header', icon: '🖼', previewBg: 'linear-gradient(135deg,#1e293b,#334155)', description: 'Background image with overlay text panel' },
+          { id: 'product_right', name: 'Product — Image Right', category: 'Content', type: 'product', icon: '📦', previewBg: 'linear-gradient(135deg,#1e3a5f,#1e293b)', description: 'Text left, image right split layout' },
+          { id: 'product_left', name: 'Product — Image Left', category: 'Content', type: 'product', icon: '📦', previewBg: 'linear-gradient(135deg,#1e293b,#1e3a5f)', description: 'Image left, text right split layout' },
+          { id: 'video_embed', name: 'Video Embed', category: 'Media', type: 'video', icon: '▶️', previewBg: 'linear-gradient(135deg,#1a1a2e,#16213e)', description: 'YouTube / Vimeo embed with thumbnail' },
+          { id: 'gallery_grid', name: 'Image Gallery', category: 'Media', type: 'gallery', icon: '🖼', previewBg: 'linear-gradient(135deg,#1e293b,#0f172a)', description: 'Grid, masonry or carousel image gallery' },
+          { id: 'timeline_v', name: 'Timeline', category: 'Content', type: 'timeline', icon: '📅', previewBg: 'linear-gradient(135deg,#1e3a5f,#0f172a)', description: 'Vertical timeline of milestones' },
+          { id: 'logo_strip', name: 'Logo Strip', category: 'Social Proof', type: 'logo_strip', icon: '🏢', previewBg: 'linear-gradient(135deg,#1e293b,#334155)', description: 'Scrolling or static partner logos' },
+          // Cards
+          { id: 'cards_3col', name: 'Cards — 3 Columns', category: 'Cards', type: 'cards', icon: '🃏', previewBg: 'linear-gradient(135deg,#1e3a5f,#1e293b)', description: '3-column feature cards with icons' },
+          { id: 'cards_2col', name: 'Cards — 2 Columns', category: 'Cards', type: 'cards', icon: '🃏', previewBg: 'linear-gradient(135deg,#1e293b,#1e3a5f)', description: '2-column cards, good for comparisons' },
+          { id: 'cards_4col', name: 'Cards — 4 Columns', category: 'Cards', type: 'cards', icon: '🃏', previewBg: 'linear-gradient(135deg,#0f172a,#1e3a5f)', description: '4-column compact feature grid' },
+          // Social Proof
+          { id: 'testimonials', name: 'Testimonials', category: 'Social Proof', type: 'testimonials', icon: '💬', previewBg: 'linear-gradient(135deg,#1e293b,#0f172a)', description: 'Client quotes with avatar and rating' },
+          { id: 'blog_feed', name: 'Blog / News Feed', category: 'Content', type: 'blog', icon: '📰', previewBg: 'linear-gradient(135deg,#1e3a5f,#1e293b)', description: 'Latest blog posts grid' },
+          // CTA
+          { id: 'cta_gradient', name: 'CTA Banner — Gradient', category: 'CTA', type: 'cta_banner', icon: '📣', previewBg: 'linear-gradient(135deg,#1d4ed8,#7c3aed)', description: 'Full-width animated gradient CTA' },
+          { id: 'cta_solid', name: 'CTA Banner — Solid', category: 'CTA', type: 'cta_banner', icon: '📣', previewBg: 'linear-gradient(135deg,#1e40af,#1e3a8a)', description: 'Solid blue CTA with primary + secondary buttons' },
+          // FAQ
+          { id: 'faq_accordion', name: 'FAQ — Accordion', category: 'FAQ', type: 'faq', icon: '❓', previewBg: 'linear-gradient(135deg,#1e293b,#0f172a)', description: 'Collapsible Q&A accordion' },
+          // Pricing
+          { id: 'pricing_3plans', name: 'Pricing — 3 Plans', category: 'Pricing', type: 'pricing', icon: '💰', previewBg: 'linear-gradient(135deg,#1e3a5f,#1e293b)', description: 'Pricing table with highlighted plan' },
+          // Stats
+          { id: 'stats_counters', name: 'Stats / Counters', category: 'Stats', type: 'stats', icon: '📊', previewBg: 'linear-gradient(135deg,#1e293b,#1e3a5f)', description: 'Animated count-up stat numbers' },
+          // Team
+          { id: 'team_grid', name: 'Team Grid', category: 'Team', type: 'team', icon: '👥', previewBg: 'linear-gradient(135deg,#1e3a5f,#0f172a)', description: 'Team member cards with bio and social links' },
+          // Divider
+          { id: 'divider', name: 'Divider', category: 'Divider', type: 'divider', icon: '➖', previewBg: '#1e293b', description: 'Spacing / visual separator between sections' },
+        ],
+
+        get filteredTemplates() {
+          const cat = this.templateLibrary.activeCategory;
+          return cat === 'All' ? this.sectionTemplates : this.sectionTemplates.filter(t => t.category === cat);
+        },
+
+        openTemplateLibrary() {
+          this.templateLibrary.activeCategory = 'All';
+          this.templateLibrary.open = true;
+        },
+
+        applyTemplate(tpl) {
+          this.templateLibrary.open = false;
+          // Pre-fill the Add Section form
+          this.newSection.type = tpl.type;
+          // Set sensible defaults per template
+          if (tpl.id === 'cards_2col') this.newSection.desktopColumns = '2';
+          else if (tpl.id === 'cards_4col') this.newSection.desktopColumns = '4';
+          else this.newSection.desktopColumns = '3';
+          if (tpl.id === 'product_left') this.newSection.imagePosition = 'left';
+          else this.newSection.imagePosition = 'right';
+          if (tpl.id === 'cta_solid') this.newSection.ctaBgStyle = 'solid';
+          // Suggest an ID based on template name
+          if (!this.newSection.id) {
+            this.newSection.id = tpl.id.replace(/_\d+col$/, '').replace(/_[a-z]+$/, '');
+          }
+          // Scroll to add section panel
+          document.getElementById('add-section-panel')?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        },
+
+        // ── 8.1 Toast notifications ──────────────────────────────────────────────────
+
+        addToast(message, type = 'info', duration = 4000) {
+          const id = Date.now();
+          // Keep max 3 toasts
+          if (this.toasts.length >= 3) this.toasts.shift();
+          this.toasts.push({ id, message, type });
+          setTimeout(() => { this.toasts = this.toasts.filter(t => t.id !== id); }, duration);
+          // Also set globalSaveError for backwards compat
+          if (type === 'error') this.globalSaveError = message;
+        },
+
+        // ── 6.2 Draft / Publish ────────────────────────────────────────────────────
+
+        async togglePageStatus() {
+          this.togglingStatus = true;
+          const next = this.pageStatus === 'published' ? 'draft' : 'published';
+          const res = await fetch(`/api/layout/${this.page}/status`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ status: next }),
+          }).then(r => r.json());
+          this.togglingStatus = false;
+          if (!res.error) this.pageStatus = next;
+          else this.globalSaveError = res.error;
+        },
+
+        // ── 6.3 Revision History ──────────────────────────────────────────────────
+
+        async openRevisionPanel(sectionKey) {
+          this.revisionPanel = { open: true, sectionKey, revisions: [], loading: true };
+          const res = await fetch(`/api/revisions/${this.page}/${sectionKey}`).then(r => r.json());
+          this.revisionPanel.revisions = res.revisions || [];
+          this.revisionPanel.loading = false;
+        },
+
+        async restoreRevision(rev) {
+          const { sectionKey } = this.revisionPanel;
+          this.revisionPanel.open = false;
+          this.editableContent[sectionKey] = JSON.parse(rev.snapshot);
+          await this.autoSaveSection(sectionKey);
+        },
+      };
+    }
+  </script>
+</body>
+
+</html>

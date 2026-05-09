@@ -1,0 +1,145 @@
+---
+export interface TimelineItem {
+    year?: string;
+    title: string;
+    description?: string;
+    icon?: string;
+}
+
+export interface Props {
+    sectionId?: string;
+    title?: string;
+    description?: string;
+    items?: TimelineItem[];
+    layout?: "vertical" | "horizontal";
+    language?: string;
+}
+
+const {
+    sectionId = "timeline",
+    title = "",
+    description = "",
+    items = [],
+    layout = "vertical",
+    language = "en",
+} = Astro.props;
+---
+
+<section
+    id={sectionId}
+    class="relative bg-custom-slate py-20 px-4"
+    data-section="timeline"
+>
+    <div class="container mx-auto max-w-3xl">
+        {
+            (title || description) && (
+                <div class="text-center mb-16 reveal-fade">
+                    {title && (
+                        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">
+                            {title}
+                        </h2>
+                    )}
+                    {description && (
+                        <p class="text-lg text-slate-400">{description}</p>
+                    )}
+                </div>
+            )
+        }
+
+        {
+            layout === "vertical" && (
+                <ol class="relative">
+                    {/* Vertical line */}
+                    <li
+                        class="absolute left-1/2 top-0 bottom-0 w-px -translate-x-1/2 bg-gradient-to-b from-blue-600/60 via-slate-600 to-transparent pointer-events-none"
+                        aria-hidden="true"
+                    />
+
+                    {items.map((item, i) => {
+                        const isLeft = i % 2 === 0;
+                        return (
+                            <li
+                                class={`relative flex items-start gap-8 mb-12 reveal ${isLeft ? "flex-row" : "flex-row-reverse"}`}
+                                style={`--stagger-i:${i}`}
+                            >
+                                {/* Content card */}
+                                <div
+                                    class={`w-[calc(50%-2rem)] bg-slate-800/60 border border-slate-700 rounded-xl p-5 ${isLeft ? "text-right" : "text-left"}`}
+                                >
+                                    {item.year && (
+                                        <span class="text-blue-400 text-sm font-bold tracking-wider block mb-1">
+                                            {item.year}
+                                        </span>
+                                    )}
+                                    <h3 class="font-bold text-white text-base mb-1">
+                                        {item.title}
+                                    </h3>
+                                    {item.description && (
+                                        <p class="text-slate-400 text-sm leading-relaxed">
+                                            {item.description}
+                                        </p>
+                                    )}
+                                </div>
+
+                                {/* Centre dot */}
+                                <div class="absolute left-1/2 top-5 -translate-x-1/2 w-10 h-10 rounded-full bg-slate-900 border-2 border-blue-500 flex items-center justify-center text-lg shrink-0 z-10">
+                                    {item.icon || "●"}
+                                </div>
+
+                                {/* Spacer on opposite side */}
+                                <div class="w-[calc(50%-2rem)]" />
+                            </li>
+                        );
+                    })}
+                </ol>
+            )
+        }
+
+        {
+            layout === "horizontal" && (
+                <div class="overflow-x-auto pb-4">
+                    <ol class="flex gap-0 min-w-max relative">
+                        {/* Horizontal line */}
+                        <li
+                            class="absolute top-5 left-0 right-0 h-px bg-gradient-to-r from-transparent via-blue-600/60 to-transparent pointer-events-none"
+                            aria-hidden="true"
+                        />
+
+                        {items.map((item, i) => (
+                            <li
+                                class="relative flex flex-col items-center px-6 min-w-[180px] pt-2 reveal-fade"
+                                style={`--stagger-i:${i}`}
+                            >
+                                {/* Dot */}
+                                <div class="w-10 h-10 rounded-full bg-slate-900 border-2 border-blue-500 flex items-center justify-center text-lg z-10 mb-4">
+                                    {item.icon || "●"}
+                                </div>
+                                {item.year && (
+                                    <span class="text-blue-400 text-xs font-bold tracking-wider mb-1">
+                                        {item.year}
+                                    </span>
+                                )}
+                                <h3 class="font-bold text-white text-sm text-center mb-1">
+                                    {item.title}
+                                </h3>
+                                {item.description && (
+                                    <p class="text-slate-400 text-xs text-center leading-relaxed">
+                                        {item.description}
+                                    </p>
+                                )}
+                            </li>
+                        ))}
+                    </ol>
+                </div>
+            )
+        }
+
+        {
+            items.length === 0 && (
+                <p class="text-center text-slate-500">
+                    No timeline items configured yet.
+                </p>
+            )
+        }
+    </div>
+</section>

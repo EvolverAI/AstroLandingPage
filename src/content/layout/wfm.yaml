@@ -1,0 +1,120 @@
+# WFM page layout - section order, types, and non-translatable config
+page_sections:
+  - type: "content_header"
+    section_id: "about"
+    order: 1
+    background_image: "/img/evolverai-web-wfm-bg.jpg"
+  - type: "cards"
+    section_id: "overview"
+    order: 2
+  - type: "cards"
+    section_id: "next-gen"
+    order: 2.1
+  - type: "cards"
+    section_id: "features"
+    order: 3
+  - type: "cards"
+    section_id: "use_cases"
+    order: 4
+  - type: "cards"
+    section_id: "benefits"
+    order: 5
+  - type: "cards"
+    section_id: "demo"
+    order: 6
+    background_image: "/img/evolverai-web-company-bg.jpg"
+  - type: "content_header"
+    section_id: "contact"
+    order: 99
+    background_image: "/img/evolverai-web-contact-bg.jpg"
+
+defaults:
+  cards:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 3
+    icon:
+      type: "default"
+      alignment: "left"
+      size: "text-lg"
+    margin: "mb-4"
+    padding: "p-12"
+    colors:
+      background: "bg-slate-800"
+      border: "border-2 border-blue-700"
+    title:
+      text: "text-2xl"
+      weight: "font-semibold"
+      color: "text-blue-300"
+      size: "text-lg"
+    content:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-300"
+      size: "text-md"
+    feature:
+      text: "text-md"
+      weight: "font-normal"
+      color: "text-gray-200"
+      size: "text-md"
+      bullet: "check"
+      bulletType: "icon"
+      bulletColor: "text-green-400"
+      bulletSize: "text-xl"
+
+section_config:
+  overview:
+    cards:
+      - icon: { type: "warning", alignment: "left", color: "text-yellow-100" }
+        features_config:
+          bulletType: "icon"
+          bullet: "error"
+          bulletColor: "text-red-400"
+      - icon: { type: "lightbulb", alignment: "left", color: "text-green-500" }
+        features_config:
+          bulletType: "icon"
+          bullet: "check"
+          bulletColor: "text-green-400"
+  next-gen:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - icon: { type: "psychology", alignment: "left-big" }
+  features:
+    cards:
+      - icon: { type: "psychology", alignment: "left" }
+      - icon: { type: "refresh", alignment: "left" }
+      - icon: { type: "chat", alignment: "left" }
+  use_cases:
+    responsiveColumns:
+      mobile: 1
+      tablet: 2
+      desktop: 2
+    alignment: "center"
+    cards:
+      - icon: { type: "headset_mic", alignment: "left-headline" }
+      - icon: { type: "local_hospital", alignment: "left-headline" }
+      - icon: { type: "shopping_cart", alignment: "left-headline" }
+      - icon: { type: "engineering", alignment: "left-headline" }
+  benefits:
+    responsiveColumns:
+      mobile: 1
+      tablet: 3
+      desktop: 3
+    alignment: "center"
+    cards:
+      - icon: { type: "savings", alignment: "top-big" }
+      - icon: { type: "moving", alignment: "top-big" }
+      - icon: { type: "sentiment_very_satisfied", alignment: "top-big" }
+  demo:
+    responsiveColumns:
+      mobile: 1
+      tablet: 1
+      desktop: 1
+    cards:
+      - icon: { type: "calendar_today", alignment: "left-big" }
+        background: "bg-gradient-to-r from-blue-900 to-slate-800 rounded-lg"
+        buttonUrl: "/schedule-wfm-demo"

@@ -1,0 +1,38 @@
+name: Translation Check
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'src/content/master/**'
+
+jobs:
+  check-translations:
+    name: Check Translation Status
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Check translation status
+        run: |
+          echo "## 🌍 Translation Status" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          node scripts/translate.js status 2>&1 | tee /tmp/translate-status.txt
+          cat /tmp/translate-status.txt >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Run \`npm run translate\` locally to update translations." >> $GITHUB_STEP_SUMMARY
+
+      - name: Validate with strict mode
+        run: npm run validate:strict
+        continue-on-error: true

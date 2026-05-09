@@ -1,32 +1,141 @@
 ---
 import "../styles/global.css";
+import { ViewTransitions } from 'astro:transitions';
+import StructuredData from "../components/StructuredData.astro";
+import CookieBanner from "../components/CookieBanner.astro";
+import Analytics from "../components/Analytics.astro";
+import fs from 'node:fs';
+import path from 'node:path';
+
+// Load design settings overrides (written by admin design panel)
+let designOverrides = '';
+try {
+  const settingsPath = path.join(process.cwd(), 'src/content/design-settings.json');
+  if (fs.existsSync(settingsPath)) {
+    const settings = JSON.parse(fs.readFileSync(settingsPath, 'utf-8'));
+    if (Object.keys(settings).length > 0) {
+      designOverrides = ':root{' + Object.entries(settings).map(([k,v]) => `${k}:${v}`).join(';') + '}';
+    }
+  }
+} catch { /* non-fatal */ }
 
 export interface Props {
   title: string;
   description?: string;
+  language?: string;
+  page?: string;
+  ogImage?: string;
+  noindex?: boolean;
+  nofollow?: boolean;
 }
 
 const {
   title,
-  description = "Discover EvolverAI, your trusted partner for cutting-edge IT and AI solutions. We deliver innovative software, expert consultancy, and tailored services to drive your success.",
+  description = "Discover EvolverAI, your trusted partner for cutting-edge IT and AI solutions.",
+  language = "en",
+  page = "home",
+  ogImage = "/img/evolverai-web-company-bg.jpg",
+  noindex = false,
+  nofollow = false,
 } = Astro.props;
+
+const LANGUAGES = ["en", "it", "de"];
+const BASE_URL = "https://evolverai.ch";
+const canonicalPath = page === "home" ? `/${language}` : `/${language}/${page}`;
+const canonicalUrl = `${BASE_URL}${canonicalPath}`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang={language} dir={language === 'ar' || language === 'he' ? 'rtl' : 'ltr'}>
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
     <meta name="description" content={description} />
+    {(noindex || nofollow) && <meta name="robots" content={[noindex && 'noindex', nofollow && 'nofollow'].filter(Boolean).join(', ')} />}
+    <meta name="theme-color" content="#0a0f1e" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta
+      name="apple-mobile-web-app-status-bar-style"
+      content="black-translucent"
+    />
+    <meta name="apple-mobile-web-app-title" content="EvolverAI" />
     <title>{title}</title>
 
-    <!-- Favicons -->
+    <!-- Canonical -->
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- hreflang for multi-language SEO -->
+    {
+      LANGUAGES.map((lang) => (
+        <link
+          rel="alternate"
+          hreflang={lang}
+          href={`${BASE_URL}/${lang}${page !== "home" ? "/" + page : ""}`}
+        />
+      ))
+    }
     <link
-      rel="icon"
-      type="image/png"
-      sizes="16x16"
-      href="/img/icons/favicon-16x16.png"
+      rel="alternate"
+      hreflang="x-default"
+      href={`${BASE_URL}/en${page !== "home" ? "/" + page : ""}`}
     />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${BASE_URL}${ogImage}`} />
+    <meta
+      property="og:locale"
+      content={language === "de"
+        ? "de_DE"
+        : language === "it"
+          ? "it_IT"
+          : "en_US"}
+    />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${BASE_URL}${ogImage}`} />
+
+    <!-- Preload above-the-fold hero background -->
+    <link
+      rel="preload"
+      as="image"
+      href="/img/evolverai-web-company-bg.jpg"
+      type="image/jpeg"
+      fetchpriority="high"
+    />
+
+    <!-- Structured Data (JSON-LD) -->
+    <StructuredData
+      page={page}
+      language={language}
+      title={title}
+      description={description}
+      url={canonicalUrl}
+    />
+
+    <!-- Per-page structured data injected via slot (e.g. Article, Review) -->
+    <slot name="head" />
+
+    <!-- View Transitions -->
+    <ViewTransitions fallback="none" />
+
+    <!-- Design Settings Overrides -->
+    {designOverrides && <style set:html={designOverrides} />}
+
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+
+    <!-- Favicons -->
     <link
       rel="icon"
       type="image/png"
@@ -36,29 +145,42 @@ const {
     <link
       rel="icon"
       type="image/png"
-      sizes="48x48"
-      href="/img/icons/favicon-48x48.png"
+      sizes="16x16"
+      href="/img/icons/favicon-16x16.png"
     />
     <link rel="apple-touch-icon" href="/img/icons/apple-touch-icon.png" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 
-    <!-- Fonts -->
+    <!-- Resource hints -->
+    <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
+    <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+
+    <!-- Prefetch likely next pages -->
+    {
+      page === "home" && (
+        <>
+          <link rel="prefetch" href={`/${language}/b2b`} />
+          <link rel="prefetch" href={`/${language}/wfm`} />
+          <link rel="prefetch" href={`/${language}/elysia`} />
+        </>
+      )
+    }
+
+    <!-- Fonts — load with display=swap for performance -->
     <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&family=Noto+Sans:wght@800;400;300&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;600;700;800;900&family=Roboto:wght@400;700&display=swap"
       rel="stylesheet"
     />
+    <!-- Material Icons -->
     <link
       href="https://fonts.googleapis.com/icon?family=Material+Icons"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/icon?family=Material+Symbols+Outlined"
-      rel="stylesheet"
-    />
 
-    <!-- Font Awesome for social media icons -->
+    <!-- Font Awesome (social icons) -->
     <link
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
@@ -68,36 +190,147 @@ const {
     <script
       src="https://elysia.evolverai.ch/static/elysiachatbot.js"
       type="module"
+      defer
       data-api-key="f64230e7-8428-43e0-94a6-52e831239d74"
       data-page-context-id="evolverai"></script>
   </head>
-  <body class="bg-custom-slate text-gray-200 font-roboto">
+
+  <body
+    class="bg-custom-slate text-gray-200 font-noto-sans overscroll-none"
+    style="padding-bottom: env(safe-area-inset-bottom);"
+  >
+    <!-- Skip to main content (accessibility) -->
+    <a
+      href="#main-content"
+      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg focus:font-semibold focus:shadow-lg"
+    >Skip to main content</a>
     <slot />
+    <CookieBanner />
+    <Analytics />
 
     <script>
-      // Mobile menu functionality
-      document.addEventListener("DOMContentLoaded", function () {
-        const mobileMenuButton = document.getElementById("mobile-menu-button");
-        const menu = document.getElementById("menu");
+      // ── Theme toggle ──────────────────────────────────────────
+      (function () {
+        const saved = localStorage.getItem("theme");
+        const prefersDark = window.matchMedia(
+          "(prefers-color-scheme: dark)",
+        ).matches;
+        const theme = saved || (prefersDark ? "dark" : "light");
+        if (theme === "light")
+          document.documentElement.setAttribute("data-theme", "light");
+      })();
 
-        if (mobileMenuButton && menu) {
-          mobileMenuButton.addEventListener("click", function () {
-            menu.classList.toggle("hidden");
+      // ── Mobile menu ──────────────────────────────────────────
+      document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("mobile-menu-button");
+        const menu = document.getElementById("mobile-menu");
+        const overlay = document.getElementById("mobile-overlay");
+
+        function openMenu() {
+          menu?.classList.remove("translate-x-full");
+          overlay?.classList.remove("opacity-0", "pointer-events-none");
+          document.body.style.overflow = "hidden";
+        }
+        function closeMenu() {
+          menu?.classList.add("translate-x-full");
+          overlay?.classList.add("opacity-0", "pointer-events-none");
+          document.body.style.overflow = "";
+        }
+
+        btn?.addEventListener("click", openMenu);
+        overlay?.addEventListener("click", closeMenu);
+        document
+          .querySelectorAll("#mobile-menu a")
+          .forEach((a) => a.addEventListener("click", closeMenu));
+      });
+
+      // ── Scroll-triggered reveal animations ───────────────────
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry, i) => {
+            if (entry.isIntersecting) {
+              // Stagger children if parent has .stagger
+              if (entry.target.classList.contains("stagger")) {
+                Array.from(entry.target.children).forEach((child, idx) => {
+                  (child as HTMLElement).style.setProperty(
+                    "--stagger-i",
+                    String(idx),
+                  );
+                  child.classList.add("is-visible");
+                });
+              }
+              entry.target.classList.add("is-visible");
+              observer.unobserve(entry.target);
+            }
           });
+        },
+        { threshold: 0.1, rootMargin: "0px 0px -40px 0px" },
+      );
+
+      document
+        .querySelectorAll(
+          ".reveal, .reveal-fade, .reveal-left, .reveal-right, .stagger",
+        )
+        .forEach((el) => {
+          observer.observe(el);
+        });
+
+      // ── Header scroll behaviour ───────────────────────────────
+      const header = document.getElementById("site-header");
+      let lastY = 0;
+      window.addEventListener(
+        "scroll",
+        () => {
+          const y = window.scrollY;
+          if (y > 80) {
+            header?.classList.add("glass", "shadow-lg");
+            // Hide on scroll down, show on scroll up
+            if (y > lastY + 5) header?.classList.add("-translate-y-full");
+            else if (y < lastY - 5)
+              header?.classList.remove("-translate-y-full");
+          } else {
+            header?.classList.remove("glass", "shadow-lg", "-translate-y-full");
+          }
+          lastY = y;
+        },
+        { passive: true },
+      );
+
+      // ── CMS preview scroll-sync ───────────────────────────────
+      // When the admin editor sends a scroll-to message, scroll to the section
+      window.addEventListener("message", (e) => {
+        if (e.data?.type === "scroll-to" && e.data.id) {
+          document
+            .getElementById(e.data.id)
+            ?.scrollIntoView({ behavior: "smooth", block: "start" });
+        } else if (e.data?.type === "scroll-to-y") {
+          window.scrollTo({ top: e.data.y, behavior: "instant" });
         }
       });
 
-      // Smooth scrolling for anchor links
-      function handleNavigation(event, sectionId) {
-        event.preventDefault();
-        const section = document.getElementById(sectionId);
-        if (section) {
-          section.scrollIntoView({ behavior: "smooth" });
-        }
-      }
+      // Report scroll position back to the parent editor
+      let _scrollTimer: ReturnType<typeof setTimeout>;
+      window.addEventListener(
+        "scroll",
+        () => {
+          clearTimeout(_scrollTimer);
+          _scrollTimer = setTimeout(() => {
+            window.parent?.postMessage(
+              { type: "scroll-pos", y: window.scrollY },
+              "*",
+            );
+          }, 80);
+        },
+        { passive: true },
+      );
 
-      // Make handleNavigation global
-      window.handleNavigation = handleNavigation;
+      // Global error monitoring
+      window.onerror = (msg, src, line, col, err) => {
+        console.error('[EvolverAI Error]', { msg, src, line, col, stack: err?.stack });
+      };
+      window.addEventListener('unhandledrejection', (e) => {
+        console.error('[EvolverAI UnhandledRejection]', e.reason);
+      });
     </script>
   </body>
 </html>

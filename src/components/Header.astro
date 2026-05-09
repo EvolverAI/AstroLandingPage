@@ -1,5 +1,4 @@
 ---
-// Header component with language support
 import LanguageSwitcher from "./LanguageSwitcher.astro";
 
 export interface Props {
@@ -7,59 +6,172 @@ export interface Props {
 }
 
 const { currentLanguage = "en" } = Astro.props;
+
+const navLinks = [
+  { href: `/${currentLanguage}#about`,    icon: "business",    label: "Company" },
+  { href: `/${currentLanguage}/b2b`,      icon: "handshake",   label: "B2B" },
+  { href: `/${currentLanguage}#products`, icon: "settings",    label: "Products" },
+  { href: `/${currentLanguage}/academy`,  icon: "school",      label: "Academy" },
+  { href: `/${currentLanguage}#contact`,  icon: "headset_mic", label: "Contact" },
+];
 ---
 
+<!-- Header -->
 <header
-  class="bg-gradient-to-r from-slate-900 to-slate-950 text-white py-4 mb-8 sticky top-0 z-50"
+  id="site-header"
+  class="fixed top-0 left-0 right-0 z-50 transition-all duration-300"
+  style="height: calc(var(--header-height) + env(safe-area-inset-top)); padding-top: env(safe-area-inset-top);"
 >
-  <div class="container mx-auto px-4 flex justify-between items-center">
-    <h1 class="text-2xl font-bold">
-      Evolver<span class="text-blue-800">AI</span>
-    </h1>
+  <div class="container mx-auto px-4 h-full flex items-center justify-between">
 
-    <!-- Mobile Menu Button -->
-    <button id="mobile-menu-button" class="md:hidden focus:outline-none">
-      <i class="material-icons md-24">menu</i>
-    </button>
+    <!-- Logo -->
+    <a href={`/${currentLanguage}`} class="flex items-center gap-1 shrink-0">
+      <span class="text-2xl font-black tracking-tight" style="color: var(--color-text-primary)">Evolver</span>
+      <span class="text-2xl font-black tracking-tight text-blue-500">AI</span>
+    </a>
 
-    <!-- Desktop Navigation -->
-    <nav id="menu" class="hidden md:flex items-center gap-6">
-      <a
-        href={`/${currentLanguage}#about`}
-        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-      >
-        <i class="material-icons text-base leading-none mr-2">business</i
-        >Company
-      </a>
-      <a
-        href={`/${currentLanguage}/b2b`}
-        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-      >
-        <i class="material-icons text-base leading-none mr-2">handshake</i>B2B
-      </a>
-      <a
-        href={`/${currentLanguage}#products`}
-        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-      >
-        <i class="material-icons text-base leading-none mr-2">settings</i
-        >Products
-      </a>
-      <a
-        href={`/${currentLanguage}/academy`}
-        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-      >
-        <i class="material-icons text-base leading-none mr-2">school</i>Academy
-      </a>
-      <a
-        href={`/${currentLanguage}#contact`}
-        class="text-white px-3 py-2 hover:underline flex items-center whitespace-nowrap"
-      >
-        <i class="material-icons text-base leading-none mr-2">headset_mic</i
-        >Contact
-      </a>
-
-      <!-- Language Switcher -->
-      <LanguageSwitcher currentLanguage={currentLanguage} />
+    <!-- Desktop nav -->
+    <nav class="hidden md:flex items-center gap-1" role="navigation" aria-label="Main navigation">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class="flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm transition-all duration-200"
+          style="color: var(--color-text-secondary)"
+        >
+          <i class="material-icons text-base leading-none">{link.icon}</i>
+          {link.label}
+        </a>
+      ))}
+      <div class="ml-2 pl-2 border-l flex items-center gap-1" style="border-color: var(--color-border)">
+        <LanguageSwitcher currentLanguage={currentLanguage} />
+        <!-- Theme toggle -->
+        <button
+          id="theme-toggle"
+          class="flex items-center justify-center w-9 h-9 rounded-lg transition-all"
+          style="color: var(--color-text-muted)"
+          aria-label="Toggle theme"
+          title="Toggle dark/light mode"
+        >
+          <i class="material-icons text-base theme-icon-dark">dark_mode</i>
+          <i class="material-icons text-base theme-icon-light hidden">light_mode</i>
+        </button>
+      </div>
     </nav>
+
+    <!-- Mobile hamburger -->
+    <button
+      id="mobile-menu-button"
+      class="md:hidden flex items-center justify-center w-10 h-10 rounded-lg transition-all"
+      style="color: var(--color-text-secondary)"
+      aria-label="Open menu"
+    >
+      <i class="material-icons">menu</i>
+    </button>
   </div>
 </header>
+
+<!-- Mobile overlay -->
+<div
+  id="mobile-overlay"
+  class="fixed inset-0 bg-black/60 z-40 opacity-0 pointer-events-none transition-opacity duration-300 md:hidden"
+></div>
+
+<!-- Mobile slide-in menu -->
+<div
+  id="mobile-menu"
+  class="fixed top-0 right-0 bottom-0 w-72 z-50 translate-x-full transition-transform duration-300 ease-out md:hidden"
+  style="background: var(--color-bg-base); border-left: 1px solid var(--color-border); padding-right: env(safe-area-inset-right); padding-bottom: env(safe-area-inset-bottom); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px);"
+>
+  <div class="flex flex-col h-full">
+    <!-- Menu header -->
+    <div class="flex items-center justify-between px-5 py-4 border-b" style="border-color: var(--color-border);">
+      <span class="font-bold" style="color: var(--color-text-primary)">Evolver<span class="text-blue-500">AI</span></span>
+      <button
+        onclick="document.getElementById('mobile-overlay').click()"
+        class="w-8 h-8 flex items-center justify-center rounded-lg transition-all"
+        style="color: var(--color-text-muted)"
+      >
+        <i class="material-icons text-xl">close</i>
+      </button>
+    </div>
+
+    <!-- Nav links -->
+    <nav class="flex-1 px-3 py-4 space-y-1 overflow-y-auto">
+      {navLinks.map(link => (
+        <a
+          href={link.href}
+          class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all"
+          style="color: var(--color-text-secondary)"
+        >
+          <i class="material-icons text-blue-500">{link.icon}</i>
+          <span class="font-medium">{link.label}</span>
+        </a>
+      ))}
+    </nav>
+
+    <!-- Language switcher at bottom -->
+    <div class="px-5 py-4 border-t" style="border-color: var(--color-border);">
+      <p class="text-xs mb-2 uppercase tracking-wider" style="color: var(--color-text-muted)">Language</p>
+      <LanguageSwitcher currentLanguage={currentLanguage} />
+    </div>
+  </div>
+</div>
+
+<!-- Spacer so content doesn't hide under fixed header -->
+<div style="height: calc(var(--header-height) + env(safe-area-inset-top));"></div>
+
+<style>
+  /* Hover states for token-based nav links */
+  #site-header nav a:hover,
+  #site-header button:hover,
+  #mobile-menu a:hover {
+    color: var(--color-text-primary) !important;
+    background-color: rgba(128,128,128,0.08);
+    border-radius: 0.5rem;
+  }
+  #site-header .nav-link-active {
+    color: var(--color-text-primary) !important;
+    background: rgba(128,128,128,0.08);
+  }
+</style>
+
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const btn       = document.getElementById('theme-toggle');
+    const iconDark  = btn?.querySelector('.theme-icon-dark');
+    const iconLight = btn?.querySelector('.theme-icon-light');
+    const html      = document.documentElement;
+
+    function applyTheme(theme: string) {
+      if (theme === 'light') {
+        html.setAttribute('data-theme', 'light');
+        iconDark?.classList.add('hidden');
+        iconLight?.classList.remove('hidden');
+      } else {
+        html.removeAttribute('data-theme');
+        iconDark?.classList.remove('hidden');
+        iconLight?.classList.add('hidden');
+      }
+    }
+
+    // Init from storage
+    applyTheme(localStorage.getItem('theme') || 'dark');
+
+    btn?.addEventListener('click', () => {
+      const current = html.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      const next    = current === 'light' ? 'dark' : 'light';
+      localStorage.setItem('theme', next);
+      applyTheme(next);
+    });
+
+    // Active nav link indicator
+    const currentPath = window.location.pathname;
+    document.querySelectorAll('#site-header nav a').forEach((link) => {
+      const href = link.getAttribute('href') || '';
+      // Match exact path or hash anchor on current page
+      if (href && currentPath.startsWith(href.split('#')[0]) && href.split('#')[0].length > 3) {
+        link.classList.add('nav-link-active');
+      }
+    });
+  });
+</script>
