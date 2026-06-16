@@ -9,13 +9,12 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-[edge_functions]
-  directory = "netlify/edge-functions"
-
 # Language routing for unprefixed paths ("/", "/b2b", …) is handled server-side
-# by the `lang-redirect` edge function (see netlify/edge-functions/). It detects
-# the visitor's locale (cookie → Accept-Language → "en") and 302s to the
-# localized URL. No SPA catch-all: unknown paths now serve the real 404 page.
+# by the `lang-redirect` edge function. Netlify auto-discovers it from the default
+# netlify/edge-functions/ directory; the routes it runs on are declared in-file via
+# `export const config = { path: [...] }`. It detects the visitor's locale
+# (cookie → Accept-Language → "en") and 302s to the localized URL. No SPA
+# catch-all: unknown paths now serve the real 404 page.
 
 # ── Cache headers ──────────────────────────────────────────────────────────
 
