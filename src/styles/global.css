@@ -105,10 +105,11 @@
   .h1-noto-sans {
     font-family: var(--font-display);
     font-size: var(--text-3xl);
-    font-weight: 700;
+    font-weight: 800;
+    letter-spacing: -0.02em;
     padding-left: 1rem;
     border-left: 4px solid var(--color-accent-orange);
-    line-height: 1.2;
+    line-height: 1.15;
     color: var(--color-text-primary);
   }
 

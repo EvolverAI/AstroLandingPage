@@ -112,7 +112,9 @@ const titleClasses = `${titleColor} ${titleSize} ${titleWeight}`;
 const contentColor = cardDefaults?.content?.color || "card-content";
 const contentSize = cardDefaults?.content?.size || "text-base";
 const contentWeight = cardDefaults?.content?.weight || "font-normal";
-const descriptionClasses = `${contentColor} ${contentSize} ${contentWeight} text-justify`;
+// Left/centre alignment follows the card layout; justified text is avoided — it
+// creates uneven "rivers" and hurts readability in narrow card columns.
+const descriptionClasses = `${contentColor} ${contentSize} ${contentWeight}`;
 
 const defaultIconColor = cardDefaults?.icon?.color || "text-blue-400";
 
