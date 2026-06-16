@@ -27,6 +27,9 @@
     line-height: 1.7;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    /* Safeguard: no stray section can cause horizontal scroll/clipping on mobile.
+       `clip` (not `hidden`) keeps position: sticky working. */
+    overflow-x: clip;
   }
 
   /* Scrollbar */

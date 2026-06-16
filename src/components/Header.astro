@@ -25,9 +25,20 @@ const navLinks = [
   <div class="container mx-auto px-4 h-full flex items-center justify-between">
 
     <!-- Logo -->
-    <a href={`/${currentLanguage}`} class="flex items-center gap-1 shrink-0">
-      <span class="text-2xl font-black tracking-tight" style="color: var(--color-text-primary)">Evolver</span>
-      <span class="text-2xl font-black tracking-tight text-blue-500">AI</span>
+    <a href={`/${currentLanguage}`} class="flex items-center gap-2 shrink-0" aria-label="EvolverAI home">
+      <img
+        src="/img/logo-evolverai.png"
+        alt=""
+        width="36"
+        height="36"
+        class="h-9 w-auto"
+        loading="eager"
+        decoding="async"
+      />
+      <span class="flex items-baseline">
+        <span class="text-2xl font-black tracking-tight" style="color: var(--color-text-primary)">Evolver</span>
+        <span class="text-2xl font-black tracking-tight text-blue-500">AI</span>
+      </span>
     </a>
 
     <!-- Desktop nav -->
