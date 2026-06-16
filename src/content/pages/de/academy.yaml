@@ -72,23 +72,32 @@ sections:
   - discriminant: cards
     value:
       id: learning-approach
+      title: Learn by Doing
+      description: A practical methodology built on real projects, industry tools, and a portfolio you can show.
       cards:
-        - title: Learn by Doing
-          description: >
-            Our training methodology emphasizes practical application over theoretical concepts.  Every course includes
-            real-world projects that simulate actual business scenarios,  ensuring you gain hands-on experience with the
-            tools and techniques used in  professional AI development.
-
-            You'll work with popular frameworks like TensorFlow, PyTorch, and scikit-learn,  while learning to deploy
-            models using cloud platforms and modern MLOps practices.  By the end of each course, you'll have a portfolio
-            of projects demonstrating  your capabilities to potential employers.
+        - title: Practical over theory
           icon:
             type: build
-            alignment: left-big
+            alignment: top
+          description: >-
+            Every course centers on real-world projects that simulate actual business scenarios, so you gain genuine
+            hands-on experience.
+        - title: Industry tools
+          icon:
+            type: integration_instructions
+            alignment: top
+          description: >-
+            Work with TensorFlow, PyTorch and scikit-learn, and deploy models using cloud platforms and modern MLOps
+            practices.
+        - title: Portfolio-ready
+          icon:
+            type: school
+            alignment: top
+          description: Finish each course with a portfolio of projects that demonstrate your capabilities to potential employers.
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: courses

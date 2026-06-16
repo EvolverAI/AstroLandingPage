@@ -205,116 +205,115 @@ sections:
       id: location-infrastructure
       subtitle: Location & Infrastructure
       cards:
-        - title: Our Presence in Albania
-          subsectionColumns: 2
-          subsectionStyle: plain
-          subsections:
-            - title: Strategic Location Advantage
-              icon: location_on
-              description: |-
-                Albania offers significant advantages for our clients: a competitive labor market with considerably
-                lower operational costs than Western Europe, a multilingual workforce with strong English proficiency,
-                and a stable political climate with low geopolitical risk.
+        - title: Strategic Location Advantage
+          description: |-
+            Albania offers significant advantages for our clients: a competitive labor market with considerably
+            lower operational costs than Western Europe, a multilingual workforce with strong English proficiency,
+            and a stable political climate with low geopolitical risk.
 
-                The country's growing tech sector, investment in digital infrastructure, and commitment to economic
-                reforms make it an ideal base for cost-effective, high-quality business process operations.
-            - title: Enterprise-Grade Infrastructure
-              icon: security
-              description: |-
-                Our operations run on a secure, enterprise-grade IT infrastructure enhanced by EvolverAI's advanced
-                cloud services — combining local operational agility with global technology standards.
+            The country's growing tech sector, investment in digital infrastructure, and commitment to economic
+            reforms make it an ideal base for cost-effective, high-quality business process operations.
+          icon:
+            type: location_on
+            alignment: top
+        - title: Enterprise-Grade Infrastructure
+          description: |-
+            Our operations run on a secure, enterprise-grade IT infrastructure enhanced by EvolverAI's advanced
+            cloud services — combining local operational agility with global technology standards.
 
-                Redundant systems, multiple backup protocols, and continuous monitoring guarantee high availability.
-                We leverage EvolverAI's proprietary cloud infrastructure to ensure seamless client integration while
-                maintaining strict GDPR compliance and consistent security standards.
+            Redundant systems, multiple backup protocols, and continuous monitoring guarantee high availability.
+            We leverage EvolverAI's proprietary cloud infrastructure to ensure seamless client integration while
+            maintaining strict GDPR compliance and consistent security standards.
+          icon:
+            type: security
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: scalability
       subtitle: Built for Scalability and Future Growth
       cards:
-        - title: Growth Framework
-          subsectionColumns: 3
-          subsectionStyle: card
-          subsections:
-            - title: Workforce Scalability
-              icon: group_add
-              description: >-
-                Our recruitment and training processes are designed to quickly onboard new talent, scaling our team size
-                by up to 200% within 60 days while maintaining quality standards.
-            - title: Technical Adaptability
-              icon: hub
-              description: >-
-                Our cloud-based infrastructure scales computing resources on demand with a technology-agnostic approach,
-                integrating with virtually any client system or new technology as your business evolves.
-            - title: Service Expansion
-              icon: diversity_3
-              description: >-
-                Our operational model easily accommodates new service offerings, continuously evaluating emerging
-                technologies to propose innovative solutions for evolving business challenges.
-          callout:
-            icon: lightbulb
-            text: >-
-              Our infrastructure is built on the principle of strategic scalability — growing not just in size but in
-              capabilities. Whether scaling up during peak periods, expanding into new markets, or adding new service
-              offerings, our flexible foundation accommodates your evolving requirements without compromising
-              performance, security, or quality.
+        - title: Workforce Scalability
+          description: >-
+            Our recruitment and training processes are designed to quickly onboard new talent, scaling our team size by
+            up to 200% within 60 days while maintaining quality standards.
+          icon:
+            type: group_add
+            alignment: top
+        - title: Technical Adaptability
+          description: >-
+            Our cloud-based infrastructure scales computing resources on demand with a technology-agnostic approach,
+            integrating with virtually any client system or new technology as your business evolves.
+          icon:
+            type: hub
+            alignment: top
+        - title: Service Expansion
+          description: >-
+            Our operational model easily accommodates new service offerings, continuously evaluating emerging
+            technologies to propose innovative solutions for evolving business challenges.
+          icon:
+            type: diversity_3
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: compliance-security
       subtitle: Compliance & Security
       description: Adherence to GDPR and Industry Security Standards
       cards:
-        - title: Security Framework
-          subsectionColumns: 2
-          subsectionStyle: plain
-          subsections:
-            - title: GDPR Compliance
-              icon: gpp_good
-              description: >-
-                We are fully committed to adhering to GDPR, ensuring all personal data processed on behalf of our
-                clients is handled with the highest levels of privacy and security.
-              features:
-                - text: End-to-end encryption for data in transit and at rest
-                - text: Regular security audits and penetration testing
-                - text: Strict access controls and authentication protocols
-                - text: Comprehensive data backup and recovery procedures
-            - title: Security Infrastructure
-              icon: security
-              description: >-
-                Our security infrastructure protects your data at every level — from physical security at our facilities
-                to advanced cybersecurity measures for our digital assets.
-              features:
-                - text: Compliance with international security standards
-                - text: Regular audits against evolving threats
-                - text: Team trained in latest security protocols
-                - text: Continuous monitoring and threat detection
-            - title: Data Protection Measures
-              icon: policy
-              description: >-
-                We implement comprehensive data protection measures aligned with GDPR and international security
-                standards, safeguarding all client data throughout its lifecycle.
-              features:
-                - text: AES-256 encryption for data at rest
-                - text: TLS 1.2+ for all data in transit
-                - text: Strict data retention and disposal policies
-                - text: Role-based access control across all systems
-            - title: Compliance Certifications
-              icon: verified_user
-              description: >-
-                We maintain compliance with international security standards and regularly undergo audits. Our team is
-                trained in the latest security protocols and best practices.
+        - title: GDPR Compliance
+          description: >-
+            We are fully committed to adhering to GDPR, ensuring all personal data processed on behalf of our clients is
+            handled with the highest levels of privacy and security.
+          icon:
+            type: gpp_good
+            alignment: top
+          features:
+            - text: End-to-end encryption for data in transit and at rest
+            - text: Regular security audits and penetration testing
+            - text: Strict access controls and authentication protocols
+            - text: Comprehensive data backup and recovery procedures
+        - title: Security Infrastructure
+          description: >-
+            Our security infrastructure protects your data at every level — from physical security at our facilities to
+            advanced cybersecurity measures for our digital assets.
+          icon:
+            type: security
+            alignment: top
+          features:
+            - text: Compliance with international security standards
+            - text: Regular audits against evolving threats
+            - text: Team trained in latest security protocols
+            - text: Continuous monitoring and threat detection
+        - title: Data Protection Measures
+          description: >-
+            We implement comprehensive data protection measures aligned with GDPR and international security standards,
+            safeguarding all client data throughout its lifecycle.
+          icon:
+            type: policy
+            alignment: top
+          features:
+            - text: AES-256 encryption for data at rest
+            - text: TLS 1.2+ for all data in transit
+            - text: Strict data retention and disposal policies
+            - text: Role-based access control across all systems
+        - title: Compliance Certifications
+          description: >-
+            We maintain compliance with international security standards and regularly undergo audits. Our team is
+            trained in the latest security protocols and best practices.
+          icon:
+            type: verified_user
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: data-privacy
