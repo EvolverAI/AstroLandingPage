@@ -21,8 +21,15 @@ const {
     language = "en",
 } = Astro.props;
 
-// Duplicate logos for seamless loop
-const loopLogos = scrolling ? [...logos, ...logos] : logos;
+// Build one "set" wide enough to fill the track, then duplicate it so the
+// translateX(-50%) marquee loops seamlessly even with only a few logos.
+const oneSet: typeof logos = [];
+if (logos.length) {
+    const target = Math.max(logos.length, 6);
+    while (oneSet.length < target) oneSet.push(...logos);
+}
+const loopLogos = scrolling ? [...oneSet, ...oneSet] : logos;
+const scrollDuration = Math.max(oneSet.length * 3, 24);
 const stripUid = `strip-${sectionId}`;
 ---
 
@@ -50,7 +57,7 @@ const stripUid = `strip-${sectionId}`;
                     <div
                         id={stripUid}
                         class="flex items-center gap-12 logo-strip-track"
-                        style={`animation: logoScroll ${Math.max(logos.length * 3, 20)}s linear infinite`}
+                        style={`animation: logoScroll ${scrollDuration}s linear infinite`}
                     >
                         {loopLogos.map((logo, i) => (
                             <div class="shrink-0 flex items-center justify-center h-12 w-32 opacity-50 hover:opacity-100 transition-opacity grayscale hover:grayscale-0">

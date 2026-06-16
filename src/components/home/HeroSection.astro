@@ -25,15 +25,24 @@ const companyName = heroContent.companyName || "Evolver";
 const companyHighlight = heroContent.companyNameHighlight || "AI";
 const subtitle = heroContent.subtitle || "";
 const description = heroContent.description || "";
-const title = heroContent.title || "";
+const title = heroContent.title || `${companyName}${companyHighlight}`;
 const eyebrow = heroContent.eyebrow || "";
-const ctaText = heroContent.ctaText || "";
-const ctaUrl = heroContent.ctaUrl || "#contact";
-const secondaryCtaText = heroContent.secondaryCtaText || "";
-const secondaryCtaUrl = heroContent.secondaryCtaUrl || "#about";
 const heroImage = heroContent.heroImage || "";
 const videoSrc = heroContent.videoSrc || "";
 const variant = heroContent.variant || "default";
+
+// Sensible, localized CTA defaults so the hero always has clear actions even when
+// the content doesn't specify them.
+const ctaDefaults: Record<string, { primary: string; secondary: string }> = {
+  en: { primary: "Get in touch", secondary: "Explore solutions" },
+  it: { primary: "Contattaci", secondary: "Scopri le soluzioni" },
+  de: { primary: "Kontakt aufnehmen", secondary: "Lösungen entdecken" },
+};
+const d = ctaDefaults[language] || ctaDefaults.en;
+const primaryLabel = heroContent.ctaText || d.primary;
+const secondaryLabel = heroContent.secondaryCtaText || d.secondary;
+const primaryUrl = heroContent.ctaUrl || "#contact";
+const secondaryUrl = heroContent.secondaryCtaUrl || "#services";
 
 const isSplit = variant === "split";
 const isVideo = variant === "video";
@@ -42,145 +51,96 @@ const isParticles = variant === "particles";
 
 <section
   id="hero"
-  class={`relative min-h-screen flex flex-col justify-center overflow-hidden ${isSplit ? "md:flex-row md:items-center" : ""}`}
+  class={`relative min-h-[90vh] flex flex-col justify-center overflow-hidden ${isSplit ? "md:flex-row md:items-center" : ""}`}
 >
   <!-- Background: video variant -->
   {isVideo && videoSrc && (
-    <video
-      autoplay muted loop playsinline
-      class="absolute inset-0 w-full h-full object-cover"
-      aria-hidden="true"
-    >
+    <video autoplay muted loop playsinline class="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
       <source src={videoSrc} />
     </video>
   )}
 
-  <!-- Animated gradient background (default / gradient / split / particles) -->
+  <!-- Gradient background -->
   {!isVideo && (
     <div class={`absolute inset-0 hero-bg ${variant === "gradient" ? "hero-bg-animated" : ""}`} aria-hidden="true"></div>
   )}
+  {isVideo && <div class="absolute inset-0 bg-black/60" aria-hidden="true"></div>}
 
-  <!-- Dark overlay for video -->
-  {isVideo && (
-    <div class="absolute inset-0 bg-black/60" aria-hidden="true"></div>
-  )}
-
-  <!-- Grid pattern overlay -->
+  <!-- Grid pattern -->
   <div class="absolute inset-0 hero-grid opacity-20" aria-hidden="true"></div>
 
   <!-- Glow orbs -->
-  <div class="absolute top-1/4 left-1/4 w-96 h-96 rounded-full blur-3xl opacity-10 bg-blue-600 pointer-events-none" aria-hidden="true"></div>
-  <div class="absolute bottom-1/4 right-1/4 w-64 h-64 rounded-full blur-3xl opacity-10 bg-purple-600 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute top-1/3 left-1/4 w-[28rem] h-[28rem] rounded-full blur-3xl opacity-20 bg-blue-600 pointer-events-none" aria-hidden="true"></div>
+  <div class="absolute bottom-1/4 right-1/5 w-80 h-80 rounded-full blur-3xl opacity-15 bg-indigo-600 pointer-events-none" aria-hidden="true"></div>
 
-  <!-- Particles canvas (particles variant) -->
   {isParticles && <canvas id="hero-particles" class="absolute inset-0 w-full h-full pointer-events-none" aria-hidden="true"></canvas>}
 
   <!-- Content -->
-  <div class={`relative z-10 container mx-auto px-4 py-20 ${isSplit ? "md:grid md:grid-cols-2 md:gap-16 md:items-center" : ""}`}>
+  <div class={`relative z-10 container mx-auto px-4 py-24 md:py-28 ${isSplit ? "md:grid md:grid-cols-2 md:gap-16 md:items-center" : ""}`}>
 
-    <!-- Text column -->
-    <div class={isSplit ? "flex flex-col justify-center" : ""}>
+    <div class={isSplit ? "flex flex-col justify-center text-left" : "max-w-3xl mx-auto flex flex-col items-center text-center"}>
 
-      <!-- Eyebrow badge -->
-      {eyebrow && (
-        <div class="reveal flex justify-center mb-6">
-          <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-900/40 text-blue-300 border border-blue-700/50 backdrop-blur-sm">
-            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-            {eyebrow}
-          </span>
-        </div>
-      )}
-
-      <!-- Tagline + description (right-aligned, only when not split) -->
-      {!isSplit && (subtitle || description) && (
-        <div class="reveal flex justify-end mb-8">
-          <div class="max-w-lg text-right">
-            {subtitle && (
-              <p class="text-slate-300 text-lg leading-relaxed">
-                <i class="material-icons text-yellow-400 align-middle mr-2 text-xl">lightbulb</i>
-                {subtitle}
-              </p>
-            )}
-            {description && (
-              <p class="text-slate-400 text-base leading-relaxed mt-2">{description}</p>
-            )}
-          </div>
-        </div>
-      )}
-
-      <!-- Giant brand name -->
-      <div class="reveal text-center" transition:name="hero-title">
-        <h1 class="hero-wordmark font-bold leading-none select-none">
-          <span class="text-white">{companyName}</span><span class="text-blue-500">{companyHighlight}</span>
-        </h1>
+      <!-- Eyebrow / brand chip -->
+      <div class="reveal mb-6">
+        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-900/30 text-blue-200 border border-blue-700/40 backdrop-blur-sm">
+          <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+          {eyebrow || (<span>{companyName}<span class="text-blue-300">{companyHighlight}</span></span>)}
+        </span>
       </div>
 
-      <!-- Subtitle below wordmark -->
-      {title && (
-        <div class="reveal text-center mt-6">
-          <p class="text-slate-400 text-xl max-w-2xl mx-auto">{title}</p>
-        </div>
-      )}
+      <!-- Value-proposition headline -->
+      <h1 class="reveal hero-headline font-extrabold text-white tracking-tight" transition:name="hero-title">
+        {title}
+      </h1>
 
-      <!-- Split variant: description below title -->
-      {isSplit && description && (
-        <div class="reveal mt-4">
-          <p class="text-slate-300 text-lg leading-relaxed">{description}</p>
-        </div>
+      <!-- Subhead -->
+      {subtitle && (
+        <p class={`reveal mt-6 text-lg md:text-xl text-slate-200 leading-relaxed ${isSplit ? "" : "max-w-2xl"}`}>
+          {subtitle}
+        </p>
+      )}
+      {description && (
+        <p class={`reveal mt-3 text-base text-slate-400 leading-relaxed ${isSplit ? "" : "max-w-xl"}`}>
+          {description}
+        </p>
       )}
 
       <!-- CTA buttons -->
-      {(ctaText || secondaryCtaText) && (
-        <div class="reveal flex flex-wrap gap-4 justify-center mt-10">
-          {ctaText && (
-            <a href={ctaUrl} class="btn btn-primary px-8 py-3 text-base shadow-lg shadow-blue-900/30 hover:scale-105 transition-transform">
-              {ctaText}
-              <i class="material-icons text-base ml-1">arrow_forward</i>
-            </a>
-          )}
-          {secondaryCtaText && (
-            <a href={secondaryCtaUrl} class="btn btn-ghost px-8 py-3 text-base hover:scale-105 transition-transform">
-              {secondaryCtaText}
-            </a>
-          )}
-        </div>
-      )}
+      <div class={`reveal mt-10 flex flex-wrap gap-4 ${isSplit ? "" : "justify-center"}`}>
+        <a href={primaryUrl} class="btn btn-primary px-8 py-3.5 text-base font-semibold shadow-lg shadow-blue-900/40 hover:scale-105 transition-transform">
+          {primaryLabel}
+          <i class="material-icons text-base ml-1">arrow_forward</i>
+        </a>
+        <a href={secondaryUrl} class="btn btn-ghost px-8 py-3.5 text-base hover:scale-105 transition-transform">
+          {secondaryLabel}
+        </a>
+      </div>
     </div>
 
     <!-- Image column (split variant) -->
     {isSplit && heroImage && (
       <div class="reveal-right hidden md:flex items-center justify-center mt-12 md:mt-0">
-        <img
-          src={heroImage}
-          alt={title || companyName + companyHighlight}
-          class="w-full max-w-lg rounded-2xl shadow-2xl object-cover"
-          loading="eager"
-          fetchpriority="high"
-        />
-      </div>
-    )}
-
-    <!-- Scroll indicator (non-split) -->
-    {!isSplit && (
-      <div class="reveal flex justify-center mt-16">
-        <a
-          href="#about"
-          class="scroll-indicator flex flex-col items-center gap-2 text-slate-500 hover:text-slate-300 transition-colors"
-          aria-label="Scroll to content"
-        >
-          <span class="text-xs uppercase tracking-widest">Scroll</span>
-          <i class="material-icons animate-bounce">keyboard_arrow_down</i>
-        </a>
+        <img src={heroImage} alt={title} class="w-full max-w-lg rounded-2xl shadow-2xl object-cover" loading="eager" fetchpriority="high" />
       </div>
     )}
   </div>
+
+  <!-- Scroll indicator -->
+  {!isSplit && (
+    <div class="reveal absolute bottom-8 left-1/2 -translate-x-1/2">
+      <a href="#about" class="scroll-indicator flex flex-col items-center gap-2 text-slate-400 hover:text-slate-200 transition-colors" aria-label="Scroll to content">
+        <span class="text-xs uppercase tracking-widest">Scroll</span>
+        <i class="material-icons animate-bounce">keyboard_arrow_down</i>
+      </a>
+    </div>
+  )}
 </section>
 
 <style>
   .hero-bg {
     background:
-      radial-gradient(ellipse at 20% 50%, rgba(29, 78, 216, 0.15) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.1) 0%, transparent 50%),
+      radial-gradient(ellipse at 25% 40%, rgba(37, 99, 235, 0.22) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.16) 0%, transparent 50%),
       var(--color-bg-base);
   }
 
@@ -188,10 +148,10 @@ const isParticles = variant === "particles";
     background-size: 400% 400%;
     animation: gradient-shift 12s ease infinite;
     background-image:
-      radial-gradient(ellipse at 20% 50%, rgba(29, 78, 216, 0.25) 0%, transparent 60%),
-      radial-gradient(ellipse at 80% 20%, rgba(124, 58, 237, 0.2) 0%, transparent 50%),
+      radial-gradient(ellipse at 20% 50%, rgba(37, 99, 235, 0.28) 0%, transparent 60%),
+      radial-gradient(ellipse at 80% 20%, rgba(99, 102, 241, 0.22) 0%, transparent 50%),
       radial-gradient(ellipse at 50% 80%, rgba(16, 185, 129, 0.1) 0%, transparent 50%),
-      linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      linear-gradient(135deg, #0a0f1e 0%, #1e1b4b 50%, #0a0f1e 100%);
   }
 
   @keyframes gradient-shift {
@@ -204,22 +164,20 @@ const isParticles = variant === "particles";
       linear-gradient(rgba(148, 163, 184, 0.05) 1px, transparent 1px),
       linear-gradient(90deg, rgba(148, 163, 184, 0.05) 1px, transparent 1px);
     background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 75%);
   }
 
-  .hero-wordmark {
-    font-size: var(--text-hero);
-    font-family: var(--font-sans);
-    line-height: 0.9;
+  /* Readable, never-overflowing headline (replaces the old viewport-sized wordmark). */
+  .hero-headline {
+    font-size: clamp(2.25rem, 6vw, 4.5rem);
+    line-height: 1.08;
     overflow-wrap: break-word;
-    word-break: break-all;
-  }
-
-  @media (max-width: 360px) {
-    .hero-wordmark { font-size: clamp(2.5rem, 22vw, 9rem); }
   }
 
   @media (prefers-reduced-motion: reduce) {
     .hero-bg-animated { animation: none; }
+    .scroll-indicator .material-icons { animation: none; }
   }
 </style>
 

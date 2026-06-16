@@ -13,6 +13,21 @@ sections:
         bedeutungsvolle Innovation vorantreibt.
       description: Schließen Sie sich uns an bei der Gestaltung der Zukunft intelligenter Geschäftslösungen.
       minHeight: 100vh
+  - discriminant: logo_strip
+    value:
+      id: clients
+      title: Vertraut von führenden Organisationen
+      scrolling: true
+      logos:
+        - src: /img/clients/nielsen.png
+          alt: Nielsen
+          url: https://www.nielsen.com
+        - src: /img/clients/centro.png
+          alt: Centro Pediatrico del Mendrisiotto
+          url: https://centropediatrico.ch
+        - src: /img/clients/arbed.png
+          alt: Arbed Living Hotel
+          url: https://arbedlivinghotel.ch
   - discriminant: content_header
     value:
       id: about
@@ -390,6 +405,7 @@ sections:
   - discriminant: testimonials
     value:
       id: '111'
+      visible: false
   - discriminant: pricing
     value:
       id: ppp

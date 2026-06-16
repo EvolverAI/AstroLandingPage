@@ -46,24 +46,34 @@ sections:
   - discriminant: cards
     value:
       id: next-gen
+      title: Next-Generation AI Technology
+      description: A sophisticated AI engine at the heart of Elysia that learns, understands, and frees your team.
       cards:
-        - title: Next-Generation AI Technology
-          description: >
-            At the heart of Elysia is our sophisticated artificial intelligence engine that learns  and adapts to your
-            organization's unique requirements. The system continuously improves  its capabilities by analyzing patterns
-            in your workflows and communications, becoming more  efficient and effective over time.
-
-            Elysia doesn't just follow instructions – it understands context, anticipates needs,  and provides
-            intelligent recommendations that help your team work smarter. By handling  routine tasks and queries, it
-            frees up your valuable human resources to focus on creative,  strategic activities that drive business
-            growth.
+        - title: Learns and adapts
           icon:
             type: insights
-            alignment: left-big
+            alignment: top
+          description: >-
+            A sophisticated AI engine learns your requirements and improves by analyzing patterns in your workflows and
+            communications.
+        - title: Understands context
+          icon:
+            type: psychology
+            alignment: top
+          description: >-
+            Goes beyond instructions — it understands context, anticipates needs, and offers intelligent recommendations
+            so your team works smarter.
+        - title: Frees your people
+          icon:
+            type: rocket_launch
+            alignment: top
+          description: >-
+            By handling routine tasks and queries, it frees your team to focus on creative, strategic work that drives
+            growth.
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: features

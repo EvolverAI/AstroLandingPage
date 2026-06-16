@@ -15,6 +15,21 @@ sections:
         meaningful innovation.
       description: Join us in shaping the future of intelligent business solutions.
       minHeight: 100vh
+  - discriminant: logo_strip
+    value:
+      id: clients
+      title: Trusted by leading organizations
+      scrolling: true
+      logos:
+        - src: /img/clients/nielsen.png
+          alt: Nielsen
+          url: https://www.nielsen.com
+        - src: /img/clients/centro.png
+          alt: Centro Pediatrico del Mendrisiotto
+          url: https://centropediatrico.ch
+        - src: /img/clients/arbed.png
+          alt: Arbed Living Hotel
+          url: https://arbedlivinghotel.ch
   - discriminant: content_header
     value:
       id: about
@@ -398,6 +413,7 @@ sections:
           role: CEO
           company: Acme Corp
           rating: 5
+      visible: false
   - discriminant: pricing
     value:
       id: ppp

@@ -14,33 +14,43 @@ sections:
   - discriminant: cards
     value:
       id: company-background
+      title: Company Background & Leadership
+      description: >-
+        Infinite Workforce Shpk is our wholly-owned operational entity in Albania (EvolverAI GmbH), built for
+        sustainable, high-quality outsourcing.
       cards:
-        - title: Company Background & Leadership
-          description: |
-            Infinite Workforce Shpk is our operational entity in Albania, fully owned by EvolverAI GmbH. 
-            This strategic investment demonstrates our commitment to creating sustainable, high-quality 
-            outsourcing operations dedicated to data quality control and business process optimization.
-
-            We've designed this entity specifically to provide a skilled, well-trained workforce at an 
-            optimized cost structure, creating value for our clients while maintaining the highest 
-            standards of service excellence.
-
-            What sets us apart from other outsourcing providers is our commitment to our employees. 
-            We offer higher compensation than local competitors, which has resulted in significantly 
-            lower employee turnover rates. This stability allows us to foster a culture of merit and 
-            continuous professional growth, ensuring that our clients benefit from experienced teams 
-            that understand their business needs.
-
-            Our Albania-based team specializes in BPO operations, leveraging our proprietary Workforce 
-            Manager platform, automated Quality Control systems, and advanced KPI extraction tools to 
-            deliver exceptional results for clients in the media measurement and market research sectors.
+        - title: Wholly-owned Albanian entity
+          description: >-
+            Infinite Workforce Shpk, fully owned by EvolverAI GmbH, dedicated to data quality control and business
+            process optimization.
           icon:
-            image: /img/InfiniteWorkforceLogo.png
-            alignment: top-big
+            type: location_on
+            alignment: top
+        - title: Skilled, cost-optimized teams
+          description: >-
+            A well-trained workforce at an optimized cost structure — real value for clients while maintaining the
+            highest standards of service excellence.
+          icon:
+            type: groups
+            alignment: top
+        - title: Low turnover, deep expertise
+          description: >-
+            Higher compensation than local competitors means significantly lower turnover and experienced teams that
+            understand your business.
+          icon:
+            type: trending_up
+            alignment: top
+        - title: BPO specialists
+          description: >-
+            Our proprietary Workforce Manager platform, automated Quality Control and KPI extraction power media
+            measurement and market research.
+          icon:
+            type: insights
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: leadership
@@ -109,34 +119,38 @@ sections:
         The Operation Manager oversees all operational aspects of your outsourced processes, focusing on
         continuous improvement, transparent communication, and proactive problem-solving.
       cards:
-        - title: Key Responsibilities
-          subsectionColumns: 2
-          subsectionStyle: card
-          subsections:
-            - title: Process Efficiency Management
-              icon: speed
-              description: >-
-                Continuously analyzing and optimizing workflows to improve operational efficiency, reduce errors, and
-                achieve faster turnaround times.
-            - title: Client Communication & Reporting
-              icon: forum
-              description: >-
-                Conducting weekly client updates with detailed performance metrics, progress reports, and transparent
-                discussions about any challenges or opportunities.
-            - title: Risk Mitigation & Issue Resolution
-              icon: gpp_maybe
-              description: >-
-                Proactively identifying potential risks in workflows, data accuracy, or operational bottlenecks,
-                implementing effective strategies to address them before they impact deliverables.
-            - title: Resource Management & Team Development
-              icon: groups
-              description: >-
-                Ensuring optimal allocation of resources and providing regular training on new tools, technologies, and
-                processes to maintain a highly skilled and adaptable team.
+        - title: Process Efficiency Management
+          description: >-
+            Continuously analyzing and optimizing workflows to improve operational efficiency, reduce errors, and
+            achieve faster turnaround times.
+          icon:
+            type: speed
+            alignment: top
+        - title: Client Communication & Reporting
+          description: >-
+            Conducting weekly client updates with detailed performance metrics, progress reports, and transparent
+            discussions about any challenges or opportunities.
+          icon:
+            type: forum
+            alignment: top
+        - title: Risk Mitigation & Issue Resolution
+          description: >-
+            Proactively identifying potential risks in workflows, data accuracy, or operational bottlenecks,
+            implementing effective strategies to address them before they impact deliverables.
+          icon:
+            type: gpp_maybe
+            alignment: top
+        - title: Resource Management & Team Development
+          description: >-
+            Ensuring optimal allocation of resources and providing regular training on new tools, technologies, and
+            processes to maintain a highly skilled and adaptable team.
+          icon:
+            type: groups
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: support-structure
@@ -146,168 +160,160 @@ sections:
         your outsourced processes runs smoothly. This multidisciplinary support network works in concert to anticipate
         needs, resolve challenges, and drive continuous improvement across all service areas.
       cards:
-        - title: Support Functions
-          subsectionColumns: 3
-          subsectionStyle: card
-          subsections:
-            - title: IT Support & Infrastructure
-              icon: computer
-              description: >-
-                Our dedicated IT team ensures all technical aspects of your outsourced operations function flawlessly,
-                with robust security protocols and minimal downtime.
-              features:
-                - text: Comprehensive disaster recovery planning and business continuity measures
-                - text: Enterprise-grade network security and monitoring
-                - text: Deployment and maintenance of specialized tools and applications
-                - text: Proactive system monitoring and preventive maintenance
-            - title: HR & Talent Development
-              icon: people
-              description: >-
-                Our HR team focuses on attracting, developing, and retaining the best talent through strategic
-                recruitment and professional growth opportunities.
-              features:
-                - text: Strategic hiring aligned with your specific operational requirements
-                - text: Comprehensive talent development programs and career pathing
-                - text: Employee engagement initiatives that boost morale and productivity
-                - text: Competitive compensation packages that attract and retain top talent
-            - title: Administrative & Compliance
-              icon: account_balance
-              description: >-
-                Our administrative team handles all financial, legal, and compliance matters, ensuring smooth operations
-                while adhering to all relevant regulations.
-              features:
-                - text: Comprehensive regulatory compliance management
-                - text: Strategic cost management and transparent budgeting
-                - text: Efficient invoice management and payment processing
-                - text: Contract management and legal documentation
-          callout:
-            icon: insights
-            title: Our Integrated Approach
-            text: >-
-              What truly sets our team structure apart is how these elements work together as a unified system. The
-              Operation Manager coordinates closely with each support function, ensuring that all aspects of service
-              delivery are synchronized and focused on your specific business requirements. This integrated approach
-              enables us to respond quickly to changing needs, scale operations efficiently, and consistently deliver
-              exceptional results that exceed expectations.
+        - title: IT Support & Infrastructure
+          description: >-
+            Our dedicated IT team ensures all technical aspects of your outsourced operations function flawlessly, with
+            robust security protocols and minimal downtime.
+          icon:
+            type: computer
+            alignment: top
+          features:
+            - text: Comprehensive disaster recovery planning and business continuity measures
+            - text: Enterprise-grade network security and monitoring
+            - text: Deployment and maintenance of specialized tools and applications
+            - text: Proactive system monitoring and preventive maintenance
+        - title: HR & Talent Development
+          description: >-
+            Our HR team focuses on attracting, developing, and retaining the best talent through strategic recruitment
+            and professional growth opportunities.
+          icon:
+            type: people
+            alignment: top
+          features:
+            - text: Strategic hiring aligned with your specific operational requirements
+            - text: Comprehensive talent development programs and career pathing
+            - text: Employee engagement initiatives that boost morale and productivity
+            - text: Competitive compensation packages that attract and retain top talent
+        - title: Administrative & Compliance
+          description: >-
+            Our administrative team handles all financial, legal, and compliance matters, ensuring smooth operations
+            while adhering to all relevant regulations.
+          icon:
+            type: account_balance
+            alignment: top
+          features:
+            - text: Comprehensive regulatory compliance management
+            - text: Strategic cost management and transparent budgeting
+            - text: Efficient invoice management and payment processing
+            - text: Contract management and legal documentation
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: location-infrastructure
       subtitle: Location & Infrastructure
       cards:
-        - title: Our Presence in Albania
-          subsectionColumns: 2
-          subsectionStyle: plain
-          subsections:
-            - title: Strategic Location Advantage
-              icon: location_on
-              description: |-
-                Albania offers significant advantages for our clients: a competitive labor market with considerably
-                lower operational costs than Western Europe, a multilingual workforce with strong English proficiency,
-                and a stable political climate with low geopolitical risk.
+        - title: Strategic Location Advantage
+          description: |-
+            Albania offers significant advantages for our clients: a competitive labor market with considerably
+            lower operational costs than Western Europe, a multilingual workforce with strong English proficiency,
+            and a stable political climate with low geopolitical risk.
 
-                The country's growing tech sector, investment in digital infrastructure, and commitment to economic
-                reforms make it an ideal base for cost-effective, high-quality business process operations.
-            - title: Enterprise-Grade Infrastructure
-              icon: security
-              description: |-
-                Our operations run on a secure, enterprise-grade IT infrastructure enhanced by EvolverAI's advanced
-                cloud services — combining local operational agility with global technology standards.
+            The country's growing tech sector, investment in digital infrastructure, and commitment to economic
+            reforms make it an ideal base for cost-effective, high-quality business process operations.
+          icon:
+            type: location_on
+            alignment: top
+        - title: Enterprise-Grade Infrastructure
+          description: |-
+            Our operations run on a secure, enterprise-grade IT infrastructure enhanced by EvolverAI's advanced
+            cloud services — combining local operational agility with global technology standards.
 
-                Redundant systems, multiple backup protocols, and continuous monitoring guarantee high availability.
-                We leverage EvolverAI's proprietary cloud infrastructure to ensure seamless client integration while
-                maintaining strict GDPR compliance and consistent security standards.
+            Redundant systems, multiple backup protocols, and continuous monitoring guarantee high availability.
+            We leverage EvolverAI's proprietary cloud infrastructure to ensure seamless client integration while
+            maintaining strict GDPR compliance and consistent security standards.
+          icon:
+            type: security
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: scalability
       subtitle: Built for Scalability and Future Growth
       cards:
-        - title: Growth Framework
-          subsectionColumns: 3
-          subsectionStyle: card
-          subsections:
-            - title: Workforce Scalability
-              icon: group_add
-              description: >-
-                Our recruitment and training processes are designed to quickly onboard new talent, scaling our team size
-                by up to 200% within 60 days while maintaining quality standards.
-            - title: Technical Adaptability
-              icon: hub
-              description: >-
-                Our cloud-based infrastructure scales computing resources on demand with a technology-agnostic approach,
-                integrating with virtually any client system or new technology as your business evolves.
-            - title: Service Expansion
-              icon: diversity_3
-              description: >-
-                Our operational model easily accommodates new service offerings, continuously evaluating emerging
-                technologies to propose innovative solutions for evolving business challenges.
-          callout:
-            icon: lightbulb
-            text: >-
-              Our infrastructure is built on the principle of strategic scalability — growing not just in size but in
-              capabilities. Whether scaling up during peak periods, expanding into new markets, or adding new service
-              offerings, our flexible foundation accommodates your evolving requirements without compromising
-              performance, security, or quality.
+        - title: Workforce Scalability
+          description: >-
+            Our recruitment and training processes are designed to quickly onboard new talent, scaling our team size by
+            up to 200% within 60 days while maintaining quality standards.
+          icon:
+            type: group_add
+            alignment: top
+        - title: Technical Adaptability
+          description: >-
+            Our cloud-based infrastructure scales computing resources on demand with a technology-agnostic approach,
+            integrating with virtually any client system or new technology as your business evolves.
+          icon:
+            type: hub
+            alignment: top
+        - title: Service Expansion
+          description: >-
+            Our operational model easily accommodates new service offerings, continuously evaluating emerging
+            technologies to propose innovative solutions for evolving business challenges.
+          icon:
+            type: diversity_3
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: compliance-security
       subtitle: Compliance & Security
       description: Adherence to GDPR and Industry Security Standards
       cards:
-        - title: Security Framework
-          subsectionColumns: 2
-          subsectionStyle: plain
-          subsections:
-            - title: GDPR Compliance
-              icon: gpp_good
-              description: >-
-                We are fully committed to adhering to GDPR, ensuring all personal data processed on behalf of our
-                clients is handled with the highest levels of privacy and security.
-              features:
-                - text: End-to-end encryption for data in transit and at rest
-                - text: Regular security audits and penetration testing
-                - text: Strict access controls and authentication protocols
-                - text: Comprehensive data backup and recovery procedures
-            - title: Security Infrastructure
-              icon: security
-              description: >-
-                Our security infrastructure protects your data at every level — from physical security at our facilities
-                to advanced cybersecurity measures for our digital assets.
-              features:
-                - text: Compliance with international security standards
-                - text: Regular audits against evolving threats
-                - text: Team trained in latest security protocols
-                - text: Continuous monitoring and threat detection
-            - title: Data Protection Measures
-              icon: policy
-              description: >-
-                We implement comprehensive data protection measures aligned with GDPR and international security
-                standards, safeguarding all client data throughout its lifecycle.
-              features:
-                - text: AES-256 encryption for data at rest
-                - text: TLS 1.2+ for all data in transit
-                - text: Strict data retention and disposal policies
-                - text: Role-based access control across all systems
-            - title: Compliance Certifications
-              icon: verified_user
-              description: >-
-                We maintain compliance with international security standards and regularly undergo audits. Our team is
-                trained in the latest security protocols and best practices.
+        - title: GDPR Compliance
+          description: >-
+            We are fully committed to adhering to GDPR, ensuring all personal data processed on behalf of our clients is
+            handled with the highest levels of privacy and security.
+          icon:
+            type: gpp_good
+            alignment: top
+          features:
+            - text: End-to-end encryption for data in transit and at rest
+            - text: Regular security audits and penetration testing
+            - text: Strict access controls and authentication protocols
+            - text: Comprehensive data backup and recovery procedures
+        - title: Security Infrastructure
+          description: >-
+            Our security infrastructure protects your data at every level — from physical security at our facilities to
+            advanced cybersecurity measures for our digital assets.
+          icon:
+            type: security
+            alignment: top
+          features:
+            - text: Compliance with international security standards
+            - text: Regular audits against evolving threats
+            - text: Team trained in latest security protocols
+            - text: Continuous monitoring and threat detection
+        - title: Data Protection Measures
+          description: >-
+            We implement comprehensive data protection measures aligned with GDPR and international security standards,
+            safeguarding all client data throughout its lifecycle.
+          icon:
+            type: policy
+            alignment: top
+          features:
+            - text: AES-256 encryption for data at rest
+            - text: TLS 1.2+ for all data in transit
+            - text: Strict data retention and disposal policies
+            - text: Role-based access control across all systems
+        - title: Compliance Certifications
+          description: >-
+            We maintain compliance with international security standards and regularly undergo audits. Our team is
+            trained in the latest security protocols and best practices.
+          icon:
+            type: verified_user
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: data-privacy

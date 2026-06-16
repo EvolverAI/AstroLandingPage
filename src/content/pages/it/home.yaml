@@ -13,6 +13,21 @@ sections:
         un'innovazione significativa.
       description: Unitevi a noi nel plasmare il futuro delle soluzioni aziendali intelligenti.
       minHeight: 100vh
+  - discriminant: logo_strip
+    value:
+      id: clients
+      title: Hanno scelto EvolverAI
+      scrolling: true
+      logos:
+        - src: /img/clients/nielsen.png
+          alt: Nielsen
+          url: https://www.nielsen.com
+        - src: /img/clients/centro.png
+          alt: Centro Pediatrico del Mendrisiotto
+          url: https://centropediatrico.ch
+        - src: /img/clients/arbed.png
+          alt: Arbed Living Hotel
+          url: https://arbedlivinghotel.ch
   - discriminant: content_header
     value:
       id: about
@@ -387,6 +402,7 @@ sections:
   - discriminant: testimonials
     value:
       id: '111'
+      visible: false
   - discriminant: pricing
     value:
       id: ppp

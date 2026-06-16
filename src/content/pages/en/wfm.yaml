@@ -46,24 +46,32 @@ sections:
   - discriminant: cards
     value:
       id: next-gen
+      title: Powered by Advanced AI
+      description: A proprietary AI engine sits at the core of Workforce Manager — learning, optimizing, and anticipating.
       cards:
-        - title: Powered by Advanced AI
-          description: >
-            At the core of Workforce Manager is our proprietary artificial intelligence engine,  designed to learn from
-            your organization's unique patterns and requirements.  The system continuously improves its recommendations
-            and forecasts based on historical  data, optimizing schedules for maximum efficiency while respecting
-            individual preferences  and constraints.
-
-            Our AI doesn't just react to your needs – it anticipates them, providing proactive  suggestions to improve
-            workforce allocation, identify potential scheduling conflicts  before they occur, and ensure the right
-            people are assigned to the right tasks at the  right time.
+        - title: Learns your patterns
           icon:
             type: psychology
-            alignment: left-big
+            alignment: top
+          description: >-
+            A proprietary AI engine learns your organization's unique patterns and continuously improves its forecasts
+            from historical data.
+        - title: Optimizes schedules
+          icon:
+            type: schedule
+            alignment: top
+          description: Builds maximally efficient schedules while respecting individual preferences and constraints.
+        - title: Anticipates, not just reacts
+          icon:
+            type: insights
+            alignment: top
+          description: >-
+            Proactively suggests better workforce allocation and flags scheduling conflicts before they occur — the
+            right people on the right tasks at the right time.
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: features
