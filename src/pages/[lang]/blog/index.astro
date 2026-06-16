@@ -104,7 +104,7 @@ const t = labels[lang] ?? labels.en;
                             <article class="card-base group flex flex-col" data-tags={tags.join(',')}>
                                 {coverImage && (
                                     <a
-                                        href={`/${lang}/blog/${post.slug}`}
+                                        href={`/${lang}/blog/${post.id}`}
                                         class="block -mx-[var(--space-card)] -mt-[var(--space-card)] mb-5 overflow-hidden rounded-t-[var(--radius-lg)]"
                                         tabindex="-1"
                                     >
@@ -134,7 +134,7 @@ const t = labels[lang] ?? labels.en;
 
                                 <h2 class="text-xl font-semibold text-gray-800 leading-snug mb-3 flex-1">
                                     <a
-                                        href={`/${lang}/blog/${post.slug}`}
+                                        href={`/${lang}/blog/${post.id}`}
                                         class="hover:text-blue-600 transition-colors"
                                     >
                                         {title}
@@ -161,7 +161,7 @@ const t = labels[lang] ?? labels.en;
         </div>
     </main>
 
-    <Footer currentLanguage={lang} />
+    <Footer language={lang} />
 
     <script>
         // Client-side tag filter
@@ -183,7 +183,7 @@ const t = labels[lang] ?? labels.en;
                 // Filter cards
                 cards.forEach(card => {
                     const cardTags = (card.getAttribute('data-tags') || '').split(',');
-                    const show = tag === 'all' || cardTags.includes(tag);
+                    const show = tag === 'all' || (!!tag && cardTags.includes(tag));
                     (card as HTMLElement).style.display = show ? '' : 'none';
                 });
             });

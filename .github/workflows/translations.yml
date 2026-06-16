@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [main]
     paths:
-      - 'src/content/master/**'
+      - 'src/content/pages/en/**'
 
 jobs:
   check-translations:
@@ -33,6 +33,6 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Run \`npm run translate\` locally to update translations." >> $GITHUB_STEP_SUMMARY
 
-      - name: Validate with strict mode
-        run: npm run validate:strict
+      - name: Check types & content schema
+        run: npm run check
         continue-on-error: true

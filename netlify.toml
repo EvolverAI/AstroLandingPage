@@ -9,17 +9,13 @@
   directory = "netlify/functions"
   node_bundler = "esbuild"
 
-# Language detection redirect — root goes to /en
-[[redirects]]
-  from = "/"
-  to = "/en"
-  status = 302
+[edge_functions]
+  directory = "netlify/edge-functions"
 
-# Catch-all for SPA fallback (shouldn't be needed for static, but safety net)
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+# Language routing for unprefixed paths ("/", "/b2b", …) is handled server-side
+# by the `lang-redirect` edge function (see netlify/edge-functions/). It detects
+# the visitor's locale (cookie → Accept-Language → "en") and 302s to the
+# localized URL. No SPA catch-all: unknown paths now serve the real 404 page.
 
 # ── Cache headers ──────────────────────────────────────────────────────────
 

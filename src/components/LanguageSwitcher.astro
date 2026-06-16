@@ -1,6 +1,6 @@
 ---
 // Language Switcher Component
-import { getAvailableLanguages } from "../utils/content-loader.js";
+import { locales, localeNames } from "../i18n";
 
 export interface Props {
     currentLanguage?: string;
@@ -9,7 +9,7 @@ export interface Props {
 
 const { currentLanguage = "en", className = "" } = Astro.props;
 
-const languages = getAvailableLanguages();
+const languages = locales.map((code) => ({ code, ...localeNames[code] }));
 const currentLangData = languages.find((lang) => lang.code === currentLanguage);
 const displayName = currentLangData?.name || "Language";
 ---
@@ -109,7 +109,7 @@ const displayName = currentLangData?.name || "Language";
 
 <script>
     // Dynamic URL generation function (simplified for new routing)
-    function generateLanguageUrl(targetLangCode, currentPath) {
+    function generateLanguageUrl(targetLangCode: string, currentPath: string) {
         // Remove leading slash for processing
         const path = currentPath.startsWith("/")
             ? currentPath.substring(1)
@@ -118,7 +118,7 @@ const displayName = currentLangData?.name || "Language";
         // Split path into segments
         const segments = path
             .split("/")
-            .filter((segment) => segment.length > 0);
+            .filter((segment: string) => segment.length > 0);
 
         if (segments.length === 0) {
             // Root path, return language code
@@ -140,8 +140,11 @@ const displayName = currentLangData?.name || "Language";
     }
 
     // Language preference management
-    function setUserLanguage(langCode) {
+    function setUserLanguage(langCode: string) {
         localStorage.setItem("userLanguagePreference", langCode);
+        // Persist as a cookie too, so the server-side language redirect
+        // (Netlify lang-redirect edge function) honours the manual choice.
+        document.cookie = "lang=" + langCode + "; path=/; max-age=31536000; samesite=lax";
         // Generate dynamic URL preserving current page structure
         const targetUrl = generateLanguageUrl(
             langCode,
@@ -192,7 +195,7 @@ const displayName = currentLangData?.name || "Language";
 
             if (userPreference) {
                 // User has a preference, show the preferred language name
-                const langMap = {
+                const langMap: Record<string, string> = {
                     en: "English",
                     de: "Deutsch",
                     it: "Italiano",
@@ -201,7 +204,7 @@ const displayName = currentLangData?.name || "Language";
                     langMap[userPreference] || userPreference;
             } else if (currentLang && currentLang !== "auto") {
                 // No user preference but we can detect language from URL
-                const langMap = {
+                const langMap: Record<string, string> = {
                     en: "English",
                     de: "Deutsch",
                     it: "Italiano",

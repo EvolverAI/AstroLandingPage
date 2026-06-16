@@ -1,7 +1,10 @@
 import type { APIRoute } from 'astro';
-import { getAvailablePages, getAvailableLanguages } from '../utils/content-loader.js';
+import { locales, localeNames, pages as pageIds } from '../i18n';
 
 const BASE_URL = 'https://evolverai.ch';
+
+const getAvailablePages = () => [...pageIds];
+const getAvailableLanguages = () => locales.map((code) => ({ code, ...localeNames[code] }));
 
 const pageMeta: Record<string, { priority: string; changefreq: string }> = {
   home:    { priority: '1.0', changefreq: 'weekly' },

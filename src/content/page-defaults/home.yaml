@@ -1,0 +1,7 @@
+cards:
+  responsiveColumns:
+    mobile: 1
+    tablet: 2
+    desktop: 4
+  icon:
+    alignment: top

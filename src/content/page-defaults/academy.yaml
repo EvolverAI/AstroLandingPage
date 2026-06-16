@@ -1,0 +1,33 @@
+cards:
+  responsiveColumns:
+    mobile: 1
+    tablet: 2
+    desktop: 3
+  icon:
+    type: default
+    alignment: left
+    size: text-lg
+  margin: mb-4
+  padding: p-12
+  colors:
+    background: bg-slate-800
+    border: border-2 border-blue-700
+  title:
+    text: text-2xl
+    weight: font-semibold
+    color: text-blue-300
+    size: text-lg
+  content:
+    text: text-md
+    weight: font-normal
+    color: text-gray-300
+    size: text-md
+  feature:
+    text: text-md
+    weight: font-normal
+    color: text-gray-200
+    size: text-md
+    bullet: check
+    bulletType: icon
+    bulletColor: text-green-400
+    bulletSize: text-xl

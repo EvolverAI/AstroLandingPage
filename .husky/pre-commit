@@ -1,16 +1,16 @@
 #!/bin/sh
 # EvolverAI pre-commit hook
-# Runs content validation before every commit.
-# Install: npm run prepare (sets up husky)
+# Type-checks the project and validates all content against the Zod schema in
+# src/content.config.ts (astro check does both). Install: npm run prepare.
 
-echo "🔍 Running content validation..."
-node scripts/validate.js
+echo "🔍 Running astro check (types + content schema)..."
+npx astro check
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "❌ Commit blocked: fix content errors above before committing."
-  echo "   Run 'npm run validate' for details."
+  echo "❌ Commit blocked: fix the errors above before committing."
+  echo "   Run 'npm run check' for details."
   exit 1
 fi
 
-echo "✅ Content valid — proceeding with commit."
+echo "✅ Check passed — proceeding with commit."

@@ -1,78 +1,49 @@
 ---
+import { getCollection, getEntry } from "astro:content";
 import Layout from "../layouts/Layout.astro";
 import Header from "../components/Header.astro";
 import Footer from "../components/Footer.astro";
 import DynamicSection from "../components/DynamicSection.astro";
-import {
-    getPageData,
-    getPageSections,
-    getSectionContent,
-    getSectionConfig,
-    getDefaults,
-} from "../utils/content-loader.js";
+import { isLocale, pagePath, type Locale } from "../i18n";
 
 export async function getStaticPaths() {
-    const LANGUAGES = ["en", "de", "it"];
-    const PAGES = ["home", "b2b", "wfm", "elysia", "academy"];
-    const paths: any[] = [];
+    const entries = await getCollection("pages");
 
-    LANGUAGES.forEach((lang) => {
-        PAGES.forEach((page) => {
-            paths.push({
-                params: { slug: page === "home" ? lang : `${lang}/${page}` },
-                props: { language: lang, page },
-            });
-        });
+    return entries.map((entry) => {
+        // entry.id is "<locale>/<page>", e.g. "en/home" or "de/b2b"
+        const [locale, page] = entry.id.split("/");
+        return {
+            params: { slug: pagePath(locale as Locale, page).slice(1) }, // strip leading "/"
+            props: { entry, locale, page },
+        };
     });
-
-    return paths;
 }
 
-const { language, page } = Astro.props;
-
-const pageData = getPageData(page, language);
-const { layout, content } = pageData || { layout: {}, content: {} };
-
-const pageSections = getPageSections(layout);
-const defaults = getDefaults(layout);
-
-const meta = content?.meta || {};
-const title = meta.title || "EvolverAI";
-const description = meta.description || "";
+const { entry, locale, page } = Astro.props;
+const data = entry.data;
 
 // Draft gate: return 404 in production for draft pages
-const pageStatus = layout?.status || 'published';
-if (pageStatus === 'draft' && import.meta.env.PROD) {
-  return Astro.redirect('/404', 404);
+if (data.status === "draft" && import.meta.env.PROD) {
+    return Astro.redirect("/404", 404);
 }
+
+const language = isLocale(locale) ? locale : "en";
+const title = data.meta.title;
+const description = data.meta.description;
+
+// Per-page design tokens come from the separate `pageDefaults` collection.
+const defaultsEntry = await getEntry("pageDefaults", page);
+const defaults = defaultsEntry?.data ?? {};
 ---
 
-<Layout title={title} description={description} language={language} page={page}>
+<Layout title={title} description={description} language={language} page={page} ogImage={data.meta.ogImage}>
     <Header currentLanguage={language} />
 
     <main id="main-content" class={page === "home" ? "space-y-16" : "space-y-0"}>
-        {
-            pageSections.map((sectionConfig) => {
-                const sectionContent = getSectionContent(
-                    content,
-                    sectionConfig.section_id,
-                );
-                const sectionLayout = getSectionConfig(
-                    layout,
-                    sectionConfig.section_id,
-                );
-                return (
-                    <DynamicSection
-                        sectionConfig={sectionConfig}
-                        sectionContent={sectionContent}
-                        sectionLayout={sectionLayout}
-                        defaults={defaults}
-                        language={language}
-                    />
-                );
-            })
-        }
+        {data.sections.map((section) => (
+            <DynamicSection section={section} defaults={defaults} language={language} />
+        ))}
     </main>
 
-    <Footer language={language} footerContent={content?.footer} />
+    <Footer language={language} footerContent={data.footer} />
 </Layout>

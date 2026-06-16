@@ -28,11 +28,11 @@ jobs:
         run: npm run check-env
         continue-on-error: true  # warn but don't fail CI for optional vars
 
-      - name: Validate content
-        run: npm run validate
+      - name: Check types & content schema
+        run: npm run check
 
       - name: Build site
-        run: npm run build:skip-validate
+        run: npm run build
         env:
           NODE_ENV: production
 
@@ -78,7 +78,7 @@ jobs:
         run: npm ci
 
       - name: Build site
-        run: npm run build:skip-validate
+        run: npm run build
         env:
           NODE_ENV: production
 

@@ -1,6 +1,7 @@
 ---
 // Reusable Cards Section component
 import Card from "./Card.astro";
+import type { SectionCard, ResponsiveColumns } from "../../content.config";
 
 export interface CardData {
     title: string;
@@ -26,18 +27,14 @@ export interface Props {
     subtitle?: string;
     description?: string;
     image?: string;
-    cards: CardData[];
+    cards: SectionCard[];
     buttonText?: string;
     buttonUrl?: string;
     buttonColor?: string;
 
     // Layout
     columns?: string;
-    responsiveColumns?: {
-        mobile?: string;
-        tablet?: string;
-        desktop?: string;
-    };
+    responsiveColumns?: ResponsiveColumns;
     alignment?: string; // "left" (default), "center", "right"
 
     // Styling
@@ -138,7 +135,8 @@ const alignmentClasses = {
     right: "text-right items-end",
 };
 const contentAlignment =
-    alignmentClasses[localizedAlignment] || alignmentClasses.left;
+    alignmentClasses[localizedAlignment as keyof typeof alignmentClasses] ||
+    alignmentClasses.left;
 ---
 
 <section

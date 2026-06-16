@@ -60,7 +60,7 @@ const posts = allPosts
             ) : (
                 <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {posts.map((post) => {
-                        const slug = post.slug;
+                        const slug = post.id;
                         const {
                             title: postTitle,
                             date,

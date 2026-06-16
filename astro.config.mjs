@@ -1,13 +1,33 @@
 import { defineConfig } from 'astro/config';
 import tailwind from '@astrojs/tailwind';
+import react from '@astrojs/react';
+import keystatic from '@keystatic/astro';
+
+// Keystatic is the local, schema-driven content editor (run with `npm run dev`,
+// open /keystatic). Its admin routes render on demand, so they are only wired in
+// outside production — the deployed site stays a pure static build with no
+// adapter, exactly as before.
+const enableKeystatic = process.env.NODE_ENV !== 'production';
 
 export default defineConfig({
-    integrations: [tailwind()],
+    integrations: [tailwind(), ...(enableKeystatic ? [react(), keystatic()] : [])],
     output: 'static',
 
     site: 'https://evolverai.ch',
     base: '/',
     trailingSlash: 'ignore',
+
+    i18n: {
+        defaultLocale: 'en',
+        locales: ['en', 'it', 'de'],
+        routing: {
+            prefixDefaultLocale: true,
+            // Root ("/") and bare paths are redirected server-side by the
+            // Netlify `lang-redirect` edge function, so Astro should not try to
+            // generate its own root index redirect (which requires an index page).
+            redirectToDefaultLocale: false,
+        },
+    },
 
     build: {
         assets: 'assets',

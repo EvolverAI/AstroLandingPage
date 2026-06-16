@@ -5,34 +5,30 @@ This is the modern Astro-based version of the EvolverAI landing page, designed f
 ## 🚀 Project Structure
 
 ```
-astro/
-├── public/          # Static assets (images, favicon, etc.)
+├── public/                     # Static assets (images, favicon, etc.)
 ├── src/
-│   ├── components/  # Reusable Astro components
-│   │   ├── home/    # Homepage-specific components
-│   │   ├── courses/ # Course page components
-│   │   ├── b2b/     # B2B page components
-│   │   ├── elysia/  # Elysia page components
-│   │   └── wfm/     # WFM page components
-│   ├── layouts/     # Page layouts
-│   ├── pages/       # Pages (file-based routing)
-│   └── styles/      # Global styles
-├── astro.config.mjs # Astro configuration
-├── tailwind.config.mjs # Tailwind CSS configuration
-├── netlify.toml     # Netlify deployment configuration
-└── package.json     # Dependencies and scripts
+│   ├── content.config.ts       # ⭐ Single Zod schema — source of truth
+│   ├── content/
+│   │   ├── pages/<lang>/*.yaml  # Page content, one file per locale × page
+│   │   ├── page-defaults/*.yaml # Per-page design tokens (not content)
+│   │   └── blog/*.md            # Blog posts
+│   ├── components/             # Astro components (global/ section components)
+│   ├── layouts/ · pages/ · styles/ · i18n.ts
+├── keystatic.config.ts         # Local content editor schema (mirrors Zod)
+├── netlify/edge-functions/     # Server-side language redirect
+├── astro.config.mjs · netlify.toml · tailwind.config.mjs
 ```
 
 ## 🛠️ Commands
 
-All commands are run from the root of the project, from the terminal:
-
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`     |
-| `npm run build`           | Build your production site to `./dist/`         |
-| `npm run preview`         | Preview your build locally, before deploying    |
+| Command            | Action                                                     |
+| :----------------- | :--------------------------------------------------------- |
+| `npm install`      | Install dependencies                                       |
+| `npm run dev`      | Dev server at `localhost:4321` (editor at `/keystatic`)    |
+| `npm run build`    | Build the production static site to `./dist/`              |
+| `npm run preview`  | Preview the production build locally                       |
+| `npm run check`    | Type-check + validate content against the schema           |
+| `npm run translate`| AI-translate EN pages to other locales (needs OpenAI key)  |
 
 ## 🚀 Deployment to Netlify
 
@@ -76,25 +72,34 @@ npm run build
 
 ## 📝 Content Management
 
-### Adding New Components
+All page content lives in typed YAML, with one Zod schema
+([src/content.config.ts](src/content.config.ts)) as the single source of truth that drives
+rendering, validation, and the editor.
 
-1. Create a new `.astro` file in the appropriate component directory
-2. Import and use it in your pages
-3. Example:
-   ```astro
-   ---
-   // New component
-   ---
-   <section class="py-16">
-     <h2>New Section</h2>
-   </section>
-   ```
+### Editing content (Keystatic)
 
-### Updating Content
+1. `npm run dev` and open `http://localhost:4321/keystatic`.
+2. Edit a page (locale × page) — sections, cards, footer, SEO meta — with live, schema-driven
+   forms. No YAML by hand.
+3. Changes are written to `src/content/pages/<lang>/<page>.yaml`. Commit them; Netlify
+   rebuilds. The editor runs locally only and is never deployed.
 
-- **Text Content**: Edit directly in the component files
-- **Images**: Add to `public/img/` and reference as `/img/filename.jpg`
-- **Styles**: Update in component files or `src/styles/global.css`
+You can also edit the YAML files directly — they are validated on `npm run check` / `build`.
+
+### Adding a new section type
+
+1. Add a variant to the `section` discriminated union in
+   [src/content.config.ts](src/content.config.ts).
+2. Add a matching branch in [src/components/DynamicSection.astro](src/components/DynamicSection.astro).
+3. Mirror the fields in [keystatic.config.ts](keystatic.config.ts) so it's editable.
+
+### Translations
+
+Run `npm run translate` (needs `OPENAI_API_KEY`) to translate the English pages into the
+other locales; only human-text fields are translated, structure/classes/URLs are preserved.
+
+- **Images**: add to `public/img/` and reference as `/img/filename.jpg`.
+- **Design tokens**: per-page card styling lives in `src/content/page-defaults/<page>.yaml`.
 
 ## 🔧 Configuration
 
