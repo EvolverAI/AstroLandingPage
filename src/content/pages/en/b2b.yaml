@@ -119,34 +119,38 @@ sections:
         The Operation Manager oversees all operational aspects of your outsourced processes, focusing on
         continuous improvement, transparent communication, and proactive problem-solving.
       cards:
-        - title: Key Responsibilities
-          subsectionColumns: 2
-          subsectionStyle: card
-          subsections:
-            - title: Process Efficiency Management
-              icon: speed
-              description: >-
-                Continuously analyzing and optimizing workflows to improve operational efficiency, reduce errors, and
-                achieve faster turnaround times.
-            - title: Client Communication & Reporting
-              icon: forum
-              description: >-
-                Conducting weekly client updates with detailed performance metrics, progress reports, and transparent
-                discussions about any challenges or opportunities.
-            - title: Risk Mitigation & Issue Resolution
-              icon: gpp_maybe
-              description: >-
-                Proactively identifying potential risks in workflows, data accuracy, or operational bottlenecks,
-                implementing effective strategies to address them before they impact deliverables.
-            - title: Resource Management & Team Development
-              icon: groups
-              description: >-
-                Ensuring optimal allocation of resources and providing regular training on new tools, technologies, and
-                processes to maintain a highly skilled and adaptable team.
+        - title: Process Efficiency Management
+          description: >-
+            Continuously analyzing and optimizing workflows to improve operational efficiency, reduce errors, and
+            achieve faster turnaround times.
+          icon:
+            type: speed
+            alignment: top
+        - title: Client Communication & Reporting
+          description: >-
+            Conducting weekly client updates with detailed performance metrics, progress reports, and transparent
+            discussions about any challenges or opportunities.
+          icon:
+            type: forum
+            alignment: top
+        - title: Risk Mitigation & Issue Resolution
+          description: >-
+            Proactively identifying potential risks in workflows, data accuracy, or operational bottlenecks,
+            implementing effective strategies to address them before they impact deliverables.
+          icon:
+            type: gpp_maybe
+            alignment: top
+        - title: Resource Management & Team Development
+          description: >-
+            Ensuring optimal allocation of resources and providing regular training on new tools, technologies, and
+            processes to maintain a highly skilled and adaptable team.
+          icon:
+            type: groups
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: support-structure
@@ -156,53 +160,46 @@ sections:
         your outsourced processes runs smoothly. This multidisciplinary support network works in concert to anticipate
         needs, resolve challenges, and drive continuous improvement across all service areas.
       cards:
-        - title: Support Functions
-          subsectionColumns: 3
-          subsectionStyle: card
-          subsections:
-            - title: IT Support & Infrastructure
-              icon: computer
-              description: >-
-                Our dedicated IT team ensures all technical aspects of your outsourced operations function flawlessly,
-                with robust security protocols and minimal downtime.
-              features:
-                - text: Comprehensive disaster recovery planning and business continuity measures
-                - text: Enterprise-grade network security and monitoring
-                - text: Deployment and maintenance of specialized tools and applications
-                - text: Proactive system monitoring and preventive maintenance
-            - title: HR & Talent Development
-              icon: people
-              description: >-
-                Our HR team focuses on attracting, developing, and retaining the best talent through strategic
-                recruitment and professional growth opportunities.
-              features:
-                - text: Strategic hiring aligned with your specific operational requirements
-                - text: Comprehensive talent development programs and career pathing
-                - text: Employee engagement initiatives that boost morale and productivity
-                - text: Competitive compensation packages that attract and retain top talent
-            - title: Administrative & Compliance
-              icon: account_balance
-              description: >-
-                Our administrative team handles all financial, legal, and compliance matters, ensuring smooth operations
-                while adhering to all relevant regulations.
-              features:
-                - text: Comprehensive regulatory compliance management
-                - text: Strategic cost management and transparent budgeting
-                - text: Efficient invoice management and payment processing
-                - text: Contract management and legal documentation
-          callout:
-            icon: insights
-            title: Our Integrated Approach
-            text: >-
-              What truly sets our team structure apart is how these elements work together as a unified system. The
-              Operation Manager coordinates closely with each support function, ensuring that all aspects of service
-              delivery are synchronized and focused on your specific business requirements. This integrated approach
-              enables us to respond quickly to changing needs, scale operations efficiently, and consistently deliver
-              exceptional results that exceed expectations.
+        - title: IT Support & Infrastructure
+          description: >-
+            Our dedicated IT team ensures all technical aspects of your outsourced operations function flawlessly, with
+            robust security protocols and minimal downtime.
+          icon:
+            type: computer
+            alignment: top
+          features:
+            - text: Comprehensive disaster recovery planning and business continuity measures
+            - text: Enterprise-grade network security and monitoring
+            - text: Deployment and maintenance of specialized tools and applications
+            - text: Proactive system monitoring and preventive maintenance
+        - title: HR & Talent Development
+          description: >-
+            Our HR team focuses on attracting, developing, and retaining the best talent through strategic recruitment
+            and professional growth opportunities.
+          icon:
+            type: people
+            alignment: top
+          features:
+            - text: Strategic hiring aligned with your specific operational requirements
+            - text: Comprehensive talent development programs and career pathing
+            - text: Employee engagement initiatives that boost morale and productivity
+            - text: Competitive compensation packages that attract and retain top talent
+        - title: Administrative & Compliance
+          description: >-
+            Our administrative team handles all financial, legal, and compliance matters, ensuring smooth operations
+            while adhering to all relevant regulations.
+          icon:
+            type: account_balance
+            alignment: top
+          features:
+            - text: Comprehensive regulatory compliance management
+            - text: Strategic cost management and transparent budgeting
+            - text: Efficient invoice management and payment processing
+            - text: Contract management and legal documentation
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 3
   - discriminant: cards
     value:
       id: location-infrastructure
