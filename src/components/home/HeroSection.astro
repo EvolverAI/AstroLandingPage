@@ -80,13 +80,15 @@ const isParticles = variant === "particles";
 
     <div class={isSplit ? "flex flex-col justify-center text-left" : "max-w-3xl mx-auto flex flex-col items-center text-center"}>
 
-      <!-- Eyebrow / brand chip -->
-      <div class="reveal mb-6">
-        <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-900/30 text-blue-200 border border-blue-700/40 backdrop-blur-sm">
-          <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
-          {eyebrow || (<span>{companyName}<span class="text-blue-300">{companyHighlight}</span></span>)}
-        </span>
-      </div>
+      <!-- Eyebrow chip — only shown when a tagline is set (not the brand name) -->
+      {eyebrow && (
+        <div class="reveal mb-6">
+          <span class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-sm font-medium bg-blue-900/30 text-blue-200 border border-blue-700/40 backdrop-blur-sm">
+            <span class="w-1.5 h-1.5 rounded-full bg-blue-400 animate-pulse"></span>
+            {eyebrow}
+          </span>
+        </div>
+      )}
 
       <!-- Value-proposition headline -->
       <h1 class="reveal hero-headline font-extrabold text-white tracking-tight" transition:name="hero-title">
