@@ -28,6 +28,9 @@ sections:
         - src: /img/clients/arbed.png
           alt: Arbed Living Hotel
           url: https://arbedlivinghotel.ch
+        - src: /img/clients/swissoak.png
+          alt: Swiss Oak Advisory
+          url: https://swissoak.net
   - discriminant: content_header
     value:
       id: about
