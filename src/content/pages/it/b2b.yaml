@@ -14,33 +14,43 @@ sections:
   - discriminant: cards
     value:
       id: company-background
+      title: Company Background & Leadership
+      description: >-
+        Infinite Workforce Shpk is our wholly-owned operational entity in Albania (EvolverAI GmbH), built for
+        sustainable, high-quality outsourcing.
       cards:
-        - title: Company Background & Leadership
-          description: |
-            Infinite Workforce Shpk is our operational entity in Albania, fully owned by EvolverAI GmbH. 
-            This strategic investment demonstrates our commitment to creating sustainable, high-quality 
-            outsourcing operations dedicated to data quality control and business process optimization.
-
-            We've designed this entity specifically to provide a skilled, well-trained workforce at an 
-            optimized cost structure, creating value for our clients while maintaining the highest 
-            standards of service excellence.
-
-            What sets us apart from other outsourcing providers is our commitment to our employees. 
-            We offer higher compensation than local competitors, which has resulted in significantly 
-            lower employee turnover rates. This stability allows us to foster a culture of merit and 
-            continuous professional growth, ensuring that our clients benefit from experienced teams 
-            that understand their business needs.
-
-            Our Albania-based team specializes in BPO operations, leveraging our proprietary Workforce 
-            Manager platform, automated Quality Control systems, and advanced KPI extraction tools to 
-            deliver exceptional results for clients in the media measurement and market research sectors.
+        - title: Wholly-owned Albanian entity
+          description: >-
+            Infinite Workforce Shpk, fully owned by EvolverAI GmbH, dedicated to data quality control and business
+            process optimization.
           icon:
-            image: /img/InfiniteWorkforceLogo.png
-            alignment: top-big
+            type: location_on
+            alignment: top
+        - title: Skilled, cost-optimized teams
+          description: >-
+            A well-trained workforce at an optimized cost structure — real value for clients while maintaining the
+            highest standards of service excellence.
+          icon:
+            type: groups
+            alignment: top
+        - title: Low turnover, deep expertise
+          description: >-
+            Higher compensation than local competitors means significantly lower turnover and experienced teams that
+            understand your business.
+          icon:
+            type: trending_up
+            alignment: top
+        - title: BPO specialists
+          description: >-
+            Our proprietary Workforce Manager platform, automated Quality Control and KPI extraction power media
+            measurement and market research.
+          icon:
+            type: insights
+            alignment: top
       responsiveColumns:
         mobile: 1
-        tablet: 1
-        desktop: 1
+        tablet: 2
+        desktop: 2
   - discriminant: cards
     value:
       id: leadership
