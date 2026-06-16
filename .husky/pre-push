@@ -1,15 +1,15 @@
 #!/bin/sh
 # EvolverAI pre-push hook
-# Runs content validation and build check before every push.
+# Type-checks the project and validates content against the Zod schema before push.
 
-echo "🔍 Running content validation..."
-node scripts/validate.js
+echo "🔍 Running astro check (types + content schema)..."
+npx astro check
 
 if [ $? -ne 0 ]; then
   echo ""
-  echo "❌ Push blocked: fix content errors above before pushing."
-  echo "   Run 'npm run validate' for details."
+  echo "❌ Push blocked: fix the errors above before pushing."
+  echo "   Run 'npm run check' for details."
   exit 1
 fi
 
-echo "✅ Content valid — proceeding with push."
+echo "✅ Check passed — proceeding with push."
